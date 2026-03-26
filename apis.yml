@@ -1,0 +1,28 @@
+aid: datadog-apm
+name: Datadog APM
+description: >-
+  Datadog APM provides distributed tracing, profiling, and real-time performance monitoring for microservices.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Microservices
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/datadog-apm/refs/heads/main/apis.yml
+created: '2026-03-26'
+modified: '2026-03-26'
+specificationVersion: '0.19'
+apis:
+  - aid: datadog-apm:datadog-apm
+    name: Datadog APM
+    description: >-
+      Datadog APM provides distributed tracing, profiling, and real-time performance monitoring for microservices.
+    humanURL: https://github.com/api-evangelist/datadog-apm
+    tags:
+      - Microservices
+    properties: []
+common:
+  - type: Website
+    url: https://github.com/api-evangelist/datadog-apm
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

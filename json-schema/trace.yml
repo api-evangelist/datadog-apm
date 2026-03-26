@@ -1,0 +1,204 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://api-evangelist.com/schemas/datadog-apm/trace.json
+title: Datadog APM Trace
+description: >-
+  Represents a distributed trace in Datadog APM. A trace is a collection of
+  spans that represent a single request flowing through distributed services.
+type: object
+required:
+  - trace_id
+  - spans
+properties:
+  trace_id:
+    type: integer
+    description: Unique 64-bit identifier for the trace
+  spans:
+    type: array
+    description: Collection of spans belonging to this trace
+    items:
+      $ref: '#/$defs/Span'
+$defs:
+  Span:
+    type: object
+    description: >-
+      A span represents a unit of work in a distributed system. Each span
+      contains timing information, metadata, and an optional error flag.
+    required:
+      - trace_id
+      - span_id
+      - name
+      - service
+      - resource
+      - start
+      - duration
+    properties:
+      trace_id:
+        type: integer
+        description: 64-bit trace identifier
+      span_id:
+        type: integer
+        description: 64-bit span identifier
+      parent_id:
+        type: integer
+        description: 64-bit parent span identifier, 0 for root spans
+      name:
+        type: string
+        description: >-
+          Operation name, representing the type of work (e.g., http.request,
+          sql.query, redis.command)
+      service:
+        type: string
+        description: Service name that generated the span
+      resource:
+        type: string
+        description: >-
+          Resource being accessed (e.g., URL path, SQL query, cache key)
+      type:
+        type: string
+        description: Span type used for categorization
+        enum:
+          - web
+          - db
+          - cache
+          - custom
+          - sql
+          - http
+          - template
+          - memcached
+          - redis
+          - elasticsearch
+          - cassandra
+          - grpc
+      start:
+        type: integer
+        description: Start time in nanoseconds since Unix epoch
+      duration:
+        type: integer
+        description: Duration in nanoseconds
+        minimum: 0
+      error:
+        type: integer
+        description: Error flag, 1 if the span has an error, 0 otherwise
+        enum:
+          - 0
+          - 1
+      meta:
+        type: object
+        description: >-
+          String-valued metadata tags associated with the span. Common keys
+          include http.url, http.method, http.status_code, error.msg,
+          error.type, error.stack.
+        additionalProperties:
+          type: string
+      metrics:
+        type: object
+        description: >-
+          Numeric metrics associated with the span. Common keys include
+          _sampling_priority_v1, _dd.agent_psr, system.pid.
+        additionalProperties:
+          type: number
+  ServiceDefinition:
+    type: object
+    description: >-
+      Datadog Service Catalog definition describing a service, its ownership,
+      contacts, and related links.
+    required:
+      - schema-version
+      - dd-service
+    properties:
+      schema-version:
+        type: string
+        description: Version of the service definition schema
+        enum:
+          - v2
+          - v2.1
+          - v2.2
+      dd-service:
+        type: string
+        description: Unique identifier for the service
+      team:
+        type: string
+        description: Team that owns the service
+      description:
+        type: string
+        description: Human-readable description of the service
+      tier:
+        type: string
+        description: Service tier level
+      lifecycle:
+        type: string
+        description: Current lifecycle stage
+        enum:
+          - production
+          - staging
+          - development
+          - deprecated
+      application:
+        type: string
+        description: Application the service belongs to
+      contacts:
+        type: array
+        items:
+          type: object
+          required:
+            - type
+            - contact
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+              enum:
+                - email
+                - slack
+                - microsoft-teams
+            contact:
+              type: string
+      links:
+        type: array
+        items:
+          type: object
+          required:
+            - name
+            - type
+            - url
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+              enum:
+                - doc
+                - repo
+                - runbook
+                - dashboard
+                - oncall
+                - code
+                - link
+            url:
+              type: string
+              format: uri
+      tags:
+        type: array
+        items:
+          type: string
+      integrations:
+        type: object
+        properties:
+          pagerduty:
+            type: object
+            properties:
+              service-url:
+                type: string
+                format: uri
+          opsgenie:
+            type: object
+            properties:
+              service-url:
+                type: string
+                format: uri
+              region:
+                type: string
+                enum:
+                  - US
+                  - EU

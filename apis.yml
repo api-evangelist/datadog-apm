@@ -19,21 +19,27 @@ created: '2026-03-26'
 modified: '2026-03-26'
 specificationVersion: '0.19'
 apis:
-  - aid: datadog-apm:datadog-apm
-    name: Datadog APM
+  - aid: datadog-apm:datadog-apm-api
+    name: Datadog APM API
     description: >-
-      Datadog APM provides end-to-end distributed tracing, continuous profiling,
-      and real-time performance monitoring for applications and microservices. It
-      automatically instruments applications to provide deep visibility into
-      request traces, latency, and error rates across distributed systems.
-    humanURL: https://www.datadoghq.com/product/apm/
+      Datadog APM REST API for traces, spans, services, service definitions,
+      and SLOs. Provides endpoints for searching traces, managing service
+      catalog entries, and configuring service level objectives.
+    humanURL: https://docs.datadoghq.com/api/latest/tracing/
     tags:
       - APM
       - Distributed Tracing
-      - Observability
-      - Performance Monitoring
-      - Microservices
-    properties: []
+      - Traces
+      - Spans
+      - Service Definitions
+      - SLOs
+    properties:
+      - type: Documentation
+        url: https://docs.datadoghq.com/api/latest/tracing/
+      - type: OpenAPI
+        url: openapi/datadog-apm-api.yml
+      - type: JSONSchema
+        url: json-schema/trace.yml
 common:
   - type: Website
     url: https://www.datadoghq.com/

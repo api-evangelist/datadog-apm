@@ -1,0 +1,1018 @@
+openapi: 3.1.0
+info:
+  title: Datadog APM API
+  description: >-
+    Datadog APM REST API for traces, services, service definitions, and SLOs.
+    Provides endpoints for searching and retrieving distributed traces,
+    managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  - url: https://api.datadoghq.com
+    description: Datadog US1 site
+  - url: https://api.datadoghq.eu
+    description: Datadog EU site
+  - url: https://api.us3.datadoghq.com
+    description: Datadog US3 site
+  - url: https://api.us5.datadoghq.com
+    description: Datadog US5 site
+security:
+  - apiKeyAuth: []
+    appKeyAuth: []
+paths:
+  /api/v1/traces:
+    get:
+      operationId: listTraces
+      summary: List traces
+      description: >-
+        Search and retrieve traces. Returns a list of traces matching the
+        given search criteria.
+      tags:
+        - Traces
+      parameters:
+        - name: query
+          in: query
+          description: Search query for traces
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start of the time range in epoch seconds
+          schema:
+            type: integer
+        - name: end
+          in: query
+          description: End of the time range in epoch seconds
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Maximum number of traces to return
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: A list of traces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trace'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v2/spans/events/search:
+    post:
+      operationId: searchSpans
+      summary: Search spans
+      description: >-
+        Search or aggregate spans from your Datadog platform. Returns spans
+        matching the search criteria.
+      tags:
+        - Spans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpansSearchRequest'
+      responses:
+        '200':
+          description: Span search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpansSearchResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v2/spans:
+    post:
+      operationId: aggregateSpans
+      summary: Aggregate spans
+      description: Aggregate spans matching a search query grouped by facets.
+      tags:
+        - Spans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpansAggregateRequest'
+      responses:
+        '200':
+          description: Aggregation results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        attributes:
+                          type: object
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v1/service_dependencies:
+    get:
+      operationId: getServiceDependencies
+      summary: Get service dependencies
+      description: Get the list of service dependencies for your organization.
+      tags:
+        - Services
+      parameters:
+        - name: env
+          in: query
+          required: true
+          description: The environment to query
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start time in epoch seconds
+          schema:
+            type: integer
+        - name: end
+          in: query
+          description: End time in epoch seconds
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Service dependency map
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v2/services/definitions:
+    get:
+      operationId: listServiceDefinitions
+      summary: List service definitions
+      description: >-
+        Get a list of all service definitions in the Datadog Service Catalog.
+      tags:
+        - Service Definitions
+      parameters:
+        - name: page[size]:
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            default: 10
+        - name: page[number]:
+          in: query
+          description: Page number
+          schema:
+            type: integer
+        - name: schema_version
+          in: query
+          description: Filter by schema version (v1, v2, v2.1, v2.2)
+          schema:
+            type: string
+            enum:
+              - v1
+              - v2
+              - v2.1
+              - v2.2
+      responses:
+        '200':
+          description: List of service definitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionsListResponse'
+        '403':
+          description: Forbidden
+    post:
+      operationId: createOrUpdateServiceDefinition
+      summary: Create or update a service definition
+      description: >-
+        Create or update a service definition in the Datadog Service Catalog.
+      tags:
+        - Service Definitions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceDefinition'
+      responses:
+        '200':
+          description: Service definition created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionCreateResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v2/services/definitions/{service_name}:
+    get:
+      operationId: getServiceDefinition
+      summary: Get a service definition
+      description: Get a single service definition from the Datadog Service Catalog.
+      tags:
+        - Service Definitions
+      parameters:
+        - name: service_name
+          in: path
+          required: true
+          description: The name of the service
+          schema:
+            type: string
+        - name: schema_version
+          in: query
+          description: Schema version to return
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionGetResponse'
+        '404':
+          description: Service not found
+    delete:
+      operationId: deleteServiceDefinition
+      summary: Delete a service definition
+      description: Delete a service definition from the Datadog Service Catalog.
+      tags:
+        - Service Definitions
+      parameters:
+        - name: service_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Service definition deleted
+        '404':
+          description: Service not found
+  /api/v1/slo:
+    get:
+      operationId: listSLOs
+      summary: List SLOs
+      description: Get a list of service level objective objects for your organization.
+      tags:
+        - SLOs
+      parameters:
+        - name: ids
+          in: query
+          description: Comma-separated list of SLO IDs
+          schema:
+            type: string
+        - name: query
+          in: query
+          description: Search query for filtering SLOs
+          schema:
+            type: string
+        - name: tags_query
+          in: query
+          description: Filter SLOs by tags
+          schema:
+            type: string
+        - name: metrics_query
+          in: query
+          description: Filter SLOs by metrics query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of SLOs to return
+          schema:
+            type: integer
+            default: 1000
+        - name: offset
+          in: query
+          description: Pagination offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of SLOs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOListResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+    post:
+      operationId: createSLO
+      summary: Create a SLO
+      description: Create a service level objective object.
+      tags:
+        - SLOs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SLO'
+      responses:
+        '200':
+          description: SLO created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v1/slo/{slo_id}:
+    get:
+      operationId: getSLO
+      summary: Get a SLO
+      description: Get a service level objective by ID.
+      tags:
+        - SLOs
+      parameters:
+        - name: slo_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: with_configured_alert_ids
+          in: query
+          description: Include configured alert IDs
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: SLO details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+    put:
+      operationId: updateSLO
+      summary: Update a SLO
+      description: Update an existing service level objective.
+      tags:
+        - SLOs
+      parameters:
+        - name: slo_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SLO'
+      responses:
+        '200':
+          description: SLO updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+    delete:
+      operationId: deleteSLO
+      summary: Delete a SLO
+      description: Permanently delete a service level objective.
+      tags:
+        - SLOs
+      parameters:
+        - name: slo_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: force
+          in: query
+          description: Force delete even if referenced by monitors
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SLO deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      deleted:
+                        type: array
+                        items:
+                          type: string
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+        '409':
+          description: Conflict - SLO is referenced
+  /api/v1/slo/{slo_id}/history:
+    get:
+      operationId: getSLOHistory
+      summary: Get SLO history
+      description: Get the SLO history data for a given SLO.
+      tags:
+        - SLOs
+      parameters:
+        - name: slo_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: from_ts
+          in: query
+          required: true
+          description: Start of history window in epoch seconds
+          schema:
+            type: integer
+        - name: to_ts
+          in: query
+          required: true
+          description: End of history window in epoch seconds
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: SLO history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOHistoryResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY
+  schemas:
+    Trace:
+      type: object
+      properties:
+        traceId:
+          type: string
+        spans:
+          type: array
+          items:
+            $ref: '#/components/schemas/APMSpan'
+    APMSpan:
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: 64-bit trace ID
+        spanId:
+          type: string
+          description: 64-bit span ID
+        parentId:
+          type: string
+          description: 64-bit parent span ID
+        name:
+          type: string
+          description: Operation name
+        service:
+          type: string
+          description: Service name
+        resource:
+          type: string
+          description: Resource name (e.g., URL, query)
+        type:
+          type: string
+          description: Span type (web, db, cache, custom)
+        start:
+          type: integer
+          description: Start time in nanoseconds since epoch
+        duration:
+          type: integer
+          description: Duration in nanoseconds
+        error:
+          type: integer
+          description: Error flag (0 or 1)
+        meta:
+          type: object
+          description: String key-value tags
+          additionalProperties:
+            type: string
+        metrics:
+          type: object
+          description: Numeric key-value metrics
+          additionalProperties:
+            type: number
+    SpansSearchRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - search_request
+            attributes:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  properties:
+                    query:
+                      type: string
+                      description: Search query string
+                    from:
+                      type: string
+                      description: Start time (ISO 8601 or relative)
+                    to:
+                      type: string
+                      description: End time (ISO 8601 or relative)
+                sort:
+                  type: string
+                  description: Sort order for results
+                  enum:
+                    - timestamp
+                    - '-timestamp'
+                page:
+                  type: object
+                  properties:
+                    cursor:
+                      type: string
+                    limit:
+                      type: integer
+                      default: 10
+                      maximum: 1000
+    SpansSearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              id:
+                type: string
+              attributes:
+                type: object
+                properties:
+                  service:
+                    type: string
+                  resource_name:
+                    type: string
+                  span_id:
+                    type: string
+                  trace_id:
+                    type: string
+                  timestamp:
+                    type: string
+                  duration:
+                    type: integer
+                  status:
+                    type: string
+                  tags:
+                    type: object
+                    additionalProperties:
+                      type: string
+        meta:
+          type: object
+          properties:
+            page:
+              type: object
+              properties:
+                after:
+                  type: string
+    SpansAggregateRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - aggregate_request
+            attributes:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  properties:
+                    query:
+                      type: string
+                    from:
+                      type: string
+                    to:
+                      type: string
+                group_by:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      facet:
+                        type: string
+                      limit:
+                        type: integer
+                      sort:
+                        type: object
+                compute:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      aggregation:
+                        type: string
+                        enum:
+                          - count
+                          - avg
+                          - sum
+                          - min
+                          - max
+                          - pct
+                      metric:
+                        type: string
+                      type:
+                        type: string
+    ServiceDefinitionsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceDefinitionData'
+    ServiceDefinitionData:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          type: object
+          properties:
+            meta:
+              type: object
+              properties:
+                last_modified_time:
+                  type: string
+                github_html_url:
+                  type: string
+            schema:
+              $ref: '#/components/schemas/ServiceDefinition'
+    ServiceDefinition:
+      type: object
+      properties:
+        schema-version:
+          type: string
+          enum:
+            - v2
+            - v2.1
+            - v2.2
+        dd-service:
+          type: string
+          description: Unique service name
+        team:
+          type: string
+          description: Team that owns the service
+        description:
+          type: string
+        tier:
+          type: string
+        lifecycle:
+          type: string
+          enum:
+            - production
+            - staging
+            - development
+            - deprecated
+        application:
+          type: string
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                  - email
+                  - slack
+                  - microsoft-teams
+              contact:
+                type: string
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                  - doc
+                  - repo
+                  - runbook
+                  - dashboard
+                  - oncall
+                  - code
+                  - link
+              url:
+                type: string
+                format: uri
+        repos:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+                format: uri
+              provider:
+                type: string
+        tags:
+          type: array
+          items:
+            type: string
+        integrations:
+          type: object
+          properties:
+            pagerduty:
+              type: object
+              properties:
+                service-url:
+                  type: string
+                  format: uri
+            opsgenie:
+              type: object
+              properties:
+                service-url:
+                  type: string
+                  format: uri
+                region:
+                  type: string
+                  enum:
+                    - US
+                    - EU
+    ServiceDefinitionCreateResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceDefinitionData'
+    ServiceDefinitionGetResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceDefinitionData'
+    SLO:
+      type: object
+      required:
+        - name
+        - type
+        - thresholds
+      properties:
+        name:
+          type: string
+          description: Name of the SLO
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - metric
+            - monitor
+            - time_slice
+        thresholds:
+          type: array
+          items:
+            $ref: '#/components/schemas/SLOThreshold'
+        monitor_ids:
+          type: array
+          description: Required for monitor-based SLOs
+          items:
+            type: integer
+        query:
+          type: object
+          description: Required for metric-based SLOs
+          properties:
+            numerator:
+              type: string
+            denominator:
+              type: string
+        sli_specification:
+          type: object
+          description: Required for time-slice SLOs
+          properties:
+            time_slice:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    formulas:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          formula:
+                            type: string
+                    queries:
+                      type: array
+                      items:
+                        type: object
+                comparator:
+                  type: string
+                  enum:
+                    - '>'
+                    - '>='
+                    - <
+                    - <=
+                threshold:
+                  type: number
+        tags:
+          type: array
+          items:
+            type: string
+        target_threshold:
+          type: number
+        timeframe:
+          type: string
+          enum:
+            - 7d
+            - 30d
+            - 90d
+            - custom
+    SLOThreshold:
+      type: object
+      required:
+        - target
+        - timeframe
+      properties:
+        target:
+          type: number
+          description: Target percentage (0-100)
+        target_display:
+          type: string
+        timeframe:
+          type: string
+          enum:
+            - 7d
+            - 30d
+            - 90d
+            - custom
+        warning:
+          type: number
+        warning_display:
+          type: string
+    SLOListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SLOResponse'
+        metadata:
+          type: object
+          properties:
+            page:
+              type: object
+              properties:
+                total_count:
+                  type: integer
+                total_filtered_count:
+                  type: integer
+    SLOResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            type:
+              type: string
+            thresholds:
+              type: array
+              items:
+                $ref: '#/components/schemas/SLOThreshold'
+            tags:
+              type: array
+              items:
+                type: string
+            creator:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+            created_at:
+              type: integer
+            modified_at:
+              type: integer
+        errors:
+          type: array
+          items:
+            type: string
+    SLOHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            from_ts:
+              type: integer
+            to_ts:
+              type: integer
+            type:
+              type: string
+            type_id:
+              type: integer
+            overall:
+              type: object
+              properties:
+                sli_value:
+                  type: number
+                span_precision:
+                  type: number
+                name:
+                  type: string
+                precision:
+                  type: object
+                  additionalProperties:
+                    type: number
+            thresholds:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  target:
+                    type: number
+                  timeframe:
+                    type: string
+        errors:
+          type: array
+          items:
+            type: string

@@ -10,9 +10,9 @@ image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - APM
   - Distributed Tracing
+  - Microservices
   - Observability
   - Performance Monitoring
-  - Microservices
 url: >-
   https://raw.githubusercontent.com/api-evangelist/datadog-apm/refs/heads/main/apis.yml
 created: '2026-03-26'
@@ -29,10 +29,10 @@ apis:
     tags:
       - APM
       - Distributed Tracing
-      - Traces
-      - Spans
       - Service Definitions
       - SLOs
+      - Spans
+      - Traces
     properties:
       - type: Documentation
         url: https://docs.datadoghq.com/api/latest/tracing/

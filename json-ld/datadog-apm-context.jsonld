@@ -1,0 +1,69 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "datadog": "https://docs.datadoghq.com/api/latest/",
+    "Trace": {
+      "@id": "datadog:tracing",
+      "@context": {
+        "trace_id": "https://schema.org/identifier",
+        "service": "https://schema.org/serviceType",
+        "resource": "https://schema.org/about",
+        "duration": "https://schema.org/duration",
+        "start": "https://schema.org/startTime",
+        "end": "https://schema.org/endTime",
+        "spans": "https://schema.org/hasPart",
+        "tags": "https://schema.org/keywords"
+      }
+    },
+    "Span": {
+      "@id": "datadog:tracing",
+      "@context": {
+        "span_id": "https://schema.org/identifier",
+        "trace_id": "https://schema.org/isPartOf",
+        "parent_id": "https://schema.org/parent",
+        "service": "https://schema.org/serviceType",
+        "name": "https://schema.org/name",
+        "resource": "https://schema.org/about",
+        "start": "https://schema.org/startTime",
+        "duration": "https://schema.org/duration",
+        "type": "https://schema.org/additionalType",
+        "error": "https://schema.org/status",
+        "meta": "https://schema.org/additionalProperty"
+      }
+    },
+    "Service": {
+      "@id": "datadog:service_definition",
+      "@context": {
+        "name": "https://schema.org/name",
+        "type": "https://schema.org/additionalType",
+        "env": "https://schema.org/applicationCategory",
+        "tags": "https://schema.org/keywords"
+      }
+    },
+    "ServiceDefinition": {
+      "@id": "datadog:service_definition",
+      "@context": {
+        "schema_version": "https://schema.org/schemaVersion",
+        "dd_service": "https://schema.org/identifier",
+        "team": "https://schema.org/sourceOrganization",
+        "contacts": "https://schema.org/contactPoint",
+        "links": "https://schema.org/sameAs",
+        "tags": "https://schema.org/keywords"
+      }
+    },
+    "SLO": {
+      "@id": "datadog:service_level_objectives",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "name": "https://schema.org/name",
+        "description": "https://schema.org/description",
+        "type": "https://schema.org/additionalType",
+        "thresholds": "https://schema.org/MonetaryAmount",
+        "target": "https://schema.org/value",
+        "warning": "https://schema.org/value",
+        "timeframe": "https://schema.org/duration",
+        "tags": "https://schema.org/keywords"
+      }
+    }
+  }
+}

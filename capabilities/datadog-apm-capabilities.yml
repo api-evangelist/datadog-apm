@@ -1,0 +1,40 @@
+name: Datadog APM Capabilities
+description: >-
+  Capabilities exposed across Datadog APM endpoints for distributed tracing,
+  service catalog management, and service level objectives.
+capabilities:
+  - name: Trace Search
+    description: Query and retrieve distributed traces matching search criteria.
+    api: datadog-apm:datadog-apm-api
+  - name: Trace Retrieval
+    description: Fetch full trace details by trace ID for waterfall and span analysis.
+    api: datadog-apm:datadog-apm-api
+  - name: Span Search
+    description: Search and retrieve individual spans across services and resources.
+    api: datadog-apm:datadog-apm-api
+  - name: Service Catalog
+    description: List services tracked by Datadog APM with metadata and ownership.
+    api: datadog-apm:datadog-apm-api
+  - name: Service Definitions
+    description: Create, update, and delete schema-versioned service definitions.
+    api: datadog-apm:datadog-apm-api
+  - name: SLO Management
+    description: Create, list, update, and delete service level objectives.
+    api: datadog-apm:datadog-apm-api
+  - name: SLO History
+    description: Retrieve historical SLI data and burn rate for an SLO.
+    api: datadog-apm:datadog-apm-api
+  - name: Multi-Region API Access
+    description: Call APM endpoints across US1, EU, US3, and US5 Datadog sites.
+    api: datadog-apm:datadog-apm-api
+use_cases:
+  - name: Distributed system observability
+    description: Trace requests across microservices to find latency and error sources.
+  - name: Service ownership and governance
+    description: Use service definitions to track ownership, contacts, and runbooks.
+  - name: SLO-driven reliability
+    description: Define and monitor SLOs to balance feature velocity with reliability.
+  - name: Performance regression detection
+    description: Compare trace metrics across deployments to surface regressions.
+  - name: Customer support triage
+    description: Pivot from a customer-affected trace ID to root-cause spans quickly.

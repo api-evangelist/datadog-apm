@@ -1,0 +1,53 @@
+name: Datadog APM Vocabulary
+description: >-
+  Shared vocabulary of terms used across Datadog APM for distributed tracing,
+  service catalog, and service level objectives.
+terms:
+  - term: Trace
+    definition: >-
+      A directed acyclic graph of spans representing a single end-to-end
+      request through a distributed system.
+  - term: Span
+    definition: >-
+      A timed operation within a trace, recording resource, service,
+      duration, and key metadata.
+  - term: Service
+    definition: >-
+      A logical application or component instrumented by Datadog APM and
+      registered in the service catalog.
+  - term: Service Definition
+    definition: >-
+      A schema-versioned descriptor of a service including ownership,
+      contacts, links, and metadata managed via the service definition API.
+  - term: Resource
+    definition: >-
+      A specific endpoint, query, or method within a service that spans are
+      grouped under for analysis.
+  - term: SLO
+    definition: >-
+      A service level objective measuring the reliability of a service
+      against a target over a time window.
+  - term: SLI
+    definition: >-
+      A service level indicator metric that backs an SLO, derived from
+      monitors or events.
+  - term: Tag
+    definition: >-
+      A key-value pair attached to traces, spans, services, and SLOs for
+      filtering and grouping.
+  - term: Site
+    definition: >-
+      A regional Datadog deployment such as US1, EU, US3, or US5 that
+      serves the API at a region-specific hostname.
+  - term: Trace Search Query
+    definition: >-
+      A query expression used to filter traces and spans by service,
+      resource, status, and tags.
+  - term: Continuous Profiler
+    definition: >-
+      Datadog's always-on profiling system that captures CPU, memory, and
+      I/O performance data for running services.
+  - term: Trace Metric
+    definition: >-
+      A pre-aggregated metric derived from traces such as request count,
+      latency percentiles, or error rate.

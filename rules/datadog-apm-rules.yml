@@ -1,0 +1,39 @@
+extends:
+  - spectral:oas
+rules:
+  datadog-apm-info-contact:
+    description: API info should provide a contact for Datadog support.
+    given: $.info
+    severity: warn
+    then:
+      field: contact
+      function: truthy
+  datadog-apm-server-region:
+    description: Servers should target one of the Datadog regional sites.
+    given: $.servers[*].url
+    severity: warn
+    then:
+      function: pattern
+      functionOptions:
+        match: "datadoghq\\.(com|eu)|datadoghq\\.com"
+  datadog-apm-api-version-prefix:
+    description: Operation paths should be versioned under /api/v1 or /api/v2.
+    given: $.paths
+    severity: warn
+    then:
+      function: pattern
+      functionOptions:
+        match: "^/api/v[12]"
+  datadog-apm-operation-tags:
+    description: Every operation must declare at least one tag.
+    given: $.paths[*][*]
+    severity: error
+    then:
+      field: tags
+      function: truthy
+  datadog-apm-security-keys:
+    description: Operations should require both API key and application key auth.
+    given: $.security
+    severity: warn
+    then:
+      function: truthy

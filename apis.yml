@@ -66,6 +66,109 @@ common:
     url: capabilities/datadog-apm-capabilities.yml
   - type: Rules
     url: rules/datadog-apm-rules.yml
+  - type: Integrations
+    url: https://www.datadoghq.com/product/platform/integrations/
+integrations:
+  - name: Ably
+  - name: Abnormal Security
+  - name: Active Directory
+  - name: ActiveMQ
+  - name: ActiveMQ XML
+  - name: Adaptive Shield
+  - name: Adobe Experience Manager
+  - name: Adyen
+  - name: Aerospike
+  - name: Aerospike Enterprise
+  - name: Agent Metrics
+  - name: Agora Analytics
+  - name: AIMon
+  - name: Airbrake
+  - name: Airbyte
+  - name: Airflow
+  - name: Akamai Application Security
+  - name: Akamai DataStream 2
+  - name: Akamai mPulse
+  - name: Akamai Zero Trust
+  - name: Akamas
+  - name: Akeyless Gateway
+  - name: Alcide
+  - name: AlertNow
+  - name: Algorithmia
+  - name: Alibaba Cloud
+  - name: Altostra
+  - name: Amazon API Gateway Integration
+  - name: AWS App Mesh
+  - name: AWS App Runner
+  - name: Amazon AppStream
+  - name: Amazon Athena
+  - name: AWS Auto Scaling
+  - name: AWS Backup
+  - name: AWS Batch
+  - name: Amazon Bedrock
+  - name: AWS Billing and Cost Management
+  - name: AWS Certificate Manager
+  - name: Amazon CloudFront
+  - name: AWS CloudHSM
+  - name: Amazon CloudSearch
+  - name: AWS CloudTrail
+  - name: AWS CodeBuild
+  - name: AWS CodeDeploy
+  - name: Amazon CodeWhisperer
+  - name: Amazon Cognito
+  - name: AWS Compute Optimizer
+  - name: AWS Config
+  - name: Amazon Connect
+  - name: AWS Direct Connect
+  - name: AWS DMS
+  - name: Amazon DocumentDB
+  - name: Amazon DynamoDB
+  - name: Amazon DAX
+  - name: Amazon EBS
+  - name: Amazon EC2
+  - name: Amazon EC2 Spot
+  - name: Amazon ECR
+  - name: Amazon ECS
+  - name: Amazon EFS
+  - name: Amazon EKS
+  - name: Datadog Blueprints Add-on
+  - name: AWS Elastic Beanstalk
+  - name: Amazon Elastic Transcoder
+  - name: Amazon ElastiCache
+  - name: Amazon Elastic Load Balancing
+  - name: Amazon EMR
+  - name: Amazon OpenSearch Service
+  - name: Amazon EventBridge
+  - name: Amazon Kinesis Data Firehose
+  - name: Amazon FSx
+  - name: Amazon GameLift
+  - name: Amazon Global Accelerator
+  - name: AWS Glue
+  - name: AWS Health
+  - name: Amazon Inspector
+  - name: AWS IoT Core
+  - name: Amazon MSK (Agent)
+  - name: Amazon Keyspaces
+  - name: Amazon Kinesis
+  - name: Amazon Kinesis Data Analytics
+  - name: AWS KMS
+  - name: AWS Lambda
+  - name: Amazon Lex
+  - name: Amazon Machine Learning
+  - name: AWS MediaConnect
+  - name: Amazon MediaConvert
+  - name: Amazon MediaLive
+  - name: AWS MediaPackage
+  - name: AWS MediaStore
+  - name: AWS MediaTailor
+  - name: Amazon MemoryDB
+  - name: Amazon MQ
+  - name: Amazon MSK
+  - name: Amazon MWAA
+  - name: Amazon Nat Gateway
+  - name: Amazon Neptune
+  - name: AWS Network Firewall
+  - name: AWS Network Manager
+  - name: Amazon OpenSearch Serverless
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

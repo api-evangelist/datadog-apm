@@ -18,7 +18,7 @@ url: >-
 created: '2026-03-26'
 modified: '2026-04-28'
 specificationVersion: '0.19'
-xType: company
+kind: company
 position: Consumer
 access: 3rd-Party
 apis:
@@ -48,7 +48,7 @@ common:
     url: https://www.datadoghq.com/
   - type: Documentation
     url: https://docs.datadoghq.com/tracing/
-  - type: Getting Started
+  - type: GettingStarted
     url: https://docs.datadoghq.com/getting_started/tracing/
   - type: GitHub
     url: https://github.com/DataDog
@@ -56,9 +56,9 @@ common:
     url: https://www.datadoghq.com/blog/
   - type: Pricing
     url: https://www.datadoghq.com/pricing/
-  - type: Sign Up
+  - type: SignUp
     url: https://www.datadoghq.com/free-datadog-trial/
-  - type: JSON-LD
+  - type: JSONLD
     url: json-ld/datadog-apm-context.jsonld
   - type: Vocabulary
     url: vocabulary/datadog-apm-vocabulary.yml

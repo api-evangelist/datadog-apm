@@ -68,6 +68,8 @@ common:
     url: rules/datadog-apm-rules.yml
   - type: Integrations
     url: https://www.datadoghq.com/product/platform/integrations/
+  - type: LLMsTxt
+    url: https://docs.datadoghq.com/llms.txt
 integrations:
   - name: Ably
   - name: Abnormal Security

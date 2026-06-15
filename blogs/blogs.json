@@ -5,7 +5,7 @@
       "source": "https://www.datadoghq.com/blog/index.xml",
       "feed_url": "https://www.datadoghq.com/blog/index.xml",
       "title": "",
-      "saved": 0,
+      "saved": 45,
       "method": "feed"
     },
     {
@@ -16,6 +16,6 @@
       "method": "none"
     }
   ],
-  "post_count": 79,
-  "fetched": "2026-06-01T23:35:02Z"
+  "post_count": 131,
+  "fetched": "2026-06-14T20:42:17Z"
 }

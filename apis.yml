@@ -56,7 +56,7 @@ common:
     url: https://www.datadoghq.com/blog/
   - type: Pricing
     url: https://www.datadoghq.com/pricing/
-  - type: SignUp
+  - type: Signup
     url: https://www.datadoghq.com/free-datadog-trial/
   - type: JSONLD
     url: json-ld/datadog-apm-context.jsonld
@@ -68,7 +68,7 @@ common:
     url: rules/datadog-apm-rules.yml
   - type: Integrations
     url: https://www.datadoghq.com/product/platform/integrations/
-  - type: LLMsTxt
+  - type: LlmsText
     url: https://docs.datadoghq.com/llms.txt
 integrations:
   - name: Ably

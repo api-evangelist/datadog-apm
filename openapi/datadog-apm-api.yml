@@ -180,13 +180,13 @@ paths:
       tags:
         - Service Definitions
       parameters:
-        - name: page[size]:
+        - name: "page[size]:"
           in: query
           description: Number of results per page
           schema:
             type: integer
             default: 10
-        - name: page[number]:
+        - name: "page[number]:"
           in: query
           description: Page number
           schema:

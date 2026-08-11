@@ -34,27 +34,71 @@ kind: company
 position: Consumer
 access: 3rd-Party
 apis:
-  - aid: datadog-apm:datadog-apm-api
-    name: Datadog APM API
-    description: >-
-      Datadog APM REST API for traces, spans, services, service definitions,
-      and SLOs. Provides endpoints for searching traces, managing service
-      catalog entries, and configuring service level objectives.
-    humanURL: https://docs.datadoghq.com/api/latest/tracing/
-    tags:
-      - APM
-      - Distributed Tracing
-      - Service Definitions
-      - SLOs
-      - Spans
-      - Traces
-    properties:
-      - type: Documentation
-        url: https://docs.datadoghq.com/api/latest/tracing/
-      - type: OpenAPI
-        url: openapi/datadog-apm-api.yml
-      - type: JSONSchema
-        url: json-schema/trace.yml
+- aid: datadog-apm:datadog-apm-service-definitions-api
+  name: Datadog APM Service Definitions API
+  description: The Service Definitions API from Datadog APM — 2 operation(s) for service definitions.
+  humanURL: https://docs.datadoghq.com/api/latest/tracing/
+  tags:
+  - Service Definitions
+  properties:
+  - type: OpenAPI
+    url: openapi/datadog-apm-service-definitions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datadoghq.com/api/latest/tracing/
+  - type: JSONSchema
+    url: json-schema/trace.yml
+- aid: datadog-apm:datadog-apm-services-api
+  name: Datadog APM Services API
+  description: The Services API from Datadog APM — 1 operation(s) for services.
+  humanURL: https://docs.datadoghq.com/api/latest/tracing/
+  tags:
+  - Services
+  properties:
+  - type: OpenAPI
+    url: openapi/datadog-apm-services-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datadoghq.com/api/latest/tracing/
+  - type: JSONSchema
+    url: json-schema/trace.yml
+- aid: datadog-apm:datadog-apm-slos-api
+  name: Datadog APM SL Os API
+  description: The SLOs API from Datadog APM — 3 operation(s) for slos.
+  humanURL: https://docs.datadoghq.com/api/latest/tracing/
+  tags:
+  - SLOs
+  properties:
+  - type: OpenAPI
+    url: openapi/datadog-apm-slos-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datadoghq.com/api/latest/tracing/
+  - type: JSONSchema
+    url: json-schema/trace.yml
+- aid: datadog-apm:datadog-apm-spans-api
+  name: Datadog APM Spans API
+  description: The Spans API from Datadog APM — 2 operation(s) for spans.
+  humanURL: https://docs.datadoghq.com/api/latest/tracing/
+  tags:
+  - Spans
+  properties:
+  - type: OpenAPI
+    url: openapi/datadog-apm-spans-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datadoghq.com/api/latest/tracing/
+  - type: JSONSchema
+    url: json-schema/trace.yml
+- aid: datadog-apm:datadog-apm-traces-api
+  name: Datadog APM Traces API
+  description: The Traces API from Datadog APM — 1 operation(s) for traces.
+  humanURL: https://docs.datadoghq.com/api/latest/tracing/
+  tags:
+  - Traces
+  properties:
+  - type: OpenAPI
+    url: openapi/datadog-apm-traces-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datadoghq.com/api/latest/tracing/
+  - type: JSONSchema
+    url: json-schema/trace.yml
 common:
   - type: TrustCenter
     url: security/datadog-apm-trust-center.yml
@@ -80,8 +124,6 @@ common:
     url: json-ld/datadog-apm-context.jsonld
   - type: Vocabulary
     url: vocabulary/datadog-apm-vocabulary.yml
-  - type: Capabilities
-    url: capabilities/datadog-apm-capabilities.yml
   - type: Rules
     url: rules/datadog-apm-rules.yml
   - type: Integrations

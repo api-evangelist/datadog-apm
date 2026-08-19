@@ -1,0 +1,81 @@
+# Datadog documentation
+
+> Documentation index for the Datadog observability platform. Covers infrastructure monitoring, APM, log management, security, synthetics, RUM, CI/CD visibility, cloud cost management, incident management, and more.
+
+## Product docs
+
+- [API Reference](https://docs.datadoghq.com/api_reference/llms.txt)
+- [APM](https://docs.datadoghq.com/apm/llms.txt): Instrument your code to improve performance
+- [Account Management](https://docs.datadoghq.com/account_management/llms.txt): Manage your Datadog account and organization
+- [Actions](https://docs.datadoghq.com/actions/llms.txt)
+- [Administrator's Guide](https://docs.datadoghq.com/administrator_s_guide/llms.txt): Setup and install Datadog as an administrator to avoid common issues.
+- [Agent](https://docs.datadoghq.com/agent/llms.txt): Install and configure the Agent to collect data
+- [Agent Console](https://docs.datadoghq.com/agent_console/llms.txt): Monitor and analyze coding agent and Bits AI agent usage, cost, and performance across your organization in Datadog Agent Console.
+- [Agent Observability](https://docs.datadoghq.com/agent_observability/llms.txt): Overview of Agent Observability, a platform for monitoring, troubleshooting, and improving LLM applications and AI agents.
+- [Agentic Onboarding](https://docs.datadoghq.com/agentic_onboarding/llms.txt)
+- [BYOC Logs](https://docs.datadoghq.com/byoc_logs/llms.txt): Learn how to deploy and manage Datadog BYOC Logs, a self-hosted log management solution for cost-effective log ingestion, processing, indexing, and search capabilities
+- [Bits AI](https://docs.datadoghq.com/bits_ai/llms.txt): Learn about Bits AI, your agentic teammate in Datadog that automates development, security, and operational workflows.
+- [Change Tracking](https://docs.datadoghq.com/change_tracking/llms.txt): Streamline troubleshooting with Change Tracking by monitoring deployments, feature flags, configuration changes, and other modifications to your services.
+- [Client SDKs](https://docs.datadoghq.com/client_sdks/llms.txt)
+- [Cloud Cost Management](https://docs.datadoghq.com/cloud_cost_management/llms.txt)
+- [Cloudcraft (Standalone)](https://docs.datadoghq.com/cloudcraft_standalone/llms.txt)
+- [Cloudcraft in Datadog](https://docs.datadoghq.com/cloudcraft_in_datadog/llms.txt): Visualize and analyze AWS, Azure, GCP, OCI, and vSphere infrastructure with live Cloudcraft diagrams in Datadog for troubleshooting, security analysis, and cost optimization.
+- [Code Coverage](https://docs.datadoghq.com/code_coverage/llms.txt): Upload coverage reports to Datadog, visualize coverage data for pull requests, and block merges based on configurable thresholds.
+- [Containers](https://docs.datadoghq.com/containers/llms.txt): Install & configure the Agent to collect data on containerized infrastructures
+- [Continuous Delivery Visibility](https://docs.datadoghq.com/continuous_delivery_visibility/llms.txt)
+- [Continuous Integration Visibility](https://docs.datadoghq.com/continuous_integration_visibility/llms.txt)
+- [Continuous Profiler](https://docs.datadoghq.com/continuous_profiler/llms.txt)
+- [Continuous Testing](https://docs.datadoghq.com/continuous_testing/llms.txt): Customize the number of Continuous Testing tests running in parallel in your CI/CD pipelines to increase your testing coverage.
+- [DDSQL Editor](https://docs.datadoghq.com/ddsql_editor/llms.txt): Query infrastructure resources and telemetry data using natural language or DDSQL syntax with support for tags as table columns.
+- [DDSQL Reference](https://docs.datadoghq.com/ddsql_reference/llms.txt): Complete reference for DDSQL syntax, data types, functions, operators, and statements for querying Datadog data with SQL.
+- [Dashboards](https://docs.datadoghq.com/dashboards/llms.txt): Visualize your data to gain insight
+- [Data Observability Overview](https://docs.datadoghq.com/data_observability_overview/llms.txt): Monitor data quality, performance, and cost with Data Observability to detect anomalies, analyze data lineage, and prevent issues affecting downstream systems.
+- [Data Streams Monitoring](https://docs.datadoghq.com/data_streams_monitoring/llms.txt)
+- [Database Monitoring](https://docs.datadoghq.com/database_monitoring/llms.txt): Learn about Database Monitoring and get started
+- [Datadog CoTerm](https://docs.datadoghq.com/datadog_coterm/llms.txt): Record terminal sessions, analyze them in Datadog, and protect against dangerous terminal commands with CoTerm's validation layer.
+- [Datadog Documentation Guides](https://docs.datadoghq.com/datadog_documentation_guides/llms.txt)
+- [Datadog Help](https://docs.datadoghq.com/datadog_help/llms.txt)
+- [Datadog IDE Plugins](https://docs.datadoghq.com/datadog_ide_plugins/llms.txt): Learn how to set up Datadog IDE plugins.
+- [Datadog MCP Server](https://docs.datadoghq.com/datadog_mcp_server/llms.txt): Connect AI agents to Datadog observability data using the MCP Server to query metrics, logs, traces, and other insights.
+- [Datadog Mobile App](https://docs.datadoghq.com/datadog_mobile_app/llms.txt): Monitor your infrastructure on-the-go with the Datadog mobile app for iOS and Android, featuring dashboards, alerts, incidents, and on-call management.
+- [Datadog Security](https://docs.datadoghq.com/datadog_security/llms.txt)
+- [Datadog Watchdog™](https://docs.datadoghq.com/datadog_watchdog/llms.txt): Automatically detect potential application and infrastructure issues
+- [Default Standard Attributes](https://docs.datadoghq.com/default_standard_attributes/llms.txt): A table of the attributes automatically applied to data sent to Datadog by the Agent by each of the RUM, Logs, and APM products, as applicable to the data domain.
+- [Delivery Performance](https://docs.datadoghq.com/delivery_performance/llms.txt): Measure and improve your software delivery performance with DORA Metrics and AI Impact analytics.
+- [Deployment Gates](https://docs.datadoghq.com/deployment_gates/llms.txt): Reduce deployment incidents by automatically evaluating monitors and APM anomalies to halt releases when performance regressions are detected.
+- [Error Tracking](https://docs.datadoghq.com/error_tracking/llms.txt)
+- [Event Management](https://docs.datadoghq.com/event_management/llms.txt)
+- [Experiments](https://docs.datadoghq.com/experiments/llms.txt): Plan, run, and analyze randomized experiments across your stack with Datadog Experiments.
+- [Extend Datadog](https://docs.datadoghq.com/extend_datadog/llms.txt): Learn how to extend Datadog.
+- [Feature Flags](https://docs.datadoghq.com/feature_flags/llms.txt): Learn about feature flags in Datadog.
+- [GPU Monitoring](https://docs.datadoghq.com/gpu_monitoring/llms.txt)
+- [Getting Started](https://docs.datadoghq.com/getting_started/llms.txt): Introduction to Datadog's observability platform with guides for installation, configuration, and getting started with key features.
+- [Incident Response](https://docs.datadoghq.com/incident_response/llms.txt)
+- [Infrastructure](https://docs.datadoghq.com/infrastructure/llms.txt)
+- [Integrations](https://docs.datadoghq.com/integrations/llms.txt): Gather data from all of your systems, apps, & services
+- [Internal Developer Portal](https://docs.datadoghq.com/internal_developer_portal/llms.txt): Datadog's Internal Developer Portal unifies live telemetry, metadata, and self-service workflows to standardize software delivery and optimize developer experience.
+- [Journey Monitoring](https://docs.datadoghq.com/journey_monitoring/llms.txt): Monitor and analyze critical user flows to troubleshoot user experience and technical issues.
+- [Log Management](https://docs.datadoghq.com/log_management/llms.txt): Configure your Datadog Agent to gather logs from your host, containers & services.
+- [Metrics](https://docs.datadoghq.com/metrics/llms.txt): Submit, query, visualize, and manage your metrics in Datadog.
+- [Monitors](https://docs.datadoghq.com/monitors/llms.txt): Create monitors, configure notifications and automations, and manage your monitors using the alerting platform
+- [Network Monitoring](https://docs.datadoghq.com/network_monitoring/llms.txt): Explore Datadog Network Monitoring Products
+- [Notebooks](https://docs.datadoghq.com/notebooks/llms.txt): Create collaborative rich text documents with live Datadog graphs for investigations, postmortems, runbooks, and data-driven storytelling.
+- [Observability Pipelines](https://docs.datadoghq.com/observability_pipelines/llms.txt)
+- [OpenTelemetry in Datadog](https://docs.datadoghq.com/opentelemetry_in_datadog/llms.txt)
+- [PR Gates](https://docs.datadoghq.com/pr_gates/llms.txt): Learn how to use PR Gates to enable your team to control what code makes it to production.
+- [Partners](https://docs.datadoghq.com/partners/llms.txt)
+- [Product Analytics](https://docs.datadoghq.com/product_analytics/llms.txt): Product Analytics helps you understand your application usage at a glance.
+- [Pup CLI](https://docs.datadoghq.com/pup_cli/llms.txt): Use the Pup command-line interface to interact with Datadog APIs from the terminal or AI agent workflows.
+- [RUM & Session Replay](https://docs.datadoghq.com/rum_session_replay/llms.txt): Visualize, observe, and analyze the performance of your front-end applications as seen by your users.
+- [Reducing Data Related Risks](https://docs.datadoghq.com/reducing_data_related_risks/llms.txt)
+- [Reference Tables](https://docs.datadoghq.com/reference_tables/llms.txt): Combine custom metadata with Datadog data by uploading CSV files or connecting cloud storage to enrich logs, security data, and analytics.
+- [Remote Configuration](https://docs.datadoghq.com/remote_configuration/llms.txt): Remotely configure and change behavior of Datadog components like Agents, SDKs, and Observability Pipelines Workers deployed in your infrastructure.
+- [Search Results](https://docs.datadoghq.com/search_results/llms.txt)
+- [Serverless](https://docs.datadoghq.com/serverless/llms.txt)
+- [Service Level Objectives](https://docs.datadoghq.com/service_level_objectives/llms.txt): Track the status of your SLOs
+- [Session Replay](https://docs.datadoghq.com/session_replay/llms.txt): Learn about how to capture and visually replay your users' web browsing or mobile app experience with Session Replay.
+- [Sheets](https://docs.datadoghq.com/sheets/llms.txt): Analyze Datadog data in a familiar spreadsheet interface with tables, pivot tables, lookups, calculated columns, and flexible spreadsheets.
+- [Source Code Integration](https://docs.datadoghq.com/source_code_integration/llms.txt): Set up the source code integration that integrates with APM to link your telemetry with your repositories, embed Git information into artifacts in your CI pipeline, and use source code management integrations to generate inline code snippets across Datadog.
+- [Synthetic Testing and Monitoring](https://docs.datadoghq.com/synthetic_testing_and_monitoring/llms.txt): Use automated testing to ensure the most critical parts of your systems and applications are up and running from various locations around the world.
+- [Test Optimization in Datadog](https://docs.datadoghq.com/test_optimization_in_datadog/llms.txt)
+- [Universal Service Monitoring](https://docs.datadoghq.com/universal_service_monitoring/llms.txt): Monitor service health metrics across your entire stack without code instrumentation using Universal Service Monitoring and the Datadog Agent.

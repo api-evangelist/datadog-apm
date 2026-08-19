@@ -1,0 +1,788 @@
+{
+  "item": [
+    {
+      "id": "83e794d6-e3d7-4ac5-9d2d-d3ae1b59e938",
+      "name": "Service Definitions",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3295afec-bdc4-4ce5-9704-1d6d73bd015b",
+          "name": "List service definitions",
+          "request": {
+            "name": "List service definitions",
+            "description": {
+              "content": "Get a list of all service definitions in the Datadog Service Catalog.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "services",
+                "definitions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page[size]:",
+                  "value": "10",
+                  "description": "Number of results per page"
+                },
+                {
+                  "disabled": false,
+                  "key": "page[number]:",
+                  "value": "<integer>",
+                  "description": "Page number"
+                },
+                {
+                  "disabled": false,
+                  "key": "schema_version",
+                  "value": "<string>",
+                  "description": "Filter by schema version (v1, v2, v2.1, v2.2)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f5f1ea35-ea76-4f57-ab77-ecddb97097e7",
+              "name": "List of service definitions",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page[size]:",
+                      "value": "10"
+                    },
+                    {
+                      "key": "page[number]:",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "schema_version",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"meta\": {\n          \"last_modified_time\": \"string\",\n          \"github_html_url\": \"string\"\n        },\n        \"schema\": {\n          \"schema-version\": \"v2\",\n          \"dd-service\": \"string\",\n          \"team\": \"string\",\n          \"description\": \"string\",\n          \"tier\": \"string\",\n          \"lifecycle\": \"staging\",\n          \"application\": \"string\",\n          \"contacts\": [\n            {\n              \"name\": \"string\",\n              \"type\": \"microsoft-teams\",\n              \"contact\": \"string\"\n            },\n            {\n              \"name\": \"string\",\n              \"type\": \"slack\",\n              \"contact\": \"string\"\n            }\n          ],\n          \"links\": [\n            {\n              \"name\": \"string\",\n              \"type\": \"repo\",\n              \"url\": \"http://dvmvFTXbSiv.rsjfdD8eVv7cukACQpJNah2gVXmoz2Fx0\"\n            },\n            {\n              \"name\": \"string\",\n              \"type\": \"code\",\n              \"url\": \"https://UkDvL.snzdDQq4Ge2qUbJ2hQVExjexfgG.UsS-iG1bM5da.wkoTsQV\"\n            }\n          ],\n          \"repos\": [\n            {\n              \"name\": \"string\",\n              \"url\": \"https://HpDJHP.ngiGH25-ktwRKGc,j7M,WNaiwTpD\",\n              \"provider\": \"string\"\n            },\n            {\n              \"name\": \"string\",\n              \"url\": \"https://jEXvdh.azKOYxIWnuz5oA2bTejVAZJkwTSbC,xTyGyw7Ua\",\n              \"provider\": \"string\"\n            }\n          ],\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"integrations\": {\n            \"pagerduty\": {\n              \"service-url\": \"https://nEYhctanSLFQjotRbRgNfgrJyXmqbwMWp.bcw4kW9B1+2U2JS+,LytFIRxVOTzb9Y4Urm6wTzo7b,S.oXh9EJ9nDfeZ+wUX4\"\n            },\n            \"opsgenie\": {\n              \"service-url\": \"https://sNqkAApW.riccQJyRxsFJFpScqik0-uxBFzi48.C9yv0YdQew1\",\n              \"region\": \"EU\"\n            }\n          }\n        }\n      }\n    },\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"meta\": {\n          \"last_modified_time\": \"string\",\n          \"github_html_url\": \"string\"\n        },\n        \"schema\": {\n          \"schema-version\": \"v2.1\",\n          \"dd-service\": \"string\",\n          \"team\": \"string\",\n          \"description\": \"string\",\n          \"tier\": \"string\",\n          \"lifecycle\": \"deprecated\",\n          \"application\": \"string\",\n          \"contacts\": [\n            {\n              \"name\": \"string\",\n              \"type\": \"microsoft-teams\",\n              \"contact\": \"string\"\n            },\n            {\n              \"name\": \"string\",\n              \"type\": \"slack\",\n              \"contact\": \"string\"\n            }\n          ],\n          \"links\": [\n            {\n              \"name\": \"string\",\n              \"type\": \"dashboard\",\n              \"url\": \"http://dnjPLklcLilBcXf.trtN+RxljySPBCBmxXXEuaU6x7tBAqobvZ\"\n            },\n            {\n              \"name\": \"string\",\n              \"type\": \"oncall\",\n              \"url\": \"https://MrQagxMG.uqNoL5Aw6IMEBKsXEsRuusLQyEJiLzx\"\n            }\n          ],\n          \"repos\": [\n            {\n              \"name\": \"string\",\n              \"url\": \"https://wOkmbSPxitCMsIZCJvUNoQOoYj.clgP9vaHDBMu9wI7wmI1rYOcH+T0eTcfjxgKDIGh0pHaU2mEO3CrPCt3k.VKRMW8N10aeQE\",\n              \"provider\": \"string\"\n            },\n            {\n              \"name\": \"string\",\n              \"url\": \"http://qRXDuMdUYVPthURcXbyEghy.lnpzhmk2ynGHzxie-7J8H,PtnrEucIt\",\n              \"provider\": \"string\"\n            }\n          ],\n          \"tags\": [\n            \"string\",\n            \"string\"\n          ],\n          \"integrations\": {\n            \"pagerduty\": {\n              \"service-url\": \"http://NrSzIH.lxfeiaa8LregRHwqeAU,YeoX63N4n.A3sKVqt4oJp1aGtc9TDGPmNryaMkRRTJzg2M\"\n            },\n            \"opsgenie\": {\n              \"service-url\": \"https://UHkeTydodjgCFbWL.zxbs5dfc4\",\n              \"region\": \"US\"\n            }\n          }\n        }\n      }\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bdea521a-17ca-4980-99ec-fcf40cfbcb52",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page[size]:",
+                      "value": "10"
+                    },
+                    {
+                      "key": "page[number]:",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "schema_version",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b4f7b0ed-5772-4b84-bab8-c4bb265d0a0a",
+          "name": "Create or update a service definition",
+          "request": {
+            "name": "Create or update a service definition",
+            "description": {
+              "content": "Create or update a service definition in the Datadog Service Catalog.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "services",
+                "definitions"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schema-version\": \"<string>\",\n  \"dd-service\": \"<string>\",\n  \"team\": \"<string>\",\n  \"description\": \"<string>\",\n  \"tier\": \"<string>\",\n  \"lifecycle\": \"<string>\",\n  \"application\": \"<string>\",\n  \"contacts\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    }\n  ],\n  \"links\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    }\n  ],\n  \"repos\": [\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    }\n  ],\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"integrations\": {\n    \"pagerduty\": {\n      \"service-url\": \"<uri>\"\n    },\n    \"opsgenie\": {\n      \"service-url\": \"<uri>\",\n      \"region\": \"<string>\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "c977b787-77e6-4887-95b7-d5234c018da0",
+              "name": "Service definition created or updated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schema-version\": \"<string>\",\n  \"dd-service\": \"<string>\",\n  \"team\": \"<string>\",\n  \"description\": \"<string>\",\n  \"tier\": \"<string>\",\n  \"lifecycle\": \"<string>\",\n  \"application\": \"<string>\",\n  \"contacts\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    }\n  ],\n  \"links\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    }\n  ],\n  \"repos\": [\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    }\n  ],\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"integrations\": {\n    \"pagerduty\": {\n      \"service-url\": \"<uri>\"\n    },\n    \"opsgenie\": {\n      \"service-url\": \"<uri>\",\n      \"region\": \"<string>\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"meta\": {\n          \"last_modified_time\": \"string\",\n          \"github_html_url\": \"string\"\n        },\n        \"schema\": {\n          \"schema-version\": \"<string>\",\n          \"dd-service\": \"<string>\",\n          \"team\": \"<string>\",\n          \"description\": \"<string>\",\n          \"tier\": \"<string>\",\n          \"lifecycle\": \"<string>\",\n          \"application\": \"<string>\",\n          \"contacts\": [\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"contact\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"contact\": \"<string>\"\n            }\n          ],\n          \"links\": [\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"url\": \"<uri>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"url\": \"<uri>\"\n            }\n          ],\n          \"repos\": [\n            {\n              \"name\": \"<string>\",\n              \"url\": \"<uri>\",\n              \"provider\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"url\": \"<uri>\",\n              \"provider\": \"<string>\"\n            }\n          ],\n          \"tags\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"integrations\": {\n            \"pagerduty\": {\n              \"service-url\": \"<uri>\"\n            },\n            \"opsgenie\": {\n              \"service-url\": \"<uri>\",\n              \"region\": \"<string>\"\n            }\n          }\n        }\n      }\n    },\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"meta\": {\n          \"last_modified_time\": \"string\",\n          \"github_html_url\": \"string\"\n        },\n        \"schema\": {\n          \"schema-version\": \"<string>\",\n          \"dd-service\": \"<string>\",\n          \"team\": \"<string>\",\n          \"description\": \"<string>\",\n          \"tier\": \"<string>\",\n          \"lifecycle\": \"<string>\",\n          \"application\": \"<string>\",\n          \"contacts\": [\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"contact\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"contact\": \"<string>\"\n            }\n          ],\n          \"links\": [\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"url\": \"<uri>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"type\": \"<string>\",\n              \"url\": \"<uri>\"\n            }\n          ],\n          \"repos\": [\n            {\n              \"name\": \"<string>\",\n              \"url\": \"<uri>\",\n              \"provider\": \"<string>\"\n            },\n            {\n              \"name\": \"<string>\",\n              \"url\": \"<uri>\",\n              \"provider\": \"<string>\"\n            }\n          ],\n          \"tags\": [\n            \"<string>\",\n            \"<string>\"\n          ],\n          \"integrations\": {\n            \"pagerduty\": {\n              \"service-url\": \"<uri>\"\n            },\n            \"opsgenie\": {\n              \"service-url\": \"<uri>\",\n              \"region\": \"<string>\"\n            }\n          }\n        }\n      }\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "682d5000-bb53-4541-a44d-e67d5b3670f0",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schema-version\": \"<string>\",\n  \"dd-service\": \"<string>\",\n  \"team\": \"<string>\",\n  \"description\": \"<string>\",\n  \"tier\": \"<string>\",\n  \"lifecycle\": \"<string>\",\n  \"application\": \"<string>\",\n  \"contacts\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    }\n  ],\n  \"links\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    }\n  ],\n  \"repos\": [\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    }\n  ],\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"integrations\": {\n    \"pagerduty\": {\n      \"service-url\": \"<uri>\"\n    },\n    \"opsgenie\": {\n      \"service-url\": \"<uri>\",\n      \"region\": \"<string>\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "263a26a5-026a-44e5-ac1d-4a671843ea62",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schema-version\": \"<string>\",\n  \"dd-service\": \"<string>\",\n  \"team\": \"<string>\",\n  \"description\": \"<string>\",\n  \"tier\": \"<string>\",\n  \"lifecycle\": \"<string>\",\n  \"application\": \"<string>\",\n  \"contacts\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    }\n  ],\n  \"links\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    }\n  ],\n  \"repos\": [\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    }\n  ],\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"integrations\": {\n    \"pagerduty\": {\n      \"service-url\": \"<uri>\"\n    },\n    \"opsgenie\": {\n      \"service-url\": \"<uri>\",\n      \"region\": \"<string>\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "be8d9294-78fb-48d2-af39-4e9723119f96",
+              "name": "Conflict",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schema-version\": \"<string>\",\n  \"dd-service\": \"<string>\",\n  \"team\": \"<string>\",\n  \"description\": \"<string>\",\n  \"tier\": \"<string>\",\n  \"lifecycle\": \"<string>\",\n  \"application\": \"<string>\",\n  \"contacts\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"contact\": \"<string>\"\n    }\n  ],\n  \"links\": [\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"type\": \"<string>\",\n      \"url\": \"<uri>\"\n    }\n  ],\n  \"repos\": [\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"url\": \"<uri>\",\n      \"provider\": \"<string>\"\n    }\n  ],\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"integrations\": {\n    \"pagerduty\": {\n      \"service-url\": \"<uri>\"\n    },\n    \"opsgenie\": {\n      \"service-url\": \"<uri>\",\n      \"region\": \"<string>\"\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2de1fed6-213a-4e73-b643-4f0240b6be6b",
+          "name": "Get a service definition",
+          "request": {
+            "name": "Get a service definition",
+            "description": {
+              "content": "Get a single service definition from the Datadog Service Catalog.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "services",
+                "definitions",
+                ":service_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "schema_version",
+                  "value": "<string>",
+                  "description": "Schema version to return"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "service_name",
+                  "description": "(Required) The name of the service"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "db6690a5-bf65-4a08-b29f-37019738bccf",
+              "name": "Service definition",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions",
+                    ":service_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "schema_version",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "service_name",
+                      "description": "(Required) The name of the service"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"type\": \"string\",\n    \"id\": \"string\",\n    \"attributes\": {\n      \"meta\": {\n        \"last_modified_time\": \"string\",\n        \"github_html_url\": \"string\"\n      },\n      \"schema\": {\n        \"schema-version\": \"<string>\",\n        \"dd-service\": \"<string>\",\n        \"team\": \"<string>\",\n        \"description\": \"<string>\",\n        \"tier\": \"<string>\",\n        \"lifecycle\": \"<string>\",\n        \"application\": \"<string>\",\n        \"contacts\": [\n          {\n            \"name\": \"<string>\",\n            \"type\": \"<string>\",\n            \"contact\": \"<string>\"\n          },\n          {\n            \"name\": \"<string>\",\n            \"type\": \"<string>\",\n            \"contact\": \"<string>\"\n          }\n        ],\n        \"links\": [\n          {\n            \"name\": \"<string>\",\n            \"type\": \"<string>\",\n            \"url\": \"<uri>\"\n          },\n          {\n            \"name\": \"<string>\",\n            \"type\": \"<string>\",\n            \"url\": \"<uri>\"\n          }\n        ],\n        \"repos\": [\n          {\n            \"name\": \"<string>\",\n            \"url\": \"<uri>\",\n            \"provider\": \"<string>\"\n          },\n          {\n            \"name\": \"<string>\",\n            \"url\": \"<uri>\",\n            \"provider\": \"<string>\"\n          }\n        ],\n        \"tags\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"integrations\": {\n          \"pagerduty\": {\n            \"service-url\": \"<uri>\"\n          },\n          \"opsgenie\": {\n            \"service-url\": \"<uri>\",\n            \"region\": \"<string>\"\n          }\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d39cdf1f-7430-4e2e-9ebe-82d995b893d2",
+              "name": "Service not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions",
+                    ":service_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "schema_version",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "service_name",
+                      "description": "(Required) The name of the service"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c3cd6684-aa6c-49ab-84af-f87d595c78af",
+          "name": "Delete a service definition",
+          "request": {
+            "name": "Delete a service definition",
+            "description": {
+              "content": "Delete a service definition from the Datadog Service Catalog.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "services",
+                "definitions",
+                ":service_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "service_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e5bdf267-5f39-4044-bf8a-0f396c56e2e3",
+              "name": "Service definition deleted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions",
+                    ":service_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "service_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f1873fb3-5da8-4cb2-b960-659d845711d2",
+              "name": "Service not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "services",
+                    "definitions",
+                    ":service_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "service_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datadoghq.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "DD-API-KEY"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "744b7215-1966-4a87-93da-09423625a716",
+    "name": "Datadog APM Service Definitions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.\n\nContact Support:\n Name: Datadog",
+      "type": "text/plain"
+    }
+  }
+}

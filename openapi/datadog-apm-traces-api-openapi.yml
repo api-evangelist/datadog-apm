@@ -1,0 +1,134 @@
+openapi: 3.2.0
+info:
+  title: Datadog APM Traces API
+  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.datadoghq.com
+  description: Datadog US1 site
+- url: https://api.datadoghq.eu
+  description: Datadog EU site
+- url: https://api.us3.datadoghq.com
+  description: Datadog US3 site
+- url: https://api.us5.datadoghq.com
+  description: Datadog US5 site
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- name: Traces
+paths:
+  /api/v1/traces:
+    get:
+      operationId: listTraces
+      summary: List traces
+      description: Search and retrieve traces. Returns a list of traces matching the given search criteria.
+      tags:
+      - Traces
+      parameters:
+      - name: query
+        in: query
+        description: Search query for traces
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start of the time range in epoch seconds
+        schema:
+          type: integer
+      - name: end
+        in: query
+        description: End of the time range in epoch seconds
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Maximum number of traces to return
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: A list of traces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trace'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    Trace:
+      type: object
+      properties:
+        traceId:
+          type: string
+        spans:
+          type: array
+          items:
+            $ref: '#/components/schemas/APMSpan'
+    APMSpan:
+      type: object
+      properties:
+        traceId:
+          type: string
+          description: 64-bit trace ID
+        spanId:
+          type: string
+          description: 64-bit span ID
+        parentId:
+          type: string
+          description: 64-bit parent span ID
+        name:
+          type: string
+          description: Operation name
+        service:
+          type: string
+          description: Service name
+        resource:
+          type: string
+          description: Resource name (e.g., URL, query)
+        type:
+          type: string
+          description: Span type (web, db, cache, custom)
+        start:
+          type: integer
+          description: Start time in nanoseconds since epoch
+        duration:
+          type: integer
+          description: Duration in nanoseconds
+        error:
+          type: integer
+          description: Error flag (0 or 1)
+        meta:
+          type: object
+          description: String key-value tags
+          additionalProperties:
+            type: string
+        metrics:
+          type: object
+          description: Numeric key-value metrics
+          additionalProperties:
+            type: number
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY

@@ -1,0 +1,29 @@
+{
+  "provider": "datadog-apm",
+  "sources": [
+    "datadog-apm-service-definitions-api-openapi.yml",
+    "datadog-apm-services-api-openapi.yml",
+    "datadog-apm-slos-api-openapi.yml",
+    "datadog-apm-spans-api-openapi.yml",
+    "datadog-apm-traces-api-openapi.yml"
+  ],
+  "outputs": [
+    "datadog-apm-service-definitions-api-openapi.yml",
+    "datadog-apm-services-api-openapi.yml",
+    "datadog-apm-slos-api-openapi.yml",
+    "datadog-apm-spans-api-openapi.yml",
+    "datadog-apm-traces-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "datadog-apm-service-definitions-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "datadog-apm-services-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "datadog-apm-slos-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "datadog-apm-spans-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "datadog-apm-traces-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": []
+}

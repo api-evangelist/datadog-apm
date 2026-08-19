@@ -1,0 +1,282 @@
+openapi: 3.2.0
+info:
+  title: Datadog APM Service Definitions API
+  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.datadoghq.com
+  description: Datadog US1 site
+- url: https://api.datadoghq.eu
+  description: Datadog EU site
+- url: https://api.us3.datadoghq.com
+  description: Datadog US3 site
+- url: https://api.us5.datadoghq.com
+  description: Datadog US5 site
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- name: Service Definitions
+paths:
+  /api/v2/services/definitions:
+    get:
+      operationId: listServiceDefinitions
+      summary: List service definitions
+      description: Get a list of all service definitions in the Datadog Service Catalog.
+      tags:
+      - Service Definitions
+      parameters:
+      - name: 'page[size]:'
+        in: query
+        description: Number of results per page
+        schema:
+          type: integer
+          default: 10
+      - name: 'page[number]:'
+        in: query
+        description: Page number
+        schema:
+          type: integer
+      - name: schema_version
+        in: query
+        description: Filter by schema version (v1, v2, v2.1, v2.2)
+        schema:
+          type: string
+          enum:
+          - v1
+          - v2
+          - v2.1
+          - v2.2
+      responses:
+        '200':
+          description: List of service definitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionsListResponse'
+        '403':
+          description: Forbidden
+    post:
+      operationId: createOrUpdateServiceDefinition
+      summary: Create or update a service definition
+      description: Create or update a service definition in the Datadog Service Catalog.
+      tags:
+      - Service Definitions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceDefinition'
+      responses:
+        '200':
+          description: Service definition created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionCreateResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v2/services/definitions/{service_name}:
+    get:
+      operationId: getServiceDefinition
+      summary: Get a service definition
+      description: Get a single service definition from the Datadog Service Catalog.
+      tags:
+      - Service Definitions
+      parameters:
+      - name: service_name
+        in: path
+        required: true
+        description: The name of the service
+        schema:
+          type: string
+      - name: schema_version
+        in: query
+        description: Schema version to return
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Service definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDefinitionGetResponse'
+        '404':
+          description: Service not found
+    delete:
+      operationId: deleteServiceDefinition
+      summary: Delete a service definition
+      description: Delete a service definition from the Datadog Service Catalog.
+      tags:
+      - Service Definitions
+      parameters:
+      - name: service_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Service definition deleted
+        '404':
+          description: Service not found
+components:
+  schemas:
+    ServiceDefinitionGetResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceDefinitionData'
+    ServiceDefinitionsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceDefinitionData'
+    ServiceDefinitionData:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          type: object
+          properties:
+            meta:
+              type: object
+              properties:
+                last_modified_time:
+                  type: string
+                github_html_url:
+                  type: string
+            schema:
+              $ref: '#/components/schemas/ServiceDefinition'
+    ServiceDefinitionCreateResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceDefinitionData'
+    ServiceDefinition:
+      type: object
+      properties:
+        schema-version:
+          type: string
+          enum:
+          - v2
+          - v2.1
+          - v2.2
+        dd-service:
+          type: string
+          description: Unique service name
+        team:
+          type: string
+          description: Team that owns the service
+        description:
+          type: string
+        tier:
+          type: string
+        lifecycle:
+          type: string
+          enum:
+          - production
+          - staging
+          - development
+          - deprecated
+        application:
+          type: string
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                - email
+                - slack
+                - microsoft-teams
+              contact:
+                type: string
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+                enum:
+                - doc
+                - repo
+                - runbook
+                - dashboard
+                - oncall
+                - code
+                - link
+              url:
+                type: string
+                format: uri
+        repos:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+                format: uri
+              provider:
+                type: string
+        tags:
+          type: array
+          items:
+            type: string
+        integrations:
+          type: object
+          properties:
+            pagerduty:
+              type: object
+              properties:
+                service-url:
+                  type: string
+                  format: uri
+            opsgenie:
+              type: object
+              properties:
+                service-url:
+                  type: string
+                  format: uri
+                region:
+                  type: string
+                  enum:
+                  - US
+                  - EU
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY

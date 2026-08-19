@@ -1,0 +1,56 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datadog APM Spans API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "DD-API-KEY",
+      "value": "{{DD-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Spans",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search spans",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datadoghq.com/api/v2/spans/events/search",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Search or aggregate spans from your Datadog platform. Returns spans matching the search criteria."
+        },
+        {
+          "info": {
+            "name": "Aggregate spans",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datadoghq.com/api/v2/spans",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Aggregate spans matching a search query grouped by facets."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

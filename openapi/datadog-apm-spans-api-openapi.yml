@@ -1,0 +1,227 @@
+openapi: 3.2.0
+info:
+  title: Datadog APM Spans API
+  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.datadoghq.com
+  description: Datadog US1 site
+- url: https://api.datadoghq.eu
+  description: Datadog EU site
+- url: https://api.us3.datadoghq.com
+  description: Datadog US3 site
+- url: https://api.us5.datadoghq.com
+  description: Datadog US5 site
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- name: Spans
+paths:
+  /api/v2/spans/events/search:
+    post:
+      operationId: searchSpans
+      summary: Search spans
+      description: Search or aggregate spans from your Datadog platform. Returns spans matching the search criteria.
+      tags:
+      - Spans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpansSearchRequest'
+      responses:
+        '200':
+          description: Span search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpansSearchResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v2/spans:
+    post:
+      operationId: aggregateSpans
+      summary: Aggregate spans
+      description: Aggregate spans matching a search query grouped by facets.
+      tags:
+      - Spans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpansAggregateRequest'
+      responses:
+        '200':
+          description: Aggregation results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        attributes:
+                          type: object
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    SpansAggregateRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - aggregate_request
+            attributes:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  properties:
+                    query:
+                      type: string
+                    from:
+                      type: string
+                    to:
+                      type: string
+                group_by:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      facet:
+                        type: string
+                      limit:
+                        type: integer
+                      sort:
+                        type: object
+                compute:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      aggregation:
+                        type: string
+                        enum:
+                        - count
+                        - avg
+                        - sum
+                        - min
+                        - max
+                        - pct
+                      metric:
+                        type: string
+                      type:
+                        type: string
+    SpansSearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              id:
+                type: string
+              attributes:
+                type: object
+                properties:
+                  service:
+                    type: string
+                  resource_name:
+                    type: string
+                  span_id:
+                    type: string
+                  trace_id:
+                    type: string
+                  timestamp:
+                    type: string
+                  duration:
+                    type: integer
+                  status:
+                    type: string
+                  tags:
+                    type: object
+                    additionalProperties:
+                      type: string
+        meta:
+          type: object
+          properties:
+            page:
+              type: object
+              properties:
+                after:
+                  type: string
+    SpansSearchRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - search_request
+            attributes:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  properties:
+                    query:
+                      type: string
+                      description: Search query string
+                    from:
+                      type: string
+                      description: Start time (ISO 8601 or relative)
+                    to:
+                      type: string
+                      description: End time (ISO 8601 or relative)
+                sort:
+                  type: string
+                  description: Sort order for results
+                  enum:
+                  - timestamp
+                  - -timestamp
+                page:
+                  type: object
+                  properties:
+                    cursor:
+                      type: string
+                    limit:
+                      type: integer
+                      default: 10
+                      maximum: 1000
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY

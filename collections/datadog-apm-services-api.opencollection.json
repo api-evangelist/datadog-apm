@@ -1,0 +1,57 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datadog APM Services API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "DD-API-KEY",
+      "value": "{{DD-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Services",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get service dependencies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v1/service_dependencies",
+            "params": [
+              {
+                "name": "env",
+                "value": "",
+                "type": "query",
+                "description": "The environment to query"
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Start time in epoch seconds"
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "End time in epoch seconds"
+              }
+            ]
+          },
+          "docs": "Get the list of service dependencies for your organization."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

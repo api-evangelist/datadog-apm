@@ -1,0 +1,459 @@
+{
+  "item": [
+    {
+      "id": "dc742474-9443-447a-80bf-2e5bb5047f07",
+      "name": "Spans",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9aec308b-b0fe-47fc-865e-db30f7b310dc",
+          "name": "Search spans",
+          "request": {
+            "name": "Search spans",
+            "description": {
+              "content": "Search or aggregate spans from your Datadog platform. Returns spans matching the search criteria.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "spans",
+                "events",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"sort\": \"<string>\",\n      \"page\": {\n        \"cursor\": \"<string>\",\n        \"limit\": 10\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "975c469e-03ac-40d8-a408-cac68359c909",
+              "name": "Span search results",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans",
+                    "events",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"sort\": \"<string>\",\n      \"page\": {\n        \"cursor\": \"<string>\",\n        \"limit\": 10\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"service\": \"string\",\n        \"resource_name\": \"string\",\n        \"span_id\": \"string\",\n        \"trace_id\": \"string\",\n        \"timestamp\": \"string\",\n        \"duration\": 4305,\n        \"status\": \"string\",\n        \"tags\": {\n          \"key_0\": \"string\",\n          \"key_1\": \"string\"\n        }\n      }\n    },\n    {\n      \"type\": \"string\",\n      \"id\": \"string\",\n      \"attributes\": {\n        \"service\": \"string\",\n        \"resource_name\": \"string\",\n        \"span_id\": \"string\",\n        \"trace_id\": \"string\",\n        \"timestamp\": \"string\",\n        \"duration\": 6033,\n        \"status\": \"string\",\n        \"tags\": {\n          \"key_0\": \"string\",\n          \"key_1\": \"string\",\n          \"key_2\": \"string\"\n        }\n      }\n    }\n  ],\n  \"meta\": {\n    \"page\": {\n      \"after\": \"string\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f772e479-7159-4514-80ae-101840d633bf",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans",
+                    "events",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"sort\": \"<string>\",\n      \"page\": {\n        \"cursor\": \"<string>\",\n        \"limit\": 10\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "be66e836-cdd5-4c2e-9897-3356def80347",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans",
+                    "events",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"sort\": \"<string>\",\n      \"page\": {\n        \"cursor\": \"<string>\",\n        \"limit\": 10\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dab54e40-b307-4472-9105-b7da0b70c337",
+          "name": "Aggregate spans",
+          "request": {
+            "name": "Aggregate spans",
+            "description": {
+              "content": "Aggregate spans matching a search query grouped by facets.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "spans"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"group_by\": [\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        },\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        }\n      ],\n      \"compute\": [\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ]\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "97d64c06-045c-4c9d-8152-da667e12f97a",
+              "name": "Aggregation results",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"group_by\": [\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        },\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        }\n      ],\n      \"compute\": [\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ]\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"type\": \"string\",\n      \"attributes\": {}\n    },\n    {\n      \"type\": \"string\",\n      \"attributes\": {}\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2f9cc335-45d4-4392-944f-9d8120c465c7",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"group_by\": [\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        },\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        }\n      ],\n      \"compute\": [\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ]\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "954ec414-ed0b-4b4d-8834-52255bdc3b22",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "spans"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"data\": {\n    \"type\": \"<string>\",\n    \"attributes\": {\n      \"filter\": {\n        \"query\": \"<string>\",\n        \"from\": \"<string>\",\n        \"to\": \"<string>\"\n      },\n      \"group_by\": [\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        },\n        {\n          \"facet\": \"<string>\",\n          \"limit\": \"<integer>\",\n          \"sort\": \"<object>\"\n        }\n      ],\n      \"compute\": [\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"aggregation\": \"<string>\",\n          \"metric\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ]\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datadoghq.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "DD-API-KEY"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7c89a2fb-5358-4d40-ac67-ba14bcea12d0",
+    "name": "Datadog APM Spans API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.\n\nContact Support:\n Name: Datadog",
+      "type": "text/plain"
+    }
+  }
+}

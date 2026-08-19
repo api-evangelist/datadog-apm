@@ -1,0 +1,63 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datadog APM Traces API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "DD-API-KEY",
+      "value": "{{DD-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Traces",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List traces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v1/traces",
+            "params": [
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Search query for traces"
+              },
+              {
+                "name": "start",
+                "value": "",
+                "type": "query",
+                "description": "Start of the time range in epoch seconds"
+              },
+              {
+                "name": "end",
+                "value": "",
+                "type": "query",
+                "description": "End of the time range in epoch seconds"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of traces to return"
+              }
+            ]
+          },
+          "docs": "Search and retrieve traces. Returns a list of traces matching the given search criteria."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

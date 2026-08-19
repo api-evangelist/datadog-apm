@@ -1,0 +1,190 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datadog APM SL Os API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "DD-API-KEY",
+      "value": "{{DD-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SLOs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List SLOs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v1/slo",
+            "params": [
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of SLO IDs"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Search query for filtering SLOs"
+              },
+              {
+                "name": "tags_query",
+                "value": "",
+                "type": "query",
+                "description": "Filter SLOs by tags"
+              },
+              {
+                "name": "metrics_query",
+                "value": "",
+                "type": "query",
+                "description": "Filter SLOs by metrics query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of SLOs to return"
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Pagination offset"
+              }
+            ]
+          },
+          "docs": "Get a list of service level objective objects for your organization."
+        },
+        {
+          "info": {
+            "name": "Create a SLO",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datadoghq.com/api/v1/slo",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a service level objective object."
+        },
+        {
+          "info": {
+            "name": "Get a SLO",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v1/slo/:slo_id",
+            "params": [
+              {
+                "name": "slo_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "with_configured_alert_ids",
+                "value": "",
+                "type": "query",
+                "description": "Include configured alert IDs"
+              }
+            ]
+          },
+          "docs": "Get a service level objective by ID."
+        },
+        {
+          "info": {
+            "name": "Update a SLO",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.datadoghq.com/api/v1/slo/:slo_id",
+            "params": [
+              {
+                "name": "slo_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an existing service level objective."
+        },
+        {
+          "info": {
+            "name": "Delete a SLO",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datadoghq.com/api/v1/slo/:slo_id",
+            "params": [
+              {
+                "name": "slo_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "force",
+                "value": "",
+                "type": "query",
+                "description": "Force delete even if referenced by monitors"
+              }
+            ]
+          },
+          "docs": "Permanently delete a service level objective."
+        },
+        {
+          "info": {
+            "name": "Get SLO history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v1/slo/:slo_id/history",
+            "params": [
+              {
+                "name": "slo_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "from_ts",
+                "value": "",
+                "type": "query",
+                "description": "Start of history window in epoch seconds"
+              },
+              {
+                "name": "to_ts",
+                "value": "",
+                "type": "query",
+                "description": "End of history window in epoch seconds"
+              }
+            ]
+          },
+          "docs": "Get the SLO history data for a given SLO."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

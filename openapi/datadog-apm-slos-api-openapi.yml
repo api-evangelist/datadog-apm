@@ -1,0 +1,440 @@
+openapi: 3.2.0
+info:
+  title: Datadog APM SL Os API
+  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.datadoghq.com
+  description: Datadog US1 site
+- url: https://api.datadoghq.eu
+  description: Datadog EU site
+- url: https://api.us3.datadoghq.com
+  description: Datadog US3 site
+- url: https://api.us5.datadoghq.com
+  description: Datadog US5 site
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- name: SLOs
+paths:
+  /api/v1/slo:
+    get:
+      operationId: listSLOs
+      summary: List SLOs
+      description: Get a list of service level objective objects for your organization.
+      tags:
+      - SLOs
+      parameters:
+      - name: ids
+        in: query
+        description: Comma-separated list of SLO IDs
+        schema:
+          type: string
+      - name: query
+        in: query
+        description: Search query for filtering SLOs
+        schema:
+          type: string
+      - name: tags_query
+        in: query
+        description: Filter SLOs by tags
+        schema:
+          type: string
+      - name: metrics_query
+        in: query
+        description: Filter SLOs by metrics query
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of SLOs to return
+        schema:
+          type: integer
+          default: 1000
+      - name: offset
+        in: query
+        description: Pagination offset
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List of SLOs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOListResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+    post:
+      operationId: createSLO
+      summary: Create a SLO
+      description: Create a service level objective object.
+      tags:
+      - SLOs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SLO'
+      responses:
+        '200':
+          description: SLO created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+  /api/v1/slo/{slo_id}:
+    get:
+      operationId: getSLO
+      summary: Get a SLO
+      description: Get a service level objective by ID.
+      tags:
+      - SLOs
+      parameters:
+      - name: slo_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: with_configured_alert_ids
+        in: query
+        description: Include configured alert IDs
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: SLO details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+    put:
+      operationId: updateSLO
+      summary: Update a SLO
+      description: Update an existing service level objective.
+      tags:
+      - SLOs
+      parameters:
+      - name: slo_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SLO'
+      responses:
+        '200':
+          description: SLO updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+    delete:
+      operationId: deleteSLO
+      summary: Delete a SLO
+      description: Permanently delete a service level objective.
+      tags:
+      - SLOs
+      parameters:
+      - name: slo_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: force
+        in: query
+        description: Force delete even if referenced by monitors
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SLO deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      deleted:
+                        type: array
+                        items:
+                          type: string
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+        '409':
+          description: Conflict - SLO is referenced
+  /api/v1/slo/{slo_id}/history:
+    get:
+      operationId: getSLOHistory
+      summary: Get SLO history
+      description: Get the SLO history data for a given SLO.
+      tags:
+      - SLOs
+      parameters:
+      - name: slo_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: from_ts
+        in: query
+        required: true
+        description: Start of history window in epoch seconds
+        schema:
+          type: integer
+      - name: to_ts
+        in: query
+        required: true
+        description: End of history window in epoch seconds
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: SLO history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLOHistoryResponse'
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: SLO not found
+components:
+  schemas:
+    SLOHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            from_ts:
+              type: integer
+            to_ts:
+              type: integer
+            type:
+              type: string
+            type_id:
+              type: integer
+            overall:
+              type: object
+              properties:
+                sli_value:
+                  type: number
+                span_precision:
+                  type: number
+                name:
+                  type: string
+                precision:
+                  type: object
+                  additionalProperties:
+                    type: number
+            thresholds:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  target:
+                    type: number
+                  timeframe:
+                    type: string
+        errors:
+          type: array
+          items:
+            type: string
+    SLOThreshold:
+      type: object
+      required:
+      - target
+      - timeframe
+      properties:
+        target:
+          type: number
+          description: Target percentage (0-100)
+        target_display:
+          type: string
+        timeframe:
+          type: string
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - custom
+        warning:
+          type: number
+        warning_display:
+          type: string
+    SLOListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SLOResponse'
+        metadata:
+          type: object
+          properties:
+            page:
+              type: object
+              properties:
+                total_count:
+                  type: integer
+                total_filtered_count:
+                  type: integer
+    SLOResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            type:
+              type: string
+            thresholds:
+              type: array
+              items:
+                $ref: '#/components/schemas/SLOThreshold'
+            tags:
+              type: array
+              items:
+                type: string
+            creator:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+            created_at:
+              type: integer
+            modified_at:
+              type: integer
+        errors:
+          type: array
+          items:
+            type: string
+    SLO:
+      type: object
+      required:
+      - name
+      - type
+      - thresholds
+      properties:
+        name:
+          type: string
+          description: Name of the SLO
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+          - metric
+          - monitor
+          - time_slice
+        thresholds:
+          type: array
+          items:
+            $ref: '#/components/schemas/SLOThreshold'
+        monitor_ids:
+          type: array
+          description: Required for monitor-based SLOs
+          items:
+            type: integer
+        query:
+          type: object
+          description: Required for metric-based SLOs
+          properties:
+            numerator:
+              type: string
+            denominator:
+              type: string
+        sli_specification:
+          type: object
+          description: Required for time-slice SLOs
+          properties:
+            time_slice:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    formulas:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          formula:
+                            type: string
+                    queries:
+                      type: array
+                      items:
+                        type: object
+                comparator:
+                  type: string
+                  enum:
+                  - '>'
+                  - '>='
+                  - <
+                  - <=
+                threshold:
+                  type: number
+        tags:
+          type: array
+          items:
+            type: string
+        target_threshold:
+          type: number
+        timeframe:
+          type: string
+          enum:
+          - 7d
+          - 30d
+          - 90d
+          - custom
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY

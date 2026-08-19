@@ -1,0 +1,115 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Datadog APM Service Definitions API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "DD-API-KEY",
+      "value": "{{DD-API-KEY}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Service Definitions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List service definitions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v2/services/definitions",
+            "params": [
+              {
+                "name": "page[size]:",
+                "value": "",
+                "type": "query",
+                "description": "Number of results per page"
+              },
+              {
+                "name": "page[number]:",
+                "value": "",
+                "type": "query",
+                "description": "Page number"
+              },
+              {
+                "name": "schema_version",
+                "value": "",
+                "type": "query",
+                "description": "Filter by schema version (v1, v2, v2.1, v2.2)"
+              }
+            ]
+          },
+          "docs": "Get a list of all service definitions in the Datadog Service Catalog."
+        },
+        {
+          "info": {
+            "name": "Create or update a service definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datadoghq.com/api/v2/services/definitions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create or update a service definition in the Datadog Service Catalog."
+        },
+        {
+          "info": {
+            "name": "Get a service definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datadoghq.com/api/v2/services/definitions/:service_name",
+            "params": [
+              {
+                "name": "service_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the service"
+              },
+              {
+                "name": "schema_version",
+                "value": "",
+                "type": "query",
+                "description": "Schema version to return"
+              }
+            ]
+          },
+          "docs": "Get a single service definition from the Datadog Service Catalog."
+        },
+        {
+          "info": {
+            "name": "Delete a service definition",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datadoghq.com/api/v2/services/definitions/:service_name",
+            "params": [
+              {
+                "name": "service_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a service definition from the Datadog Service Catalog."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

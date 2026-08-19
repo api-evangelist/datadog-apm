@@ -1,0 +1,289 @@
+{
+  "item": [
+    {
+      "id": "41fc355c-917c-4f06-8dce-29e8c8d8db7d",
+      "name": "Traces",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3b07d784-67ef-4804-8e73-c3961b395d87",
+          "name": "List traces",
+          "request": {
+            "name": "List traces",
+            "description": {
+              "content": "Search and retrieve traces. Returns a list of traces matching the given search criteria.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "traces"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "query",
+                  "value": "<string>",
+                  "description": "Search query for traces"
+                },
+                {
+                  "disabled": false,
+                  "key": "start",
+                  "value": "<integer>",
+                  "description": "Start of the time range in epoch seconds"
+                },
+                {
+                  "disabled": false,
+                  "key": "end",
+                  "value": "<integer>",
+                  "description": "End of the time range in epoch seconds"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Maximum number of traces to return"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "24b8895e-40dc-4544-92e2-e25bb76937fd",
+              "name": "A list of traces",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "traces"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"traceId\": \"string\",\n      \"spans\": [\n        {\n          \"traceId\": \"string\",\n          \"spanId\": \"string\",\n          \"parentId\": \"string\",\n          \"name\": \"string\",\n          \"service\": \"string\",\n          \"resource\": \"string\",\n          \"type\": \"string\",\n          \"start\": 53,\n          \"duration\": 7484,\n          \"error\": 9658,\n          \"meta\": {\n            \"key_0\": \"string\",\n            \"key_1\": \"string\"\n          },\n          \"metrics\": {\n            \"key_0\": 4269.865270047276,\n            \"key_1\": 1932.0274433840746\n          }\n        },\n        {\n          \"traceId\": \"string\",\n          \"spanId\": \"string\",\n          \"parentId\": \"string\",\n          \"name\": \"string\",\n          \"service\": \"string\",\n          \"resource\": \"string\",\n          \"type\": \"string\",\n          \"start\": 1447,\n          \"duration\": 6208,\n          \"error\": 839,\n          \"meta\": {\n            \"key_0\": \"string\",\n            \"key_1\": \"string\"\n          },\n          \"metrics\": {\n            \"key_0\": 3715.718233434393,\n            \"key_1\": 5485.798155408051\n          }\n        }\n      ]\n    },\n    {\n      \"traceId\": \"string\",\n      \"spans\": [\n        {\n          \"traceId\": \"string\",\n          \"spanId\": \"string\",\n          \"parentId\": \"string\",\n          \"name\": \"string\",\n          \"service\": \"string\",\n          \"resource\": \"string\",\n          \"type\": \"string\",\n          \"start\": 1280,\n          \"duration\": 2351,\n          \"error\": 5085,\n          \"meta\": {\n            \"key_0\": \"string\",\n            \"key_1\": \"string\"\n          },\n          \"metrics\": {\n            \"key_0\": 5212.072001237903,\n            \"key_1\": 5828.825486258646\n          }\n        },\n        {\n          \"traceId\": \"string\",\n          \"spanId\": \"string\",\n          \"parentId\": \"string\",\n          \"name\": \"string\",\n          \"service\": \"string\",\n          \"resource\": \"string\",\n          \"type\": \"string\",\n          \"start\": 6751,\n          \"duration\": 9609,\n          \"error\": 8257,\n          \"meta\": {\n            \"key_0\": \"string\",\n            \"key_1\": \"string\",\n            \"key_2\": \"string\",\n            \"key_3\": \"string\"\n          },\n          \"metrics\": {\n            \"key_0\": 6815.778650662975,\n            \"key_1\": 117.67904688916198\n          }\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3033c700-c3ba-4a2c-9b4f-bf54e516762d",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "traces"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "010dde41-d30b-420e-a0bd-6d4a05bdef44",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "traces"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "DD-API-KEY",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datadoghq.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "DD-API-KEY"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8b8b3c32-e0d1-411a-aa62-e04f65d62b1c",
+    "name": "Datadog APM Traces API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.\n\nContact Support:\n Name: Datadog",
+      "type": "text/plain"
+    }
+  }
+}

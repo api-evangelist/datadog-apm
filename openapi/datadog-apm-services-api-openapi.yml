@@ -1,0 +1,75 @@
+openapi: 3.2.0
+info:
+  title: Datadog APM Services API
+  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
+  version: 1.0.0
+  contact:
+    name: Datadog
+    url: https://www.datadoghq.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: https://api.datadoghq.com
+  description: Datadog US1 site
+- url: https://api.datadoghq.eu
+  description: Datadog EU site
+- url: https://api.us3.datadoghq.com
+  description: Datadog US3 site
+- url: https://api.us5.datadoghq.com
+  description: Datadog US5 site
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- name: Services
+paths:
+  /api/v1/service_dependencies:
+    get:
+      operationId: getServiceDependencies
+      summary: Get service dependencies
+      description: Get the list of service dependencies for your organization.
+      tags:
+      - Services
+      parameters:
+      - name: env
+        in: query
+        required: true
+        description: The environment to query
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start time in epoch seconds
+        schema:
+          type: integer
+      - name: end
+        in: query
+        description: End time in epoch seconds
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Service dependency map
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-API-KEY
+    appKeyAuth:
+      type: apiKey
+      in: header
+      name: DD-APPLICATION-KEY

@@ -65,6 +65,8 @@ apis:
   description: The SLOs API from Datadog APM — 3 operation(s) for slos.
   humanURL: https://docs.datadoghq.com/api/latest/tracing/
   tags:
+  - SLO
+  tags_raw:
   - SLOs
   properties:
   - type: OpenAPI

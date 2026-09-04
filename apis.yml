@@ -43,7 +43,7 @@ created: '2026-03-26'
 modified: '2026-04-28'
 specificationVersion: '0.23'
 kind: company
-position: Consumer
+position: Consuming
 access: 3rd-Party
 apis:
 - aid: datadog-apm:datadog-apm-service-definitions-api

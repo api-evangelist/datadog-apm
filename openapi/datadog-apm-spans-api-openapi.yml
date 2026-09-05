@@ -1,227 +1,1169 @@
-openapi: 3.2.0
+openapi: 3.0.0
 info:
   title: Datadog APM Spans API
-  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
-  version: 1.0.0
+  description: The Spans operations of the Datadog API, extracted verbatim from the OpenAPI definition
+    Datadog publishes for its own API clients.
+  version: '1.0'
   contact:
-    name: Datadog
-    url: https://www.datadoghq.com
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
+    email: support@datadoghq.com
+    name: Datadog Support
+    url: https://www.datadoghq.com/support/
+  x-source: https://raw.githubusercontent.com/DataDog/datadog-api-client-go/master/.generator/schemas/v2/openapi.yaml
+  x-extracted: '2026-09-05'
+  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published
+    OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by
+    API Evangelist.
 servers:
-- url: https://api.datadoghq.com
-  description: Datadog US1 site
-- url: https://api.datadoghq.eu
-  description: Datadog EU site
-- url: https://api.us3.datadoghq.com
-  description: Datadog US3 site
-- url: https://api.us5.datadoghq.com
-  description: Datadog US5 site
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: The regional site for Datadog customers.
+      enum:
+      - datadoghq.com
+      - us3.datadoghq.com
+      - us5.datadoghq.com
+      - ap1.datadoghq.com
+      - ap2.datadoghq.com
+      - uk1.datadoghq.com
+      - datadoghq.eu
+      - ddog-gov.com
+      - us2.ddog-gov.com
+      - uk1.datadoghq.com
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+- url: '{protocol}://{name}'
+  variables:
+    name:
+      default: api.datadoghq.com
+      description: Full site DNS name.
+    protocol:
+      default: https
+      description: The protocol for accessing the API.
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: Any Datadog deployment.
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
 security:
 - apiKeyAuth: []
   appKeyAuth: []
 tags:
-- name: Spans
+- description: Search and aggregate your spans from your Datadog platform over HTTP.
+  name: Spans
 paths:
-  /api/v2/spans/events/search:
+  /api/v2/spans/analytics/aggregate:
     post:
-      operationId: searchSpans
-      summary: Search spans
-      description: Search or aggregate spans from your Datadog platform. Returns spans matching the search criteria.
-      tags:
-      - Spans
+      description: 'The API endpoint to aggregate spans into buckets and compute metrics and timeseries.
+
+        This endpoint is rate limited to `300` requests per hour.'
+      operationId: AggregateSpans
       requestBody:
-        required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/SpansSearchRequest'
-      responses:
-        '200':
-          description: Span search results
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SpansSearchResponse'
-        '400':
-          description: Bad request
-        '403':
-          description: Forbidden
-  /api/v2/spans:
-    post:
-      operationId: aggregateSpans
-      summary: Aggregate spans
-      description: Aggregate spans matching a search query grouped by facets.
-      tags:
-      - Spans
-      requestBody:
-        required: true
-        content:
-          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      compute:
+                      - aggregation: pc90
+                        interval: 5m
+                        metric: '@duration'
+                        type: timeseries
+                      filter:
+                        from: now-15m
+                        query: service:web* AND @http.status_code:[200 TO 299]
+                        to: now
+                      group_by:
+                      - facet: host
+                        histogram:
+                          interval: 10
+                          max: 100
+                          min: 50
+                        sort:
+                          aggregation: count
+                          order: asc
+                      options:
+                        timezone: GMT
+                    type: aggregate_request
             schema:
               $ref: '#/components/schemas/SpansAggregateRequest'
+        required: true
       responses:
         '200':
-          description: Aggregation results
           content:
             application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        by:
+                          host: my-hostname
+                        computes:
+                          c0: 19
+                      id: abc-123
+                      type: bucket
+                    meta:
+                      elapsed: 132
+                      status: done
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type:
-                          type: string
-                        attributes:
-                          type: object
+                $ref: '#/components/schemas/SpansAggregateResponse'
+          description: OK
         '400':
-          description: Bad request
+          $ref: '#/components/responses/BadRequestResponse'
         '403':
-          description: Forbidden
+          $ref: '#/components/responses/ForbiddenResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - apm_read
+      summary: Aggregate spans
+      tags:
+      - Spans
+      x-codegen-request-body-name: body
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_read
+  /api/v2/spans/events:
+    get:
+      description: 'List endpoint returns spans that match a span search query.
+
+        [Results are paginated][1].
+
+
+        Use this endpoint to see your latest spans.
+
+        This endpoint is rate limited to `300` requests per hour.
+
+
+        [1]: /logs/guide/collect-multiple-logs-with-pagination?tab=v2api'
+      operationId: ListSpansGet
+      parameters:
+      - description: Search query following spans syntax.
+        example: '@datacenter:us @role:db'
+        in: query
+        name: filter[query]
+        required: false
+        schema:
+          type: string
+      - description: Minimum timestamp for requested spans. Supports date-time ISO8601, date math, and
+          regular timestamps (milliseconds).
+        example: '2023-01-02T09:42:36.320Z'
+        in: query
+        name: filter[from]
+        required: false
+        schema:
+          type: string
+      - description: Maximum timestamp for requested spans. Supports date-time ISO8601, date math, and
+          regular timestamps (milliseconds).
+        example: '2023-01-03T09:42:36.320Z'
+        in: query
+        name: filter[to]
+        required: false
+        schema:
+          type: string
+      - description: Order of spans in results.
+        in: query
+        name: sort
+        required: false
+        schema:
+          $ref: '#/components/schemas/SpansSort'
+      - description: List following results with a cursor provided in the previous query.
+        example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+        in: query
+        name: page[cursor]
+        required: false
+        schema:
+          type: string
+      - description: Maximum number of spans in the response.
+        example: 25
+        in: query
+        name: page[limit]
+        required: false
+        schema:
+          default: 10
+          format: int32
+          maximum: 1000
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        service: web-store
+                      id: abc-123
+                      type: spans
+              schema:
+                $ref: '#/components/schemas/SpansListResponse'
+          description: OK
+        '400':
+          $ref: '#/components/responses/SpansBadRequestResponse'
+        '403':
+          $ref: '#/components/responses/SpansForbiddenResponse'
+        '422':
+          $ref: '#/components/responses/SpansUnprocessableEntityResponse'
+        '429':
+          $ref: '#/components/responses/SpansTooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - apm_read
+      summary: Get a list of spans
+      tags:
+      - Spans
+      x-pagination:
+        cursorParam: page[cursor]
+        cursorPath: meta.page.after
+        limitParam: page[limit]
+        resultsPath: data
+  /api/v2/spans/events/search:
+    post:
+      description: 'List endpoint returns spans that match a span search query.
+
+        [Results are paginated][1].
+
+
+        Use this endpoint to build complex spans filtering and search.
+
+        This endpoint is rate limited to `300` requests per hour.
+
+
+        [1]: /logs/guide/collect-multiple-logs-with-pagination?tab=v2api'
+      operationId: ListSpans
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      filter:
+                        from: now-15m
+                        query: service:web* AND @http.status_code:[200 TO 299]
+                        to: now
+                      options:
+                        timezone: GMT
+                      page:
+                        cursor: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+                        limit: 25
+                      sort: timestamp
+                    type: search_request
+            schema:
+              $ref: '#/components/schemas/SpansListRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        env: prod
+                        service: test-service
+                      id: AAAAAWgN8Xwgr1vKDQAAAABBV2dOOFh3ZzZobm1mWXJFYTR0OA
+                      type: spans
+                    meta:
+                      elapsed: 132
+                      status: done
+              schema:
+                $ref: '#/components/schemas/SpansListResponse'
+          description: OK
+        '400':
+          $ref: '#/components/responses/SpansBadRequestResponse'
+        '403':
+          $ref: '#/components/responses/SpansForbiddenResponse'
+        '422':
+          $ref: '#/components/responses/SpansUnprocessableEntityResponse'
+        '429':
+          $ref: '#/components/responses/SpansTooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - apm_read
+      summary: Search spans
+      tags:
+      - Spans
+      x-codegen-request-body-name: body
+      x-pagination:
+        cursorParam: body.data.attributes.page.cursor
+        cursorPath: meta.page.after
+        limitParam: body.data.attributes.page.limit
+        resultsPath: data
 components:
   schemas:
     SpansAggregateRequest:
-      type: object
+      description: The object sent with the request to retrieve a list of aggregated spans from your organization.
       properties:
         data:
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-              - aggregate_request
-            attributes:
-              type: object
-              properties:
-                filter:
-                  type: object
-                  properties:
-                    query:
-                      type: string
-                    from:
-                      type: string
-                    to:
-                      type: string
-                group_by:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      facet:
-                        type: string
-                      limit:
-                        type: integer
-                      sort:
-                        type: object
-                compute:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      aggregation:
-                        type: string
-                        enum:
-                        - count
-                        - avg
-                        - sum
-                        - min
-                        - max
-                        - pct
-                      metric:
-                        type: string
-                      type:
-                        type: string
-    SpansSearchResponse:
+          $ref: '#/components/schemas/SpansAggregateData'
       type: object
+    SpansAggregateData:
+      description: The object containing the query content.
       properties:
-        data:
-          type: array
+        attributes:
+          $ref: '#/components/schemas/SpansAggregateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SpansAggregateRequestType'
+      type: object
+    APIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
           items:
-            type: object
-            properties:
-              type:
-                type: string
-              id:
-                type: string
-              attributes:
-                type: object
-                properties:
-                  service:
-                    type: string
-                  resource_name:
-                    type: string
-                  span_id:
-                    type: string
-                  trace_id:
-                    type: string
-                  timestamp:
-                    type: string
-                  duration:
-                    type: integer
-                  status:
-                    type: string
-                  tags:
-                    type: object
-                    additionalProperties:
-                      type: string
-        meta:
-          type: object
-          properties:
-            page:
-              type: object
-              properties:
-                after:
-                  type: string
-    SpansSearchRequest:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
       type: object
+    SpansListRequest:
+      description: The request for a spans list.
       properties:
         data:
+          $ref: '#/components/schemas/SpansListRequestData'
+      type: object
+    JSONAPIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          items:
+            $ref: '#/components/schemas/JSONAPIErrorItem'
+          type: array
+      required:
+      - errors
+      type: object
+    SpansListResponse:
+      description: Response object with all spans matching the request and pagination information.
+      properties:
+        data:
+          description: Array of spans matching the request.
+          items:
+            $ref: '#/components/schemas/Span'
+          type: array
+        links:
+          $ref: '#/components/schemas/SpansListResponseLinks'
+        meta:
+          $ref: '#/components/schemas/SpansListResponseMetadata'
+      type: object
+    SpansListResponseLinks:
+      description: Links attributes.
+      properties:
+        next:
+          description: 'Link for the next set of results. Note that the request can also be made using
+            the
+
+            POST endpoint.'
+          example: https://app.datadoghq.com/api/v2/spans/event?filter[query]=foo&page[cursor]=eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+      type: object
+    SpansAggregateResponse:
+      description: The response object for the spans aggregate API endpoint.
+      properties:
+        data:
+          description: The list of matching buckets, one item per bucket.
+          items:
+            $ref: '#/components/schemas/SpansAggregateBucket'
+          type: array
+        meta:
+          $ref: '#/components/schemas/SpansAggregateResponseMetadata'
+      type: object
+    SpansListResponseMetadata:
+      description: The metadata associated with a request.
+      properties:
+        elapsed:
+          description: The time elapsed in milliseconds.
+          example: 132
+          format: int64
+          type: integer
+        page:
+          $ref: '#/components/schemas/SpansResponseMetadataPage'
+        request_id:
+          description: The identifier of the request.
+          example: MWlFUjVaWGZTTTZPYzM0VXp1OXU2d3xLSVpEMjZKQ0VKUTI0dEYtM3RSOFVR
+          type: string
+        status:
+          $ref: '#/components/schemas/SpansAggregateResponseStatus'
+        warnings:
+          description: 'A list of warnings (non fatal errors) encountered, partial results might be returned
+            if
+
+            warnings are present in the response.'
+          items:
+            $ref: '#/components/schemas/SpansWarning'
+          type: array
+      type: object
+    JSONAPIErrorItem:
+      description: API error response body
+      properties:
+        detail:
+          description: A human-readable explanation specific to this occurrence of the error.
+          example: Missing required attribute in body
+          type: string
+        meta:
+          additionalProperties: {}
+          description: Non-standard meta-information about the error
           type: object
-          properties:
-            type:
-              type: string
-              enum:
-              - search_request
-            attributes:
-              type: object
-              properties:
-                filter:
-                  type: object
-                  properties:
-                    query:
-                      type: string
-                      description: Search query string
-                    from:
-                      type: string
-                      description: Start time (ISO 8601 or relative)
-                    to:
-                      type: string
-                      description: End time (ISO 8601 or relative)
-                sort:
-                  type: string
-                  description: Sort order for results
-                  enum:
-                  - timestamp
-                  - -timestamp
-                page:
-                  type: object
-                  properties:
-                    cursor:
-                      type: string
-                    limit:
-                      type: integer
-                      default: 10
-                      maximum: 1000
+        source:
+          $ref: '#/components/schemas/JSONAPIErrorItemSource'
+        status:
+          description: Status code of the response.
+          example: '400'
+          type: string
+        title:
+          description: Short human-readable summary of the error.
+          example: Bad Request
+          type: string
+      type: object
+    SpansSort:
+      description: Sort parameters when querying spans.
+      enum:
+      - timestamp
+      - -timestamp
+      type: string
+      x-enum-varnames:
+      - TIMESTAMP_ASCENDING
+      - TIMESTAMP_DESCENDING
+    SpansListRequestData:
+      description: The object containing the query content.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansListRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SpansListRequestType'
+      type: object
+    SpansAggregateRequestAttributes:
+      description: The object containing all the query parameters.
+      properties:
+        compute:
+          description: The list of metrics or timeseries to compute for the retrieved buckets.
+          items:
+            $ref: '#/components/schemas/SpansCompute'
+          type: array
+        filter:
+          $ref: '#/components/schemas/SpansQueryFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansGroupBy'
+          type: array
+        options:
+          $ref: '#/components/schemas/SpansQueryOptions'
+      type: object
+    SpansListRequestType:
+      default: search_request
+      description: The type of resource. The value should always be search_request.
+      enum:
+      - search_request
+      example: search_request
+      type: string
+      x-enum-varnames:
+      - SEARCH_REQUEST
+    Span:
+      description: Object description of a spans after being processed and stored by Datadog.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansAttributes'
+        id:
+          description: Unique ID of the Span.
+          example: AAAAAWgN8Xwgr1vKDQAAAABBV2dOOFh3ZzZobm1mWXJFYTR0OA
+          type: string
+        type:
+          $ref: '#/components/schemas/SpansType'
+      type: object
+    SpansGroupBy:
+      description: A group by rule.
+      properties:
+        facet:
+          description: The name of the facet to use (required).
+          example: host
+          type: string
+        histogram:
+          $ref: '#/components/schemas/SpansGroupByHistogram'
+        limit:
+          default: 10
+          description: The maximum buckets to return for this group by.
+          format: int64
+          type: integer
+        missing:
+          $ref: '#/components/schemas/SpansGroupByMissing'
+        sort:
+          $ref: '#/components/schemas/SpansAggregateSort'
+        total:
+          $ref: '#/components/schemas/SpansGroupByTotal'
+      required:
+      - facet
+      type: object
+    SpansCompute:
+      description: A compute rule to compute metrics or timeseries.
+      properties:
+        aggregation:
+          $ref: '#/components/schemas/SpansAggregationFunction'
+        interval:
+          description: 'The time buckets'' size (only used for type=timeseries)
+
+            Defaults to a resolution of 150 points.'
+          example: 5m
+          type: string
+        metric:
+          description: The metric to use.
+          example: '@duration'
+          type: string
+        type:
+          $ref: '#/components/schemas/SpansComputeType'
+      required:
+      - aggregation
+      type: object
+    SpansListRequestAttributes:
+      description: The object containing all the query parameters.
+      properties:
+        filter:
+          $ref: '#/components/schemas/SpansQueryFilter'
+        options:
+          $ref: '#/components/schemas/SpansQueryOptions'
+        page:
+          $ref: '#/components/schemas/SpansListRequestPage'
+        sort:
+          $ref: '#/components/schemas/SpansSort'
+      type: object
+    SpansAttributes:
+      description: JSON object containing all span attributes and their associated values.
+      properties:
+        attributes:
+          additionalProperties: {}
+          description: JSON object of attributes from your span.
+          example:
+            customAttribute: 123
+            duration: 2345
+          type: object
+        custom:
+          additionalProperties: {}
+          description: JSON object of custom spans data.
+          type: object
+        end_timestamp:
+          description: End timestamp of your span.
+          example: '2023-01-02T09:42:36.420Z'
+          format: date-time
+          type: string
+        env:
+          description: Name of the environment from where the spans are being sent.
+          example: prod
+          type: string
+        host:
+          description: Name of the machine from where the spans are being sent.
+          example: i-0123
+          type: string
+        ingestion_reason:
+          description: The reason why the span was ingested.
+          example: rule
+          type: string
+        parent_id:
+          description: Id of the span that's parent of this span.
+          example: '0'
+          type: string
+        resource_hash:
+          description: Unique identifier of the resource.
+          example: a12345678b91c23d
+          type: string
+        resource_name:
+          description: The name of the resource.
+          example: agent
+          type: string
+        retained_by:
+          description: The reason why the span was indexed.
+          example: retention_filter
+          type: string
+        service:
+          description: 'The name of the application or service generating the span events.
+
+            It is used to switch from APM to Logs, so make sure you define the same
+
+            value when you use both products.'
+          example: agent
+          type: string
+        single_span:
+          description: Whether or not the span was collected as a stand-alone span. Always associated
+            to "single_span" ingestion_reason if true.
+          example: true
+          type: boolean
+        span_id:
+          description: Id of the span.
+          example: '1234567890987654321'
+          type: string
+        start_timestamp:
+          description: Start timestamp of your span.
+          example: '2023-01-02T09:42:36.320Z'
+          format: date-time
+          type: string
+        tags:
+          description: Array of tags associated with your span.
+          example:
+          - team:A
+          items:
+            description: Tag associated with your span.
+            type: string
+          type: array
+        trace_id:
+          description: Id of the trace to which the span belongs.
+          example: '1234567890987654321'
+          type: string
+        type:
+          description: The type of the span.
+          example: web
+          type: string
+      type: object
+    SpansAggregateRequestType:
+      default: aggregate_request
+      description: The type of resource. The value should always be aggregate_request.
+      enum:
+      - aggregate_request
+      example: aggregate_request
+      type: string
+      x-enum-varnames:
+      - AGGREGATE_REQUEST
+    SpansGroupByTotal:
+      default: false
+      description: A resulting object to put the given computes in over all the matching records.
+      oneOf:
+      - $ref: '#/components/schemas/SpansGroupByTotalBoolean'
+      - $ref: '#/components/schemas/SpansGroupByTotalString'
+      - $ref: '#/components/schemas/SpansGroupByTotalNumber'
+    SpansQueryFilter:
+      description: The search and filter query settings.
+      properties:
+        from:
+          default: now-15m
+          description: The minimum time for the requested spans, supports date-time ISO8601, date math,
+            and regular timestamps (milliseconds).
+          example: now-15m
+          type: string
+        query:
+          default: '*'
+          description: The search query - following the span search syntax.
+          example: service:web* AND @http.status_code:[200 TO 299]
+          type: string
+        to:
+          default: now
+          description: The maximum time for the requested spans, supports date-time ISO8601, date math,
+            and regular timestamps (milliseconds).
+          example: now
+          type: string
+      type: object
+    SpansGroupByMissing:
+      description: The value to use for spans that don't have the facet used to group by.
+      oneOf:
+      - $ref: '#/components/schemas/SpansGroupByMissingString'
+      - $ref: '#/components/schemas/SpansGroupByMissingNumber'
+    SpansComputeType:
+      default: total
+      description: The type of compute.
+      enum:
+      - timeseries
+      - total
+      type: string
+      x-enum-varnames:
+      - TIMESERIES
+      - TOTAL
+    SpansListRequestPage:
+      description: Paging attributes for listing spans.
+      properties:
+        cursor:
+          description: List following results with a cursor provided in the previous query.
+          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+        limit:
+          default: 10
+          description: Maximum number of spans in the response.
+          example: 25
+          format: int32
+          maximum: 1000
+          type: integer
+      type: object
+    SpansAggregationFunction:
+      description: An aggregation function.
+      enum:
+      - count
+      - cardinality
+      - pc75
+      - pc90
+      - pc95
+      - pc98
+      - pc99
+      - sum
+      - min
+      - max
+      - avg
+      - median
+      example: pc90
+      type: string
+      x-enum-varnames:
+      - COUNT
+      - CARDINALITY
+      - PERCENTILE_75
+      - PERCENTILE_90
+      - PERCENTILE_95
+      - PERCENTILE_98
+      - PERCENTILE_99
+      - SUM
+      - MIN
+      - MAX
+      - AVG
+      - MEDIAN
+    SpansGroupByTotalBoolean:
+      description: If set to true, creates an additional bucket labeled "$facet_total".
+      type: boolean
+    SpansGroupByTotalString:
+      description: A string to use as the key value for the total bucket.
+      type: string
+    SpansGroupByHistogram:
+      description: 'Used to perform a histogram computation (only for measure facets).
+
+        Note: At most 100 buckets are allowed, the number of buckets is (max - min)/interval.'
+      properties:
+        interval:
+          description: The bin size of the histogram buckets.
+          example: 10
+          format: double
+          type: number
+        max:
+          description: 'The maximum value for the measure used in the histogram
+
+            (values greater than this one are filtered out).'
+          example: 100
+          format: double
+          type: number
+        min:
+          description: 'The minimum value for the measure used in the histogram
+
+            (values smaller than this one are filtered out).'
+          example: 50
+          format: double
+          type: number
+      required:
+      - interval
+      - min
+      - max
+      type: object
+    SpansGroupByTotalNumber:
+      description: A number to use as the key value for the total bucket.
+      format: double
+      type: number
+    SpansGroupByMissingString:
+      description: The missing value to use if there is string valued facet.
+      type: string
+    SpansResponseMetadataPage:
+      description: Paging attributes.
+      properties:
+        after:
+          description: 'The cursor to use to get the next results, if any. To make the next request, use
+            the same
+
+            parameters with the addition of the `page[cursor]`.'
+          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+      type: object
+    SpansAggregateBucket:
+      description: Spans aggregate.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansAggregateBucketAttributes'
+        id:
+          description: ID of the spans aggregate.
+          type: string
+        type:
+          $ref: '#/components/schemas/SpansAggregateBucketType'
+      type: object
+    SpansAggregateResponseMetadata:
+      description: The metadata associated with a request.
+      properties:
+        elapsed:
+          description: The time elapsed in milliseconds.
+          example: 132
+          format: int64
+          type: integer
+        request_id:
+          description: The identifier of the request.
+          example: MWlFUjVaWGZTTTZPYzM0VXp1OXU2d3xLSVpEMjZKQ0VKUTI0dEYtM3RSOFVR
+          type: string
+        status:
+          $ref: '#/components/schemas/SpansAggregateResponseStatus'
+        warnings:
+          description: 'A list of warnings (non fatal errors) encountered, partial results might be returned
+            if
+
+            warnings are present in the response.'
+          items:
+            $ref: '#/components/schemas/SpansWarning'
+          type: array
+      type: object
+    SpansQueryOptions:
+      description: 'Global query options that are used during the query.
+
+        Note: You should only supply timezone or time offset but not both otherwise the query will fail.'
+      properties:
+        timeOffset:
+          description: The time offset (in seconds) to apply to the query.
+          format: int64
+          type: integer
+        timezone:
+          default: UTC
+          description: The timezone can be specified as GMT, UTC, an offset from UTC (like UTC+1), or
+            as a Timezone Database identifier (like America/New_York).
+          example: GMT
+          type: string
+      type: object
+    SpansWarning:
+      description: A warning message indicating something that went wrong with the query.
+      properties:
+        code:
+          description: A unique code for this type of warning.
+          example: unknown_index
+          type: string
+        detail:
+          description: A detailed explanation of this specific warning.
+          example: 'indexes: foo, bar'
+          type: string
+        title:
+          description: A short human-readable summary of the warning.
+          example: One or several indexes are missing or invalid, results hold data from the other indexes
+          type: string
+      type: object
+    SpansAggregateBucketAttributes:
+      description: A bucket values.
+      properties:
+        by:
+          additionalProperties:
+            description: The values for each group by.
+          description: The key, value pairs for each group by.
+          example:
+            '@state': success
+            '@version': abc
+          type: object
+        compute:
+          description: The compute data.
+          type: object
+        computes:
+          additionalProperties:
+            $ref: '#/components/schemas/SpansAggregateBucketValue'
+          description: A map of the metric name -> value for regular compute or list of values for a timeseries.
+          type: object
+      type: object
+    JSONAPIErrorItemSource:
+      description: References to the source of the error.
+      properties:
+        header:
+          description: A string indicating the name of a single request header which caused the error.
+          example: Authorization
+          type: string
+        parameter:
+          description: A string indicating which URI query parameter caused the error.
+          example: limit
+          type: string
+        pointer:
+          description: A JSON pointer to the value in the request document that caused the error.
+          example: /data/attributes/title
+          type: string
+      type: object
+    SpansAggregateResponseStatus:
+      description: The status of the response.
+      enum:
+      - done
+      - timeout
+      example: done
+      type: string
+      x-enum-varnames:
+      - DONE
+      - TIMEOUT
+    SpansAggregateSort:
+      description: A sort rule.
+      example:
+        aggregation: count
+        order: asc
+      properties:
+        aggregation:
+          $ref: '#/components/schemas/SpansAggregationFunction'
+        metric:
+          description: The metric to sort by (only used for `type=measure`).
+          example: '@duration'
+          type: string
+        order:
+          $ref: '#/components/schemas/SpansSortOrder'
+        type:
+          $ref: '#/components/schemas/SpansAggregateSortType'
+      type: object
+    SpansType:
+      default: spans
+      description: Type of the span.
+      enum:
+      - spans
+      example: spans
+      type: string
+      x-enum-varnames:
+      - SPANS
+    SpansAggregateBucketValue:
+      description: A bucket value, can be either a timeseries or a single value.
+      oneOf:
+      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleString'
+      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleNumber'
+      - $ref: '#/components/schemas/SpansAggregateBucketValueTimeseries'
+    SpansGroupByMissingNumber:
+      description: The missing value to use if there is a number valued facet.
+      format: double
+      type: number
+    SpansAggregateBucketType:
+      description: The spans aggregate bucket type.
+      enum:
+      - bucket
+      example: bucket
+      type: string
+      x-enum-varnames:
+      - BUCKET
+    SpansAggregateBucketValueTimeseries:
+      description: A timeseries array.
+      items:
+        $ref: '#/components/schemas/SpansAggregateBucketValueTimeseriesPoint'
+      type: array
+      x-generate-alias-as-model: true
+    SpansSortOrder:
+      description: The order to use, ascending or descending.
+      enum:
+      - asc
+      - desc
+      example: asc
+      type: string
+      x-enum-varnames:
+      - ASCENDING
+      - DESCENDING
+    SpansAggregateBucketValueSingleNumber:
+      description: A single number value.
+      format: double
+      type: number
+    SpansAggregateSortType:
+      default: alphabetical
+      description: The type of sorting algorithm.
+      enum:
+      - alphabetical
+      - measure
+      type: string
+      x-enum-varnames:
+      - ALPHABETICAL
+      - MEASURE
+    SpansAggregateBucketValueSingleString:
+      description: A single string value.
+      type: string
+    SpansAggregateBucketValueTimeseriesPoint:
+      description: A timeseries point.
+      properties:
+        time:
+          description: The time value for this point.
+          example: '2023-06-08T11:55:00Z'
+          type: string
+        value:
+          description: The value for this point.
+          example: 19
+          format: double
+          type: number
+      type: object
+  responses:
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Bad Request
+    SpansForbiddenResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: 'Forbidden: Access denied.'
+    SpansUnprocessableEntityResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: Unprocessable Entity.
+    SpansTooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: 'Too many requests: The rate limit set by the API has been exceeded.'
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
+    ForbiddenResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Forbidden
+    SpansBadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: Bad Request.
   securitySchemes:
+    AuthZ:
+      description: This API uses OAuth 2 with the implicit grant flow.
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/v1/authorize
+          scopes:
+            ai_gateway_config_read: View AI Gateway configuration.
+            ai_gateway_config_write: Create, update, and delete AI Gateway configuration.
+            ai_gateway_usage: Use AI Gateway and view configuration applicable to the authenticated user.
+            apm_api_catalog_read: View API catalog and API definitions.
+            apm_api_catalog_write: Add, modify, and delete API catalog definitions.
+            apm_read: Read and query APM and Trace Analytics.
+            apm_service_catalog_read: View service catalog and service definitions.
+            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those
+              definitions are maintained by Datadog.
+            appsec_vm_read: View infrastructure, application code, and library vulnerability findings.
+            aws_configurations_manage: Manage AWS integration account configurations and related integration
+              settings.
+            billing_edit: Edit your organization's billing information.
+            billing_read: View your organization's billing information.
+            bits_investigations_read: View Bits AI investigations.
+            bits_investigations_write: Create and manage Bits AI investigations.
+            cases_read: View Cases.
+            cases_shared_settings_write: Update shared case management settings.
+            cases_write: Create and update cases.
+            ci_visibility_pipelines_write: Create CI Visibility pipeline spans using the API.
+            ci_visibility_read: View CI Visibility.
+            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards
+              and notebooks. For more details, see the Cloud Cost Management docs.
+            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For
+              more details, see the Cloud Cost Management docs.
+            code_analysis_read: View Code Analysis.
+            code_coverage_read: View Code Coverage.
+            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization
+              (PGO).
+            coterm_read: Read terminal recordings.
+            coterm_write: Write terminal recordings.
+            create_webhooks: Create webhooks integrations.
+            dashboards_embed_share: Create, modify, and delete shared dashboards with share type 'embed'.
+            dashboards_invite_share: Create, modify, and delete shared dashboards with share type 'invite'.
+            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable
+              graphs externally.
+            dashboards_read: View dashboards.
+            dashboards_write: Create and change dashboards.
+            data_scanner_read: View Data Scanner configurations.
+            data_scanner_write: Edit Data Scanner configurations.
+            embeddable_graphs_share: Generate public links to share embeddable graphs externally.
+            error_tracking_read: Read Error Tracking data.
+            error_tracking_write: Edit Error Tracking issues.
+            event_correlation_config_read: View event correlation configurations.
+            event_correlation_config_write: Create and update event correlation configurations.
+            events_read: Read Events data.
+            hosts_read: List hosts and their attributes.
+            incident_notification_settings_read: View Incident Notification Rule Settings.
+            incident_notification_settings_write: Configure Incidents Notification Rule settings.
+            incident_read: View incidents in Datadog.
+            incident_settings_read: View Incident Settings.
+            incident_settings_write: Configure Incident Settings.
+            incident_write: Create, view, and manage incidents in Datadog.
+            integrations_read: View configured integrations and their settings.
+            logs_modify_indexes: Modify log indexes, filters, exclusion filters, and configurations.
+            logs_read_data: Read log data.
+            logs_read_index_data: Read indexed log data.
+            manage_integrations: Install, uninstall, and configure integrations.
+            metrics_read: View custom metrics.
+            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute
+              and unmute monitors. The ability to write monitors is not required to set downtimes.
+            monitors_read: View monitors.
+            monitors_write: Edit, delete, and resolve individual monitors.
+            network_connections_read: Read cloud network connections.
+            org_connections_read: Read cross organization connections.
+            org_connections_write: Create, edit, and delete cross organization connections.
+            org_management: Edit org configurations, including authentication and certain security preferences
+              such as configuring SAML, renaming an org, configuring allowed login methods, creating child
+              orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
+              Remote Configuration for the entire organization.
+            security_comments_read: Read comments of vulnerabilities.
+            security_monitoring_critical_assets_read: Read Critical Assets.
+            security_monitoring_critical_assets_write: Write Critical Assets.
+            security_monitoring_filters_read: Read Security Filters.
+            security_monitoring_filters_write: Create, edit, and delete Security Filters.
+            security_monitoring_findings_read: View a list of findings that include both misconfigurations
+              and identity risks.
+            security_monitoring_rules_read: Read Detection Rules.
+            security_monitoring_rules_write: Create and edit Detection Rules.
+            security_monitoring_signals_read: View Security Signals.
+            security_monitoring_suppressions_read: Read Rule Suppressions.
+            security_monitoring_suppressions_write: Write Rule Suppressions.
+            security_pipelines_read: View Security Pipelines.
+            security_pipelines_write: Create, edit, and delete CSM Security Pipelines.
+            siem_entities_read: View Cloud SIEM entities.
+            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission
+              can make status corrections, even if they do not have permission to edit those SLOs.
+            slos_read: View SLOs and status corrections.
+            slos_write: Create, edit, and delete SLOs.
+            synthetics_global_variable_read: View, search, and use Synthetics global variables.
+            synthetics_global_variable_write: Create, edit, and delete global variables for Synthetics.
+            synthetics_private_location_read: View, search, and use Synthetics private locations.
+            synthetics_private_location_write: Create and delete private locations in addition to having
+              access to the associated installation guidelines.
+            synthetics_read: List and view configured Synthetic tests and test results.
+            synthetics_write: Create, edit, and delete Synthetic tests.
+            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
+              Team membership across all Teams, use the User Access Manage permission.
+            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and
+              which Users are on each Team.
+            test_optimization_read: View Test Optimization.
+            test_optimization_settings_write: Update service settings in Test Optimization.
+            test_optimization_write: Update flaky tests from Flaky Tests Management of Test Optimization.
+            timeseries_query: Query Timeseries data.
+            usage_read: View your organization's usage and usage attribution.
+            user_access_invite: Invite other users to your organization.
+            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure
+              logs restriction queries.
+            user_access_read: View users and their roles and settings.
+            workflows_read: View workflows.
+            workflows_run: Run workflows.
+            workflows_write: Create, edit, and delete workflows.
+          tokenUrl: /oauth2/v1/token
+      type: oauth2
     apiKeyAuth:
-      type: apiKey
+      description: Your Datadog API Key.
       in: header
       name: DD-API-KEY
-    appKeyAuth:
       type: apiKey
+      x-env-name: DD_API_KEY
+    appKeyAuth:
+      description: Your Datadog APP Key.
       in: header
       name: DD-APPLICATION-KEY
+      type: apiKey
+      x-env-name: DD_APP_KEY
+    bearerAuth:
+      scheme: bearer
+      type: http
+      x-env-name: DD_BEARER_TOKEN

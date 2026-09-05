@@ -1,0 +1,110 @@
+generated: '2026-09-05'
+method: searched
+source: https://docs.datadoghq.com/integrations/webhooks/
+provider: Datadog APM
+providerId: datadog-apm
+asyncapi_published: false
+asyncapi_note: >-
+  Datadog publishes no AsyncAPI document. Probed the docs and the DataDog GitHub org; the event
+  surface is documented as a configurable outbound webhook integration, not as an event-driven API
+  contract. This is recorded as a Webhooks catalog rather than fabricating an AsyncAPI.
+surface: outbound webhooks
+description: >-
+  Datadog's event surface is inverted relative to most APIs: the payload is CALLER-DEFINED. You
+  configure a webhook in the Webhooks integration tile, supply your own URL, your own JSON payload
+  template and your own custom headers, and Datadog interpolates $-prefixed variables into it. There
+  is no fixed schema to code against — the schema is whatever template you wrote. What IS fixed is
+  the variable vocabulary and the set of event types that can fire.
+configuration:
+  where: Datadog Webhooks integration tile (UI), or the Webhooks Integration API under /api/v1/integration/webhooks
+  fields:
+  - url
+  - payload (JSON template, optionally form-encoded)
+  - custom_headers (JSON)
+  - encode_as_form (boolean)
+  custom_variables: >-
+    User-defined variables usable in the URL, payload and headers; values can be hidden from view,
+    which is the documented mechanism for storing credentials.
+authentication_to_your_endpoint:
+- method: HTTP Basic
+- method: OAuth 2.0
+  detail: >-
+    Configured as a named Auth Method with Access Token URL, Client ID, Client Secret, and optional
+    Scope and Audience, then attached to a webhook configuration.
+delivery:
+  queueing: >-
+    When a monitor alert notifies two or more webhook endpoints, Datadog creates a webhook queue per
+    service, so a retry on one endpoint does not delay another.
+  ordering: >-
+    Within one service scope, ordering is enforced for related events (an Acknowledge payload is sent
+    before a Resolution; if the Acknowledge fails, the Resolution is queued behind the retry).
+  retries: >-
+    Datadog documents that retry logic exists and describes its ordering consequences, but publishes
+    no retry count, interval or backoff schedule. Recorded as undocumented rather than guessed.
+  signing: >-
+    No webhook signature or shared-secret verification mechanism is documented. A receiver
+    authenticates Datadog by whatever credential it put in the custom headers or Auth Method.
+event_types:
+  note: >-
+    The $EVENT_TYPE variable resolves to one of these. Two are directly APM-relevant.
+  types:
+  - id: trace_analytics_alert
+    monitor: Trace Analytics
+    apm_relevant: true
+  - id: metric_slo_alert
+    monitor: Metric based SLO
+    apm_relevant: true
+  - id: monitor_slo_alert
+    monitor: Monitor based SLO
+    apm_relevant: true
+  - id: error_tracking_alert
+    monitor: Error Tracking
+    apm_relevant: true
+  - id: query_alert_monitor
+    monitor: Metric, Anomaly, Forecast
+  - id: composite_monitor
+    monitor: Composite
+  - id: service_check
+    monitor: Host, Service Check
+  - id: process_alert
+    monitor: Process
+  - id: outlier_monitor
+    monitor: Outlier
+  - id: log_alert
+    monitor: Logs
+  - id: rum_alert
+    monitor: RUM
+  - id: synthetics_alert
+    monitor: Synthetics
+  - id: ci_pipelines_alert
+    monitor: CI Pipelines
+  - id: ci_tests_alert
+    monitor: CI Tests
+  - id: event_alert
+    monitor: Event using V1 endpoint
+  - id: event_v2_alert
+    monitor: Event with V2 endpoint
+variables:
+  note: >-
+    The docs list a large built-in variable vocabulary interpolated into the payload template. A
+    representative subset is recorded verbatim; the full list is on the source page.
+  examples:
+  - name: $EVENT_TYPE
+    meaning: Which of the event types above fired.
+  - name: $ALERT_ID
+    meaning: ID of the alerting monitor.
+  - name: $ALERT_CYCLE_KEY
+    meaning: ID linking events from the time an alert triggers until it resolves.
+  - name: $AGGREG_KEY
+    meaning: ID aggregating events that belong together.
+  - name: $ALERT_STATUS
+    meaning: >-
+      Summary of the alert status. Note - for Logs Monitor alerts this variable must be added
+      manually in the Webhook integration tile before it populates.
+agent_implication: >-
+  An agent cannot subscribe to Datadog events; a human must configure a webhook first, and the payload
+  contract is then whatever that human wrote. There is no discoverable event schema and no
+  subscription API for the APM surface.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

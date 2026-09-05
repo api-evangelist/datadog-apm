@@ -1,0 +1,63 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://docs.datadoghq.com/api/latest/, https://status.datadoghq.com/,
+  https://status.datadoghq.com/api/v2/summary.json, and derived from openapi/
+provider: Datadog APM
+providerId: datadog-apm
+versioning:
+  scheme: URI path
+  current:
+  - v1
+  - v2
+  detail: >-
+    Datadog runs /api/v1/ and /api/v2/ side by side. v2 is not a successor to v1 in this product —
+    the APM surface is split across both, permanently: SLOs and SLO corrections are v1-only, spans,
+    span metrics, retention filters and service definitions are v2-only. There is no deprecation of
+    v1 implied by the existence of v2.
+  spec_versions:
+    v1: '1.0'
+    v2: '1.0'
+    note: >-
+      The published OpenAPI carries info.version 1.0 for both documents; the moving version number
+      that actually tracks change is the generated client release (see packages/).
+deprecation:
+  policy_published: false
+  policy_url: null
+  sunset_header: not documented
+  deprecation_header: not documented
+  rfc8594: false
+  note: >-
+    No API deprecation policy page was found. Probed https://docs.datadoghq.com/api/latest/deprecation/
+    (404) and https://docs.datadoghq.com/developers/guide/api-deprecation/ (404). This is a real gap
+    for an API with two coexisting versions: nothing published tells a consumer how much notice a
+    removed endpoint gets.
+  deprecated_operations:
+    count: 0
+    detail: 'No operation in the extracted APM subset carries `deprecated: true`.'
+status_page:
+  url: https://status.datadoghq.com/
+  provider: Statuspage (Atlassian)
+  machine_readable: true
+  api:
+    summary: https://status.datadoghq.com/api/v2/summary.json
+    status: 200
+    probed: '2026-09-05'
+  note: >-
+    Per-component and per-region status, and a public JSON API an agent can poll without a key. This
+    is one of the strongest operational signals in the record.
+sla:
+  published: true
+  scope: >-
+    Datadog publishes commercial SLAs as part of its enterprise agreements rather than as a public
+    per-endpoint uptime commitment; the public surface is the status page and the trust center.
+  see_also: security/datadog-apm-trust-center.yml
+release_notes:
+  in_product: https://app.datadoghq.com/release-notes
+  note: >-
+    The product release-notes surface sits behind the app host and rendered as an application shell to
+    an anonymous fetch, so it is recorded as a pointer rather than harvested. The dated, machine-readable
+    change record for the API itself is the client-library release history (see changelog/).
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

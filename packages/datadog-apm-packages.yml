@@ -1,0 +1,175 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  registry.npmjs.org, pypi.org, rubygems.org, proxy.golang.org, search.maven.org, api.nuget.org and
+  https://docs.datadoghq.com/developers/community/libraries/
+provider: Datadog APM
+providerId: datadog-apm
+note: >-
+  Datadog ships two distinct first-party library families and both are relevant to APM. The
+  datadog-api-client-* generated clients wrap the REST API captured in openapi/ (SLOs, spans, span
+  metrics, retention filters, service definitions); the dd-trace / ddtrace tracer libraries are the
+  in-process instrumentation that produces the spans in the first place. Versions and dates were read
+  from each registry's own metadata endpoint on 2026-09-05.
+packages:
+- name: '@datadog/datadog-api-client'
+  registry: npm
+  language: JavaScript/TypeScript
+  official: true
+  family: api-client
+  url: https://www.npmjs.com/package/@datadog/datadog-api-client
+  repository: https://github.com/DataDog/datadog-api-client-typescript
+  version: 1.63.0
+  published: '2026-09-02'
+  description: OpenAPI-generated client for the Datadog REST API (v1 + v2).
+- name: dd-trace
+  registry: npm
+  language: JavaScript/TypeScript
+  official: true
+  family: tracer
+  url: https://www.npmjs.com/package/dd-trace
+  repository: https://github.com/DataDog/dd-trace-js
+  version: 6.14.0
+  published: '2026-09-04'
+  description: Datadog APM tracing client for Node.js.
+- name: datadog-api-client
+  registry: pypi
+  language: Python
+  official: true
+  family: api-client
+  url: https://pypi.org/project/datadog-api-client/
+  repository: https://github.com/DataDog/datadog-api-client-python
+  version: 2.60.0
+  published: '2026-09-02'
+  description: Generated client covering all Datadog public endpoints.
+- name: ddtrace
+  registry: pypi
+  language: Python
+  official: true
+  family: tracer
+  url: https://pypi.org/project/ddtrace/
+  repository: https://github.com/DataDog/dd-trace-py
+  version: 4.14.0
+  published: '2026-08-26'
+  description: Datadog APM client library for Python.
+- name: datadog
+  registry: pypi
+  language: Python
+  official: true
+  family: api-client
+  url: https://pypi.org/project/datadog/
+  repository: https://github.com/DataDog/datadogpy
+  version: 0.53.0
+  published: '2026-07-24'
+  description: The original hand-written Datadog Python library (API + DogStatsD).
+- name: github.com/DataDog/datadog-api-client-go/v2
+  registry: go
+  language: Go
+  official: true
+  family: api-client
+  url: https://pkg.go.dev/github.com/DataDog/datadog-api-client-go/v2
+  repository: https://github.com/DataDog/datadog-api-client-go
+  version: v2.65.0
+  published: '2026-09-02'
+  description: >-
+    Generated Go client. Its .generator/schemas/v1|v2/openapi.yaml files are the OpenAPI source this
+    repo's openapi/ artifacts were extracted from.
+- name: github.com/DataDog/dd-trace-go/v2
+  registry: go
+  language: Go
+  official: true
+  family: tracer
+  url: https://pkg.go.dev/github.com/DataDog/dd-trace-go/v2
+  repository: https://github.com/DataDog/dd-trace-go
+  version: v2.10.1
+  published: '2026-08-31'
+  description: Datadog APM tracing client for Go.
+- name: com.datadoghq:datadog-api-client
+  registry: maven
+  language: Java
+  official: true
+  family: api-client
+  url: https://central.sonatype.com/artifact/com.datadoghq/datadog-api-client
+  repository: https://github.com/DataDog/datadog-api-client-java
+  version: 2.38.0
+  published: '2025-06-24'
+  description: >-
+    Generated Java client. NOTE the currency gap — Maven Central's latest is 2.38.0 (2025-06-24)
+    while docs.datadoghq.com/api/latest/ shows 2.60.0 in its Maven install snippet, so the published
+    artifact trails the documented one.
+- name: com.datadoghq:dd-java-agent
+  registry: maven
+  language: Java
+  official: true
+  family: tracer
+  url: https://central.sonatype.com/artifact/com.datadoghq/dd-java-agent
+  repository: https://github.com/DataDog/dd-trace-java
+  version: 1.50.0
+  published: '2025-06-20'
+  description: Java APM agent (auto-instrumentation).
+- name: com.datadoghq:dd-trace-api
+  registry: maven
+  language: Java
+  official: true
+  family: tracer
+  url: https://central.sonatype.com/artifact/com.datadoghq/dd-trace-api
+  repository: https://github.com/DataDog/dd-trace-java
+  version: 1.50.0
+  published: '2025-06-20'
+  description: Public Java tracing API used for manual instrumentation.
+- name: Datadog.Trace
+  registry: nuget
+  language: .NET
+  official: true
+  family: tracer
+  url: https://www.nuget.org/packages/Datadog.Trace
+  repository: https://github.com/DataDog/dd-trace-dotnet
+  version: 3.52.0
+  published: null
+  note: >-
+    Version read from api.nuget.org/v3-flatcontainer/datadog.trace/index.json, which returns the
+    version list only; no publish date was recorded rather than guessing one.
+- name: datadog
+  registry: rubygems
+  language: Ruby
+  official: true
+  family: tracer
+  url: https://rubygems.org/gems/datadog
+  repository: https://github.com/DataDog/dd-trace-rb
+  version: 2.42.0
+  published: '2026-08-31'
+  description: Datadog's Ruby client library including APM tracing (renamed from ddtrace at 2.0.0).
+- name: ddtrace
+  registry: rubygems
+  language: Ruby
+  official: true
+  family: tracer
+  status: renamed
+  url: https://rubygems.org/gems/ddtrace
+  version: 1.23.3
+  published: '2024-07-01'
+  note: Superseded — the gem's own description says it was renamed to `datadog` at 2.0.0.
+- name: dogapi
+  registry: rubygems
+  language: Ruby
+  official: true
+  family: api-client
+  status: abandoned
+  url: https://rubygems.org/gems/dogapi
+  version: 1.45.0
+  published: '2021-01-27'
+  note: >-
+    Last release 2021-01-27 — more than five years behind the API it wraps. This is the clearest
+    abandonment signal in Datadog's package surface.
+excluded:
+- name: datadog-apm
+  registry: crates
+  version: 0.2.0
+  published: '2020-06-09'
+  reason: >-
+    Third-party crate, not published by Datadog. Recorded here so a later pass does not mistake the
+    slug match for a first-party Rust SDK. Datadog's Rust tracing lives in the dd-trace-rs /
+    libdatadog repositories and is not published as a first-party crates.io SDK.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

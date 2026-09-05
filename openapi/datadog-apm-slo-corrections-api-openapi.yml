@@ -1,0 +1,801 @@
+openapi: 3.0.0
+info:
+  title: Datadog APM SLO Corrections API
+  description: The Service Level Objective Corrections operations of the Datadog API, extracted verbatim
+    from the OpenAPI definition Datadog publishes for its own API clients.
+  version: '1.0'
+  contact:
+    email: support@datadoghq.com
+    name: Datadog Support
+    url: https://www.datadoghq.com/support/
+  x-source: https://raw.githubusercontent.com/DataDog/datadog-api-client-go/master/.generator/schemas/v1/openapi.yaml
+  x-extracted: '2026-09-05'
+  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published
+    OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by
+    API Evangelist.
+servers:
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: The regional site for Datadog customers.
+      enum:
+      - datadoghq.com
+      - us3.datadoghq.com
+      - us5.datadoghq.com
+      - ap1.datadoghq.com
+      - ap2.datadoghq.com
+      - uk1.datadoghq.com
+      - datadoghq.eu
+      - ddog-gov.com
+      - us2.ddog-gov.com
+      - uk1.datadoghq.com
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+- url: '{protocol}://{name}'
+  variables:
+    name:
+      default: api.datadoghq.com
+      description: Full site DNS name.
+    protocol:
+      default: https
+      description: The protocol for accessing the API.
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: Any Datadog deployment.
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- description: 'SLO Status Corrections allow you to prevent specific time periods from negatively impacting
+
+    your SLO’s status and error budget. You can use Status Corrections for various purposes, such
+
+    as removing planned maintenance windows, non-business hours, or other time periods that do
+
+    not correspond to genuine issues. See [SLO status corrections](https://docs.datadoghq.com/service_management/service_level_objectives/#slo-status-corrections)
+    for more information.'
+  name: Service Level Objective Corrections
+paths:
+  /api/v1/slo/correction:
+    get:
+      description: Get all Service Level Objective corrections.
+      operationId: ListSLOCorrection
+      parameters:
+      - description: The specific offset to use as the beginning of the returned response.
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int64
+          type: integer
+      - description: The number of SLO corrections to return in the response. Default is 25.
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 25
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionListResponse'
+          description: OK
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - slos_read
+      summary: Get all SLO corrections
+      tags:
+      - Service Level Objective Corrections
+      x-pagination:
+        limitParam: limit
+        pageOffsetParam: offset
+        resultsPath: data
+      x-permission:
+        operator: OR
+        permissions:
+        - slos_read
+    post:
+      description: 'Create an SLO correction. Use `slo_id` to apply the correction to a single SLO, or
+        `slo_query` to apply the
+
+        correction to SLOs that match a query. Exactly one of `slo_id` or `slo_query` is required.'
+      operationId: CreateSLOCorrection
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Planned maintenance window for database upgrade.
+                      end: 1600003600
+                      slo_id: sloId
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+              slo_query:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Planned maintenance window for checkout services.
+                      end: 1600003600
+                      slo_query: env:prod service:checkout
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+            schema:
+              $ref: '#/components/schemas/SLOCorrectionCreateRequest'
+        description: Create an SLO Correction
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: SLO Not Found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - slos_corrections
+      summary: Create an SLO correction
+      tags:
+      - Service Level Objective Corrections
+      x-codegen-request-body-name: body
+      x-permission:
+        operator: OR
+        permissions:
+        - slos_corrections
+  /api/v1/slo/correction/{slo_correction_id}:
+    delete:
+      description: Permanently delete the specified SLO correction object.
+      operationId: DeleteSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: OK
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Not found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Delete an SLO correction
+      tags:
+      - Service Level Objective Corrections
+    get:
+      description: Get an SLO correction.
+      operationId: GetSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Get an SLO correction for an SLO
+      tags:
+      - Service Level Objective Corrections
+    patch:
+      description: Update the specified SLO correction object.
+      operationId: UpdateSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Updated correction for maintenance window.
+                      end: 1600003600
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+              slo_query:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Updated correction for checkout services.
+                      end: 1600003600
+                      slo_query: env:prod service:checkout
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+            schema:
+              $ref: '#/components/schemas/SLOCorrectionUpdateRequest'
+        description: The edited SLO correction object.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Not Found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Update an SLO correction
+      tags:
+      - Service Level Objective Corrections
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    SLOCorrectionListResponse:
+      description: A list of  SLO correction objects.
+      properties:
+        data:
+          description: The list of SLO corrections objects.
+          items:
+            $ref: '#/components/schemas/SLOCorrection'
+          type: array
+        meta:
+          $ref: '#/components/schemas/ResponseMetaAttributes'
+      type: object
+    SLOCorrectionResponse:
+      description: The response object of an SLO correction.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrection'
+      type: object
+    APIErrorResponse:
+      description: Error response object.
+      properties:
+        errors:
+          description: Array of errors returned by the API.
+          example:
+          - Bad Request
+          items:
+            description: Error description.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    ResponseMetaAttributes:
+      description: Object describing meta attributes of response.
+      properties:
+        page:
+          $ref: '#/components/schemas/Pagination'
+      type: object
+    SLOCorrectionCreateRequest:
+      description: An object that defines a correction to be applied to one or more SLOs.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionCreateData'
+      type: object
+    SLOCorrectionUpdateRequest:
+      description: An object that defines a correction to be applied to an SLO.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionUpdateData'
+      type: object
+    SLOCorrectionUpdateData:
+      description: The data object associated with the SLO correction to be updated.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    SLOCorrectionCreateData:
+      description: The data object associated with the SLO correction to be created.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      required:
+      - type
+      type: object
+    SLOCorrection:
+      description: The response object of a list of SLO corrections.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
+        id:
+          description: The ID of the SLO correction.
+          type: string
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    SLOCorrectionType:
+      default: correction
+      description: SLO correction resource type.
+      enum:
+      - correction
+      example: correction
+      type: string
+      x-enum-varnames:
+      - CORRECTION
+    Pagination:
+      description: Pagination object.
+      properties:
+        total_count:
+          description: Total count.
+          format: int64
+          type: integer
+        total_filtered_count:
+          description: Total count of elements matched by the filter.
+          format: int64
+          type: integer
+      type: object
+    SLOCorrectionResponseAttributes:
+      description: The attribute object associated with the SLO correction.
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        created_at:
+          description: The epoch timestamp of when the correction was created at.
+          format: int64
+          nullable: true
+          type: integer
+        creator:
+          $ref: '#/components/schemas/Creator'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 3600
+          format: int64
+          nullable: true
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          format: int64
+          nullable: true
+          type: integer
+        modified_at:
+          description: The epoch timestamp of when the correction was modified at.
+          format: int64
+          nullable: true
+          type: integer
+        modifier:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributesModifier'
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules
+            for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          nullable: true
+          type: string
+        slo_id:
+          description: ID of the single SLO that this correction applies to.
+          nullable: true
+          type: string
+        slo_query:
+          description: Query that matches the SLOs this correction applies to.
+          nullable: true
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          type: string
+      type: object
+    SLOCorrectionCreateRequestAttributes:
+      description: 'The attribute object associated with the SLO correction to be created.
+
+
+        Exactly one of `slo_id` or `slo_query` must be provided.'
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 1600000000
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules
+            for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_id:
+          description: ID of the single SLO that this correction applies to.
+          example: sloId
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
+          type: string
+      required:
+      - start
+      - category
+      type: object
+    SLOCorrectionUpdateRequestAttributes:
+      description: The attribute object associated with the SLO correction to be updated.
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 3600
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules
+            for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
+          type: string
+      type: object
+    Creator:
+      description: Object describing the creator of the shared element.
+      properties:
+        email:
+          description: Email of the creator.
+          type: string
+        handle:
+          description: Handle of the creator.
+          type: string
+        name:
+          description: Name of the creator.
+          nullable: true
+          type: string
+      readOnly: true
+      type: object
+    SLOCorrectionResponseAttributesModifier:
+      description: Modifier of the object.
+      nullable: true
+      properties:
+        email:
+          description: Email of the Modifier.
+          type: string
+        handle:
+          description: Handle of the Modifier.
+          type: string
+        name:
+          description: Name of the Modifier.
+          type: string
+      type: object
+    SLOCorrectionCategory:
+      description: Category the SLO correction belongs to.
+      enum:
+      - Scheduled Maintenance
+      - Outside Business Hours
+      - Deployment
+      - Other
+      example: Scheduled Maintenance
+      type: string
+      x-enum-varnames:
+      - SCHEDULED_MAINTENANCE
+      - OUTSIDE_BUSINESS_HOURS
+      - DEPLOYMENT
+      - OTHER
+  responses:
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
+  securitySchemes:
+    AuthZ:
+      description: This API uses OAuth 2 with the implicit grant flow.
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/v1/authorize
+          scopes:
+            apm_api_catalog_read: View API catalog and API definitions.
+            apm_api_catalog_write: Add, modify, and delete API catalog definitions.
+            apm_read: Read and query APM and Trace Analytics.
+            apm_service_catalog_read: View service catalog and service definitions.
+            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those
+              definitions are maintained by Datadog.
+            billing_read: View your organization's billing information.
+            cases_read: View Cases.
+            cases_write: Create and update cases.
+            ci_visibility_pipelines_write: Create CI Visibility pipeline spans using the API.
+            ci_visibility_read: View CI Visibility.
+            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards
+              and notebooks. For more details, see the Cloud Cost Management docs.
+            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For
+              more details, see the Cloud Cost Management docs.
+            code_analysis_read: View Code Analysis.
+            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization
+              (PGO).
+            coterm_read: Read terminal recordings.
+            coterm_write: Write terminal recordings.
+            create_webhooks: Create webhooks integrations.
+            dashboards_embed_share: Create, modify, and delete shared dashboards with share type 'embed'.
+            dashboards_invite_share: Create, modify, and delete shared dashboards with share type 'invite'.
+            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable
+              graphs externally.
+            dashboards_read: View dashboards.
+            dashboards_write: Create and change dashboards.
+            data_scanner_read: View Data Scanner configurations.
+            data_scanner_write: Edit Data Scanner configurations.
+            embeddable_graphs_share: Generate public links to share embeddable graphs externally.
+            events_read: Read Events data.
+            hosts_read: List hosts and their attributes.
+            incident_notification_settings_write: Configure Incidents Notification settings.
+            incident_read: View incidents in Datadog.
+            incident_settings_write: Configure Incident Settings.
+            incident_write: Create, view, and manage incidents in Datadog.
+            metrics_read: View custom metrics.
+            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute
+              and unmute monitors. The ability to write monitors is not required to set downtimes.
+            monitors_read: View monitors.
+            monitors_write: Edit, delete, and resolve individual monitors.
+            org_management: Edit org configurations, including authentication and certain security preferences
+              such as configuring SAML, renaming an org, configuring allowed login methods, creating child
+              orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
+              Remote Configuration for the entire organization.
+            security_comments_read: Read comments of vulnerabilities.
+            security_monitoring_filters_read: Read Security Filters.
+            security_monitoring_filters_write: Create, edit, and delete Security Filters.
+            security_monitoring_findings_read: View a list of findings that include both misconfigurations
+              and identity risks.
+            security_monitoring_rules_read: Read Detection Rules.
+            security_monitoring_rules_write: Create and edit Detection Rules.
+            security_monitoring_signals_read: View Security Signals.
+            security_monitoring_suppressions_read: Read Rule Suppressions.
+            security_monitoring_suppressions_write: Write Rule Suppressions.
+            security_pipelines_read: View Security Pipelines.
+            security_pipelines_write: Create, edit, and delete CSM Security Pipelines.
+            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission
+              can make status corrections, even if they do not have permission to edit those SLOs.
+            slos_read: View SLOs and status corrections.
+            slos_write: Create, edit, and delete SLOs.
+            synthetics_global_variable_read: View, search, and use Synthetics global variables.
+            synthetics_global_variable_write: Create, edit, and delete global variables for Synthetics.
+            synthetics_private_location_read: View, search, and use Synthetics private locations.
+            synthetics_private_location_write: Create and delete private locations in addition to having
+              access to the associated installation guidelines.
+            synthetics_read: List and view configured Synthetic tests and test results.
+            synthetics_write: Create, edit, and delete Synthetic tests.
+            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
+              Team membership across all Teams, use the User Access Manage permission.
+            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and
+              which Users are on each Team.
+            test_optimization_read: View Test Optimization.
+            timeseries_query: Query Timeseries data.
+            usage_read: View your organization's usage and usage attribution.
+            user_access_invite: Invite other users to your organization.
+            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure
+              logs restriction queries.
+            user_access_read: View users and their roles and settings.
+            workflows_read: View workflows.
+            workflows_run: Run workflows.
+            workflows_write: Create, edit, and delete workflows.
+          tokenUrl: /oauth2/v1/token
+      type: oauth2
+    apiKeyAuth:
+      description: Your Datadog API Key.
+      in: header
+      name: DD-API-KEY
+      type: apiKey
+      x-env-name: DD_API_KEY
+    apiKeyAuthQuery:
+      description: Deprecated API Key as query argument.
+      in: query
+      name: api_key
+      type: apiKey
+      x-auth-id-alias: apiKeyAuth
+      x-env-name: DD_API_KEY
+    appKeyAuth:
+      description: Your Datadog APP Key.
+      in: header
+      name: DD-APPLICATION-KEY
+      type: apiKey
+      x-env-name: DD_APP_KEY
+    appKeyAuthQuery:
+      description: Deprecated APP Key as query argument.
+      in: query
+      name: application_key
+      type: apiKey
+      x-auth-id-alias: appKeyAuth
+      x-env-name: DD_APP_KEY
+    bearerAuth:
+      scheme: bearer
+      type: http
+      x-env-name: DD_BEARER_TOKEN

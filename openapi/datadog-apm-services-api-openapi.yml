@@ -1,75 +1,313 @@
-openapi: 3.2.0
+openapi: 3.0.0
 info:
   title: Datadog APM Services API
-  description: Datadog APM REST API for traces, services, service definitions, and SLOs. Provides endpoints for searching and retrieving distributed traces, managing service catalog entries, and configuring service level objectives.
-  version: 1.0.0
+  description: The APM operations of the Datadog API, extracted verbatim from the OpenAPI definition Datadog
+    publishes for its own API clients.
+  version: '1.0'
   contact:
-    name: Datadog
-    url: https://www.datadoghq.com
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
+    email: support@datadoghq.com
+    name: Datadog Support
+    url: https://www.datadoghq.com/support/
+  x-source: https://raw.githubusercontent.com/DataDog/datadog-api-client-go/master/.generator/schemas/v2/openapi.yaml
+  x-extracted: '2026-09-05'
+  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published
+    OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by
+    API Evangelist.
 servers:
-- url: https://api.datadoghq.com
-  description: Datadog US1 site
-- url: https://api.datadoghq.eu
-  description: Datadog EU site
-- url: https://api.us3.datadoghq.com
-  description: Datadog US3 site
-- url: https://api.us5.datadoghq.com
-  description: Datadog US5 site
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: The regional site for Datadog customers.
+      enum:
+      - datadoghq.com
+      - us3.datadoghq.com
+      - us5.datadoghq.com
+      - ap1.datadoghq.com
+      - ap2.datadoghq.com
+      - uk1.datadoghq.com
+      - datadoghq.eu
+      - ddog-gov.com
+      - us2.ddog-gov.com
+      - uk1.datadoghq.com
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+- url: '{protocol}://{name}'
+  variables:
+    name:
+      default: api.datadoghq.com
+      description: Full site DNS name.
+    protocol:
+      default: https
+      description: The protocol for accessing the API.
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: Any Datadog deployment.
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
 security:
 - apiKeyAuth: []
   appKeyAuth: []
 tags:
-- name: Services
+- description: Observe, troubleshoot, and improve cloud-scale applications with all telemetry in context
+  name: APM
 paths:
-  /api/v1/service_dependencies:
+  /api/v2/apm/services:
     get:
-      operationId: getServiceDependencies
-      summary: Get service dependencies
-      description: Get the list of service dependencies for your organization.
-      tags:
-      - Services
+      operationId: GetServiceList
       parameters:
-      - name: env
+      - description: Filter services by environment. Can be set to `*` to return all services across all
+          environments.
         in: query
+        name: filter[env]
         required: true
-        description: The environment to query
         schema:
           type: string
-      - name: start
-        in: query
-        description: Start time in epoch seconds
-        schema:
-          type: integer
-      - name: end
-        in: query
-        description: End time in epoch seconds
-        schema:
-          type: integer
       responses:
         '200':
-          description: Service dependency map
           content:
             application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        metadata:
+                        - isTraced: true
+                          isUsm: false
+                        services:
+                        - test-service
+                      id: abc-123
+                      type: services_list
               schema:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    type: string
-        '400':
-          description: Bad request
-        '403':
-          description: Forbidden
+                $ref: '#/components/schemas/ServiceList'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - apm_read
+      summary: Get service list
+      tags:
+      - APM
 components:
+  schemas:
+    ServiceList:
+      description: The response body for the service list endpoint.
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceListData'
+      type: object
+    ServiceListData:
+      description: A single data item in the service list response.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/ServiceListDataAttributes'
+        id:
+          description: The unique identifier of the service.
+          type: string
+        type:
+          $ref: '#/components/schemas/ServiceListDataType'
+      required:
+      - type
+      type: object
+    ServiceListDataAttributes:
+      description: Attributes of a service list entry, containing metadata and a list of service names.
+      properties:
+        metadata:
+          description: A list of metadata items associated with the service.
+          items:
+            $ref: '#/components/schemas/ServiceListDataAttributesMetadataItems'
+          type: array
+        services:
+          description: A list of service names.
+          items:
+            description: A single service name.
+            type: string
+          type: array
+      type: object
+    ServiceListDataType:
+      default: services_list
+      description: Services list resource type.
+      enum:
+      - services_list
+      example: services_list
+      type: string
+      x-enum-varnames:
+      - SERVICES_LIST
+    APIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
+          items:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    ServiceListDataAttributesMetadataItems:
+      description: An object containing metadata flags for a service, indicating whether it is traced
+        by APM or monitored through Universal Service Monitoring.
+      properties:
+        isTraced:
+          description: Indicates whether the service is traced by APM.
+          type: boolean
+        isUsm:
+          description: Indicates whether the service uses Universal Service Monitoring.
+          type: boolean
+      type: object
+  responses:
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
   securitySchemes:
+    AuthZ:
+      description: This API uses OAuth 2 with the implicit grant flow.
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/v1/authorize
+          scopes:
+            ai_gateway_config_read: View AI Gateway configuration.
+            ai_gateway_config_write: Create, update, and delete AI Gateway configuration.
+            ai_gateway_usage: Use AI Gateway and view configuration applicable to the authenticated user.
+            apm_api_catalog_read: View API catalog and API definitions.
+            apm_api_catalog_write: Add, modify, and delete API catalog definitions.
+            apm_read: Read and query APM and Trace Analytics.
+            apm_service_catalog_read: View service catalog and service definitions.
+            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those
+              definitions are maintained by Datadog.
+            appsec_vm_read: View infrastructure, application code, and library vulnerability findings.
+            aws_configurations_manage: Manage AWS integration account configurations and related integration
+              settings.
+            billing_edit: Edit your organization's billing information.
+            billing_read: View your organization's billing information.
+            bits_investigations_read: View Bits AI investigations.
+            bits_investigations_write: Create and manage Bits AI investigations.
+            cases_read: View Cases.
+            cases_shared_settings_write: Update shared case management settings.
+            cases_write: Create and update cases.
+            ci_visibility_pipelines_write: Create CI Visibility pipeline spans using the API.
+            ci_visibility_read: View CI Visibility.
+            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards
+              and notebooks. For more details, see the Cloud Cost Management docs.
+            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For
+              more details, see the Cloud Cost Management docs.
+            code_analysis_read: View Code Analysis.
+            code_coverage_read: View Code Coverage.
+            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization
+              (PGO).
+            coterm_read: Read terminal recordings.
+            coterm_write: Write terminal recordings.
+            create_webhooks: Create webhooks integrations.
+            dashboards_embed_share: Create, modify, and delete shared dashboards with share type 'embed'.
+            dashboards_invite_share: Create, modify, and delete shared dashboards with share type 'invite'.
+            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable
+              graphs externally.
+            dashboards_read: View dashboards.
+            dashboards_write: Create and change dashboards.
+            data_scanner_read: View Data Scanner configurations.
+            data_scanner_write: Edit Data Scanner configurations.
+            embeddable_graphs_share: Generate public links to share embeddable graphs externally.
+            error_tracking_read: Read Error Tracking data.
+            error_tracking_write: Edit Error Tracking issues.
+            event_correlation_config_read: View event correlation configurations.
+            event_correlation_config_write: Create and update event correlation configurations.
+            events_read: Read Events data.
+            hosts_read: List hosts and their attributes.
+            incident_notification_settings_read: View Incident Notification Rule Settings.
+            incident_notification_settings_write: Configure Incidents Notification Rule settings.
+            incident_read: View incidents in Datadog.
+            incident_settings_read: View Incident Settings.
+            incident_settings_write: Configure Incident Settings.
+            incident_write: Create, view, and manage incidents in Datadog.
+            integrations_read: View configured integrations and their settings.
+            logs_modify_indexes: Modify log indexes, filters, exclusion filters, and configurations.
+            logs_read_data: Read log data.
+            logs_read_index_data: Read indexed log data.
+            manage_integrations: Install, uninstall, and configure integrations.
+            metrics_read: View custom metrics.
+            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute
+              and unmute monitors. The ability to write monitors is not required to set downtimes.
+            monitors_read: View monitors.
+            monitors_write: Edit, delete, and resolve individual monitors.
+            network_connections_read: Read cloud network connections.
+            org_connections_read: Read cross organization connections.
+            org_connections_write: Create, edit, and delete cross organization connections.
+            org_management: Edit org configurations, including authentication and certain security preferences
+              such as configuring SAML, renaming an org, configuring allowed login methods, creating child
+              orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
+              Remote Configuration for the entire organization.
+            security_comments_read: Read comments of vulnerabilities.
+            security_monitoring_critical_assets_read: Read Critical Assets.
+            security_monitoring_critical_assets_write: Write Critical Assets.
+            security_monitoring_filters_read: Read Security Filters.
+            security_monitoring_filters_write: Create, edit, and delete Security Filters.
+            security_monitoring_findings_read: View a list of findings that include both misconfigurations
+              and identity risks.
+            security_monitoring_rules_read: Read Detection Rules.
+            security_monitoring_rules_write: Create and edit Detection Rules.
+            security_monitoring_signals_read: View Security Signals.
+            security_monitoring_suppressions_read: Read Rule Suppressions.
+            security_monitoring_suppressions_write: Write Rule Suppressions.
+            security_pipelines_read: View Security Pipelines.
+            security_pipelines_write: Create, edit, and delete CSM Security Pipelines.
+            siem_entities_read: View Cloud SIEM entities.
+            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission
+              can make status corrections, even if they do not have permission to edit those SLOs.
+            slos_read: View SLOs and status corrections.
+            slos_write: Create, edit, and delete SLOs.
+            synthetics_global_variable_read: View, search, and use Synthetics global variables.
+            synthetics_global_variable_write: Create, edit, and delete global variables for Synthetics.
+            synthetics_private_location_read: View, search, and use Synthetics private locations.
+            synthetics_private_location_write: Create and delete private locations in addition to having
+              access to the associated installation guidelines.
+            synthetics_read: List and view configured Synthetic tests and test results.
+            synthetics_write: Create, edit, and delete Synthetic tests.
+            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
+              Team membership across all Teams, use the User Access Manage permission.
+            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and
+              which Users are on each Team.
+            test_optimization_read: View Test Optimization.
+            test_optimization_settings_write: Update service settings in Test Optimization.
+            test_optimization_write: Update flaky tests from Flaky Tests Management of Test Optimization.
+            timeseries_query: Query Timeseries data.
+            usage_read: View your organization's usage and usage attribution.
+            user_access_invite: Invite other users to your organization.
+            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure
+              logs restriction queries.
+            user_access_read: View users and their roles and settings.
+            workflows_read: View workflows.
+            workflows_run: Run workflows.
+            workflows_write: Create, edit, and delete workflows.
+          tokenUrl: /oauth2/v1/token
+      type: oauth2
     apiKeyAuth:
-      type: apiKey
+      description: Your Datadog API Key.
       in: header
       name: DD-API-KEY
-    appKeyAuth:
       type: apiKey
+      x-env-name: DD_API_KEY
+    appKeyAuth:
+      description: Your Datadog APP Key.
       in: header
       name: DD-APPLICATION-KEY
+      type: apiKey
+      x-env-name: DD_APP_KEY
+    bearerAuth:
+      scheme: bearer
+      type: http
+      x-env-name: DD_BEARER_TOKEN

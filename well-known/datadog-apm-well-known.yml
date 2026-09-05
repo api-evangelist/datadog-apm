@@ -1,0 +1,135 @@
+generated: '2026-09-05'
+method: probed
+source: live GET of the named /.well-known/ paths on every host this record knows
+provider: Datadog APM
+providerId: datadog-apm
+note: >-
+  Datadog serves no /.well-known documents from its marketing, docs, app or API hosts — every named
+  path 404s there. The Datadog MCP Server host (mcp.datadoghq.com) is the one host that publishes
+  real documents: an RFC 9116 security.txt and the RFC 8414 / RFC 9728 pair that gate the remote MCP
+  server. The authorization server named in that metadata is app.datadoghq.com, a third host, which
+  itself serves no discovery document.
+hosts:
+- host: www.datadoghq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: datadoghq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: api.datadoghq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: docs.datadoghq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: app.datadoghq.com
+  note: >-
+    Named as the authorization_endpoint / token_endpoint / registration_endpoint host by
+    mcp.datadoghq.com's RFC 8414 metadata, so it was probed as a third host; it publishes no
+    discovery document of its own.
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: mcp.datadoghq.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain
+    file: datadog-apm-security.txt
+    note: RFC 9116 security.txt — security@ and bugbounty@ contacts, private HackerOne program.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: datadog-apm-oauth-authorization-server.json
+    note: >-
+      RFC 8414 authorization server metadata for the remote MCP server. OAuth 2.1, PKCE required
+      (S256), dynamic client registration, single scope mcp_all.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: datadog-apm-oauth-protected-resource.json
+    note: RFC 9728 protected resource metadata; bearer token in the Authorization header.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404

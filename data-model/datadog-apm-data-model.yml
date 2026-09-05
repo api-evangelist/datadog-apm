@@ -1,0 +1,170 @@
+generated: '2026-09-05'
+method: derived
+source: >-
+  openapi/ ($ref graph, resource `type` discriminators and id-reference fields), enriched from
+  https://docs.datadoghq.com/tracing/ and https://docs.datadoghq.com/service_catalog/
+provider: Datadog APM
+providerId: datadog-apm
+description: >-
+  The entity graph of Datadog's APM REST surface. The v2 half is JSON:API-shaped — every resource is
+  {type, id, attributes} and the `type` discriminator is a fixed enum, which makes the resource
+  boundaries unusually legible. The v1 SLO half uses flat objects with no type discriminator.
+identifier_conventions:
+- entity: Span
+  id_field: id
+  form: opaque base64-ish string (example AAAAAWgN8Xwgr1vKDQAAAABBV2dOOFh3ZzZobm1mWXJFYTR0OA)
+  note: Not the 64-bit trace/span id from the wire protocol; the API id is a storage identifier.
+- entity: SLO
+  id_field: slo_id
+  form: 32-char hex string, path parameter
+- entity: SLOCorrection
+  id_field: slo_correction_id
+  form: opaque string
+- entity: RetentionFilter
+  id_field: filter_id
+  form: opaque string
+- entity: SpansMetric
+  id_field: metric_id / SpansMetricID
+  form: caller-chosen metric name, so creates fail loudly on collision rather than duplicating
+- entity: ServiceDefinition
+  id_field: service_name
+  form: the service name itself — the natural key, which is why the write is an upsert
+entities:
+- name: Span
+  spec: openapi/datadog-apm-spans-api-openapi.yml
+  type_discriminator: spans
+  schema: Span / SpansAttributes
+  description: A single unit of work in a distributed trace. The core APM read entity.
+  key_attributes:
+  - service
+  - env
+  - trace_id
+  - span_id
+  - parent_id
+  - resource_name
+  - start_timestamp
+  - end_timestamp
+  - type
+  - host
+  - retained_by
+  - ingestion_reason
+  - custom (arbitrary span tags)
+  attributes_verified: >-
+    Property names read directly from components.schemas.SpansAttributes on 2026-09-05. Note there is
+    no `duration` field — duration is derived from start_timestamp and end_timestamp.
+- name: SpansAggregateBucket
+  spec: openapi/datadog-apm-spans-api-openapi.yml
+  type_discriminator: aggregate_bucket
+  description: >-
+    A computed rollup of spans (single number, single string, or timeseries) produced by
+    AggregateSpans. Not stored — it exists only in a response.
+- name: SpansMetric
+  spec: openapi/datadog-apm-spans-metrics-api-openapi.yml
+  type_discriminator: spans_metrics
+  description: >-
+    A metric DEFINITION generated from spans — a compute (count / distribution over a span attribute),
+    a filter query, and group-by tags. Configuration, not data.
+- name: RetentionFilter
+  spec: openapi/datadog-apm-retention-filters-api-openapi.yml
+  type_discriminator: apm_retention_filter
+  description: >-
+    A rule deciding which spans Datadog indexes — a filter query, `rate` and `trace_rate` sampling
+    rates, an `enabled` flag, an `editable` flag, and an `execution_order` position in an ordered list.
+  ordering: >-
+    Retention filters are ORDERED and the order is itself a resource — ReorderApmRetentionFilters
+    (PUT .../retention-filters-execution-order) rewrites the whole list.
+- name: ServiceDefinition
+  spec: openapi/datadog-apm-service-definitions-api-openapi.yml
+  type_discriminator: service-definition
+  description: >-
+    A declarative service catalog document (service.datadog.yaml) — ownership, contacts, links,
+    integrations, tiers.
+  schema_versions:
+  - v1
+  - v2
+  - v2.1
+  - v2.2
+  note: >-
+    FOUR coexisting schema versions of the same document are modelled in the spec, selected by a
+    schema_version query parameter. An agent reading a definition must branch on the version it asked
+    for; this is the most version-fragmented entity in the surface.
+- name: ServiceListData
+  spec: openapi/datadog-apm-services-api-openapi.yml
+  type_discriminator: services
+  description: The live list of APM services observed in an environment. Requires filter[env].
+- name: SLO (ServiceLevelObjective)
+  spec: openapi/datadog-apm-slos-api-openapi.yml
+  description: >-
+    A service level objective — a type (metric or monitor), an SLI query or monitor id list, and
+    thresholds per timeframe (7d/30d/90d/custom).
+  key_attributes:
+  - id
+  - name
+  - type
+  - thresholds[]
+  - query
+  - monitor_ids[]
+  - tags
+  - creator
+- name: SLOCorrection
+  spec: openapi/datadog-apm-slo-corrections-api-openapi.yml
+  type_discriminator: correction
+  description: >-
+    A time-boxed exclusion applied to an SLO's error budget (scheduled maintenance, deployment,
+    outside business hours), optionally recurring via an rrule.
+- name: SLOHistory
+  spec: openapi/datadog-apm-slos-api-openapi.yml
+  description: Computed SLI history for one SLO over a time range; read-only, not addressable.
+relationships:
+- from: Span
+  to: ServiceListData
+  kind: belongs_to
+  via: service (tag value, not a foreign key)
+  note: >-
+    The join between spans and the service list is by TAG STRING, not by id. There is no referential
+    integrity — a service can appear in spans and never in the service catalog.
+- from: SpansMetric
+  to: Span
+  kind: derived_from
+  via: filter.query (span search query)
+- from: RetentionFilter
+  to: Span
+  kind: selects
+  via: filter.query (span search query)
+- from: ServiceDefinition
+  to: ServiceListData
+  kind: describes
+  via: service name (natural key)
+  note: >-
+    A definition may exist for a service that emits no spans, and a service may emit spans with no
+    definition. The two are joined by name only.
+- from: SLO
+  to: SLOCorrection
+  kind: has_many
+  via: slo_id
+  operation: GetSLOCorrections
+- from: SLOCorrection
+  to: SLO
+  kind: belongs_to
+  via: attributes.slo_id
+- from: SLO
+  to: Monitor
+  kind: has_many
+  via: monitor_ids[]
+  note: >-
+    Monitor is OUTSIDE this repo's surface — a monitor-type SLO holds ids of resources managed by the
+    Datadog Monitors API. This is the main cross-product foreign key in the APM data model, and it is
+    also what makes SLO deletes conflict (409).
+- from: SLO
+  to: SLOHistory
+  kind: has_one
+  via: slo_id
+  operation: GetSLOHistory
+shared_types:
+  note: >-
+    Creator, Pagination and ResponseMetaAttributes are shared verbatim across the SLO and SLO
+    correction specs, which is the strongest signal that the two are one v1 subsystem.
+render: null
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

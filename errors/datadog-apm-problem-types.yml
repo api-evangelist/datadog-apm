@@ -1,0 +1,99 @@
+generated: '2026-09-05'
+method: derived
+source: >-
+  openapi/ 4xx responses (extracted verbatim from Datadog's published v1/v2 OpenAPI), enriched from
+  https://docs.datadoghq.com/api/latest/ and https://docs.datadoghq.com/api/latest/rate-limits/
+provider: Datadog APM
+providerId: datadog-apm
+format: vendor-json
+rfc9457: false
+note: >-
+  Datadog does not use RFC 9457 application/problem+json. Every 4xx in the APM surface returns
+  application/json with an `errors` array, but the array carries two DIFFERENT shapes depending on
+  which API version answers, and the OpenAPI declares both. An agent cannot parse Datadog errors with
+  one branch.
+envelopes:
+- name: APIErrorResponse
+  shape: '{"errors": ["Bad Request"]}'
+  items: plain strings
+  used_by: >-
+    API v1 (SLOs, SLO corrections) and the v2 service-definition and retention-filter surfaces.
+  required:
+  - errors
+  source: openapi/datadog-apm-slos-api-openapi.yml#/components/schemas/APIErrorResponse
+- name: JSONAPIErrorResponse
+  shape: '{"errors": [{"status": "400", "title": "Bad Request", "detail": "...", "source": {...}, "meta": {...}}]}'
+  items: JSON:API error objects (status, title, detail, source, meta)
+  used_by: API v2 spans surface (search, GET list, analytics aggregate).
+  required:
+  - errors
+  source: openapi/datadog-apm-spans-api-openapi.yml#/components/schemas/JSONAPIErrorResponse
+problem_types:
+- status: 400
+  title: Bad Request
+  envelope: both
+  operations_declaring_it: 22
+  meaning: Malformed request body, invalid query syntax, or an out-of-range time window.
+  remediation: Validate the request against the operation schema; APM query strings must be valid Datadog search syntax.
+- status: 403
+  title: 'Forbidden: Access denied'
+  envelope: both
+  operations_declaring_it: 33
+  meaning: >-
+    The DD-API-KEY / DD-APPLICATION-KEY pair is missing, invalid, or the application key lacks the
+    permission the operation requires (for example apm_read or apm_service_catalog_write).
+  remediation: >-
+    Check both headers are sent, that the application key belongs to a role holding the required
+    permission, and that the key is scoped to the same Datadog site as the host being called.
+- status: 404
+  title: Not Found
+  envelope: APIErrorResponse
+  operations_declaring_it: 17
+  meaning: >-
+    The addressed resource does not exist in this organization — an unknown slo_id, service_name,
+    filter_id or metric_id. Datadog also returns 404 when the resource exists in a different site.
+  remediation: Confirm the identifier and that the request is going to the org's own Datadog site host.
+- status: 409
+  title: Conflict
+  envelope: SLODeleteResponse / CheckCanDeleteSLOResponse
+  operations_declaring_it: 6
+  meaning: >-
+    SLO-specific. Deleting an SLO that is referenced by a dashboard or monitor returns 409 with a body
+    naming the blocking references rather than the generic error envelope.
+  remediation: >-
+    Call CheckCanDeleteSLO first; it returns the same conflict payload without deleting anything, and
+    is the closest thing this API has to a dry run.
+- status: 422
+  title: Unprocessable Entity
+  envelope: JSONAPIErrorResponse
+  operations_declaring_it: 2
+  meaning: Spans surface only — the request parsed but the span query or aggregation is not executable.
+  remediation: Narrow the time range or simplify the aggregation; check `source.pointer` in the error item.
+- status: 429
+  title: Too Many Requests
+  envelope: both
+  operations_declaring_it: 34
+  meaning: >-
+    Rate limit exceeded. Declared on every operation in the APM surface — it is the one error an
+    agent must always handle.
+  remediation: >-
+    Read X-RateLimit-Reset (seconds until reset) and X-RateLimit-Period from the response and back off;
+    X-RateLimit-Name identifies the bucket to quote when asking Datadog support for an increase.
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Period
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - X-RateLimit-Name
+  see_also: rate-limits/datadog-apm-rate-limits.yml
+gaps:
+- >-
+  No machine-readable error CODE is returned in either envelope — only an HTTP status and a
+  human-readable string. There is no stable identifier an agent can branch on, and no documented
+  error-code registry for the REST API.
+- >-
+  Datadog publishes no error reference page for the HTTP API equivalent to its integration
+  troubleshooting docs; the OpenAPI response descriptions are the most specific published source.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

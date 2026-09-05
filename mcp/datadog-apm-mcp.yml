@@ -1,0 +1,169 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://docs.datadoghq.com/bits_ai/mcp_server/ (fetched as .md),
+  https://docs.datadoghq.com/mcp_server/tools.md, https://docs.datadoghq.com/mcp_server/setup.md,
+  https://github.com/datadog-labs/opencode-plugin (first-party endpoint literal), and live probes of
+  mcp.datadoghq.com
+provider: Datadog APM
+providerId: datadog-apm
+name: Datadog MCP Server
+status: published
+description: >-
+  Datadog operates a first-party remote MCP server that bridges AI agents to Datadog observability
+  data. It is not APM-specific — it exposes most Datadog products — but it ships a dedicated `apm`
+  toolset for span search, trace queries, Watchdog stories, latency-bottleneck analysis and APM
+  recommendations, which is the agent-facing counterpart of the REST surface captured in openapi/.
+deployment:
+  mode: remote
+  endpoint: https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
+  auth: oauth
+  verified: probed
+  note: >-
+    Endpoint taken verbatim from Datadog's own opencode-plugin README, then probed: it answers
+    HTTP 401 {"errors":["Unauthorized"]} to an anonymous tools/list, and mcp.datadoghq.com publishes
+    RFC 8414 + RFC 9728 metadata for it. The docs pages themselves render the endpoint from a
+    client-side site selector, so the literal is sourced from the first-party repo rather than the
+    rendered page. No stdio package is published for this server; the vendor plugins (Claude Code,
+    Copilot, OpenCode, Cursor) are wrappers that point a client at this same remote URL.
+transport: streamable-http
+regional_endpoints:
+  note: >-
+    Datadog is a multi-site product and the docs present a per-site endpoint through a JavaScript
+    site selector. Only the US1 endpoint above was observed directly; the other site endpoints were
+    not fetched and are deliberately not listed rather than pattern-guessed.
+authorization:
+  model: oauth2
+  spec_version: '2.1'
+  issuer: https://mcp.datadoghq.com/v1/mcp
+  authorization_endpoint: https://app.datadoghq.com/oauth2/v1/authorize
+  token_endpoint: https://app.datadoghq.com/api/v2/oauth2/token
+  registration_endpoint: https://app.datadoghq.com/api/v2/oauth2/register
+  pkce_required: true
+  code_challenge_methods:
+  - S256
+  scopes:
+  - mcp_all
+  bearer_methods:
+  - header
+  source: https://mcp.datadoghq.com/.well-known/oauth-authorization-server
+  evidence: well-known/datadog-apm-oauth-authorization-server.json
+probe:
+  url: https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
+  method: POST
+  body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  http_status: 401
+  response: '{"errors":["Unauthorized"]}'
+  fetched: '2026-09-05'
+  conclusion: >-
+    The live tool schemas are auth-gated. The tool list below is therefore transcribed from Datadog's
+    published tools reference (names, toolset, required permission, description) — inputSchema for
+    each tool requires authenticated introspection and is deliberately absent rather than invented.
+authorization_model_note: >-
+  The MCP Server forwards the authenticated user's own credentials to Datadog APIs, so existing RBAC,
+  Data Access Control and log restriction queries apply unchanged; write tools check the matching
+  permission (for example monitors_write) on each call.
+rate_limits:
+  burst: 50 requests / 10 seconds
+  monthly: 100000 tool calls
+  source: https://docs.datadoghq.com/bits_ai/mcp_server/
+  note: Datadog labels these fair-use limits and says they are subject to change.
+toolsets:
+  selector: '?toolsets=<name>[,<name>] query parameter (or the X-Datadog-MCP-Toolsets header for Codex)'
+  all: toolsets=all
+  omit: '?omit_tools=<name>'
+  apm_toolset_status: Preview — access requires signing up at https://www.datadoghq.com/product-preview/apm-mcp-toolset/
+tools:
+- name: apm_search_spans
+  toolset: apm
+  permission: APM Read
+  description: Searches for spans using APM query syntax, with support for pagination and tag filtering.
+- name: apm_query_trace
+  toolset: apm
+  permission: APM Read
+  description: >-
+    Queries a trace's span data to filter, aggregate, or rank spans, such as finding the highest
+    self-time spans or tracing an error to its origin service.
+- name: apm_discover_span_tags
+  toolset: apm
+  permission: APM Read
+  description: Discovers available tag keys on spans within a time range.
+- name: apm_get_primary_tag_keys
+  toolset: apm
+  permission: APM Read
+  description: Retrieves the primary tag keys configured for the organization.
+- name: apm_search_watchdog_stories
+  toolset: apm
+  permission: APM Read
+  description: >-
+    Searches for Watchdog anomaly detection stories for a service within a time range, providing
+    AI-powered insights into latency, error rate, and traffic anomalies.
+- name: apm_get_watchdog_story
+  toolset: apm
+  permission: APM Read
+  description: Retrieves detailed information about a specific Watchdog story by its ID.
+- name: apm_latency_bottleneck_summary
+  toolset: apm
+  permission: APM Read
+  description: >-
+    Analyzes latency bottlenecks across traces in an anomaly period using self-time calculations,
+    detects cascading call patterns, and surfaces root causes of latency spikes.
+- name: get_change_stories
+  toolset: apm
+  description: >-
+    Retrieves change stories from the Change Tracking API for APM services — deployments, feature
+    flags, configuration updates and infrastructure events in a time range.
+- name: semantic_search_change_stories
+  toolset: apm
+  description: Searches change stories using natural language and AI-powered semantic search.
+- name: apm_search_recommendations
+  toolset: apm
+  permission: APM Read
+  description: Searches for APM recommendations from Datadog.
+- name: apm_get_recommendation
+  toolset: apm
+  permission: APM Read
+  description: Retrieves full details of a specific APM recommendation by ID.
+- name: get_datadog_trace
+  toolset: core
+  description: Core-toolset trace retrieval, available without the apm preview toolset.
+- name: search_datadog_spans
+  toolset: core
+  description: Core-toolset span search.
+- name: search_datadog_services
+  toolset: core
+  description: Core-toolset service search.
+- name: search_datadog_service_dependencies
+  toolset: core
+  description: Core-toolset service dependency search.
+- name: search_datadog_slos
+  toolset: alerting
+  permission: SLOs Read
+  description: Searches Datadog SLOs by name, tags, or type, with query syntax for service/team filtering.
+tools_note: >-
+  Only the APM-relevant tools are transcribed here. Datadog's published reference lists well over a
+  hundred tools across ~20 toolsets (logs, metrics, dashboards, cases, DDSQL, database monitoring,
+  error tracking, security, synthetics and more); the full list is at
+  https://docs.datadoghq.com/mcp_server/tools.md.
+observability:
+  metrics:
+  - datadog.mcp.session.starts
+  - datadog.mcp.tool.usage
+  audit_trail: All tool calls are recorded in Datadog Audit Trail under the event name "MCP Server".
+compliance:
+  hipaa_eligible: true
+  govcloud_supported: false
+docs:
+  overview: https://docs.datadoghq.com/bits_ai/mcp_server/
+  setup: https://docs.datadoghq.com/mcp_server/setup/
+  tools: https://docs.datadoghq.com/mcp_server/tools/
+related_servers:
+- name: Datadog Code Security MCP Server
+  mode: local-stdio
+  scope: >-
+    A separate, narrower local-only server for SAST, SCA, IaC, secrets and SBOM scanning against
+    source code. Not the APM surface; recorded so the two are not conflated.
+  docs: https://docs.datadoghq.com/security/code_security/dev_tool_int/mcp_server/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

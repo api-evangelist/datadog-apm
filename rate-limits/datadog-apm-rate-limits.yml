@@ -3,90 +3,110 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
 provider: Datadog APM
 providerId: datadog-apm
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://docs.datadoghq.com/api/latest/rate-limits/ and
+  https://docs.datadoghq.com/bits_ai/mcp_server/ (MCP fair-use limits)
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+modified: '2026-09-05'
+supersedes: >-
+  A 2026-05-04 bulk-sweep scaffold that invented per-tier numeric limits (10/min free, 100/min pro,
+  1000/min enterprise, monthly request quotas). Datadog publishes none of those. Every value below is
+  read from Datadog's own documentation, and where Datadog declines to publish a number that is
+  recorded as an explicit gap rather than filled in.
 tags:
-  - APM
-  - Distributed Tracing
-  - Microservices
-  - Observability
-  - Performance Monitoring
-  - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the Datadog APM API surface. Captures per-tier
-  quotas, burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to
-  be replaced with published provider limits.
+- APM
+- Rate Limiting
+- Throttling
+description: >-
+  Datadog rate-limits per endpoint bucket, not per plan tier, and it declines to publish the numeric
+  limits — the documentation says explicitly that the list of limits is not comprehensive and that the
+  authoritative value for any endpoint arrives in the response headers. For an agent this is actually
+  workable: the runtime signal is complete and self-describing even though the static number is not.
 headers:
   limit: X-RateLimit-Limit
+  period: X-RateLimit-Period
   remaining: X-RateLimit-Remaining
   reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+  name: X-RateLimit-Name
+header_semantics:
+- header: X-RateLimit-Limit
+  meaning: Number of requests allowed in a time period.
+- header: X-RateLimit-Period
+  meaning: Length of time in seconds for resets (calendar aligned).
+- header: X-RateLimit-Remaining
+  meaning: Number of allowed requests left in the current time period.
+- header: X-RateLimit-Reset
+  meaning: Time in seconds until next reset.
+- header: X-RateLimit-Name
+  meaning: >-
+    Name of the rate limit — the bucket identifier to quote when asking Datadog to raise it. No other
+    major observability API publishes this, and it is the field that makes an increase request
+    actionable.
+retry_after_header: false
 responseCodes:
   throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
+limit_count: 3
 limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - Datadog APM API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - Datadog APM API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - Datadog APM API
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - Datadog APM API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - Datadog APM API
+- name: Event submission
+  scope: organization
+  metric: events_per_minute
+  limit: 250000
+  timeFrame: minute
+  applies:
+  - Datadog Events API
+  source: https://docs.datadoghq.com/api/latest/rate-limits/
+- name: Datadog MCP Server tool call burst
+  scope: mcp-session
+  metric: requests_per_10_seconds
+  limit: 50
+  timeFrame: 10 seconds
+  applies:
+  - https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
+  source: https://docs.datadoghq.com/bits_ai/mcp_server/
+  note: Datadog labels this fair use and subject to change.
+- name: Datadog MCP Server monthly tool calls
+  scope: organization
+  metric: tool_calls_per_month
+  limit: 100000
+  timeFrame: month
+  applies:
+  - https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
+  source: https://docs.datadoghq.com/bits_ai/mcp_server/
+not_rate_limited:
+- surface: Metric / data point submission
+  note: >-
+    Not rate limited. Constrained instead by the custom metrics volume in the commercial agreement —
+    a billing limit, not a throttle.
+- surface: Log submission
+  note: Not rate limited.
+undocumented:
+  per_endpoint_limits: >-
+    The numeric limit for the APM endpoints in openapi/ (spans search, span analytics, SLO reads and
+    writes, retention filters) is NOT published. Datadog states limits vary per endpoint and are
+    returned in the headers. Recorded as an honest gap — an agent cannot pre-compute a safe call rate
+    for these operations from any published document.
+  declared_in_spec: >-
+    Confirming the same thing from the other side: 429 is declared on all 34 operations in openapi/,
+    and none of them declares a limit value.
 policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+- name: Backoff
+  description: >-
+    Datadog's documented remediation is to wait the X-RateLimit-Period, or to call at a frequency
+    slightly longer than X-RateLimit-Limit / X-RateLimit-Period. There is no Retry-After header on
+    this API, so X-RateLimit-Reset is the value to sleep on.
+- name: Increase on request
+  description: >-
+    Limits can be raised from the defaults by contacting Datadog support; quote the X-RateLimit-Name
+    value of the bucket being hit.
+observability:
+  self_service: true
+  description: >-
+    Datadog exposes API rate limit consumption as usage metrics (allowed and blocked requests, by
+    endpoint dimension), so an organization can audit its own limit headroom in Datadog itself. It
+    excludes metric, log and event submission endpoints.
+  dashboard: https://app.datadoghq.com/dashboard/lists?q=Datadog%20api%20rate%20limit%20usage
 maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- FN: Kin Lane
+  email: kin@apievangelist.com

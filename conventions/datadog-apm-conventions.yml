@@ -1,0 +1,204 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://docs.datadoghq.com/api/latest/, https://docs.datadoghq.com/api/latest/using-the-api/,
+  https://docs.datadoghq.com/api/latest/rate-limits/,
+  https://docs.datadoghq.com/account_management/api-app-keys/, and derived from openapi/
+provider: Datadog APM
+providerId: datadog-apm
+description: >-
+  Cross-cutting runtime semantics for the Datadog APM REST surface — what an agent has to know that
+  is not in any single operation.
+authentication:
+  style: two-header API key
+  headers:
+  - name: DD-API-KEY
+    role: Organization API key. Required on every request.
+  - name: DD-APPLICATION-KEY
+    role: >-
+      Application key. Required on read/write endpoints that act as a user; carries the RBAC
+      permissions (apm_read, apm_service_catalog_read/write, slos_read/write).
+  alternative: >-
+    OAuth 2 authorization-code flow for Datadog Apps and the MCP Server. The OpenAPI declares an
+    AuthZ oauth2 scheme with 96 scopes and per-operation scope requirements.
+  site_scoping: >-
+    CRITICAL AND EASY TO GET WRONG — keys are scoped to a Datadog SITE. The same key against the
+    wrong regional host returns 403/404, not a redirect. The servers[] block is templated
+    (https://{subdomain}.{site}) precisely because the host is a deployment choice, not a constant.
+  see_also: authentication/datadog-apm-authentication.yml
+idempotency:
+  coverage: none
+  mechanism: null
+  header: null
+  note: >-
+    Datadog documents no Idempotency-Key header and no replay-protection mechanism anywhere in the
+    APM surface. The OpenAPI declares no idempotency parameter on any of the 16 mutating operations.
+    Where the API is naturally safe to retry it is because the operation is an upsert, not because a
+    replay is deduplicated.
+  naturally_idempotent:
+  - operationId: CreateOrUpdateServiceDefinitions
+    reason: >-
+      POST /api/v2/services/definitions is an upsert keyed on the service name inside the submitted
+      document, so re-sending the same body converges rather than duplicating.
+  - operationId: ReorderApmRetentionFilters
+    reason: Submits the complete desired execution order; replaying it is a no-op.
+  - operationId: UpdateSLO
+    reason: Full-document PUT keyed on slo_id.
+  at_risk:
+  - operationId: CreateSLO
+    risk: A retried POST /api/v1/slo creates a SECOND SLO. There is no client-supplied key to prevent it.
+  - operationId: CreateSLOCorrection
+    risk: A retried correction is applied twice, changing the SLI a second time.
+  - operationId: CreateApmRetentionFilter
+    risk: A retried create adds a duplicate filter to the evaluation order.
+  - operationId: CreateSpansMetric
+    risk: >-
+      Duplicate span-metric definitions on retry; Datadog rejects a duplicate id, so this one fails
+      loudly rather than silently duplicating.
+reversibility:
+  grade: documented
+  note: >-
+    Every destructive APM operation has a delete/recreate path and one has a genuine pre-flight
+    check, but Datadog publishes NO restoration window for any of them. Deletes are immediate and
+    permanent as far as the published documentation states, so the grade stops at `documented`.
+    No window is asserted here because none is stated — inventing one could cost a user an SLO.
+  write_surfaces:
+  - surface: Service Level Objectives
+    write_ops:
+    - CreateSLO
+    - UpdateSLO
+    - DeleteSLO
+    - DeleteSLOTimeframeInBulk
+    reversal:
+      operation: CheckCanDeleteSLO
+      kind: pre-flight check, not a reversal
+      detail: >-
+        GET /api/v1/slo/can_delete reports whether the SLOs are referenced by dashboards or monitors
+        and returns the same 409 conflict payload the delete would, without deleting. This is the
+        only dry-run affordance in the APM surface.
+    window: null
+    window_source: null
+    note: A deleted SLO is not restorable through the API; its history is not recoverable by recreating it.
+  - surface: SLO Corrections
+    write_ops:
+    - CreateSLOCorrection
+    - UpdateSLOCorrection
+    - DeleteSLOCorrection
+    reversal:
+      operation: DeleteSLOCorrection
+      kind: true reversal
+      detail: >-
+        A correction is an overlay on an SLO's error budget; deleting the correction restores the
+        uncorrected SLI. This is the one genuinely undoable write in the surface.
+    window: null
+    window_source: null
+  - surface: APM Retention Filters
+    write_ops:
+    - CreateApmRetentionFilter
+    - UpdateApmRetentionFilter
+    - DeleteApmRetentionFilter
+    - ReorderApmRetentionFilters
+    reversal:
+      operation: CreateApmRetentionFilter
+      kind: recreate, not undo
+      detail: >-
+        Deleting or disabling a retention filter is irreversible in effect: spans that were not
+        retained during the gap are gone. Recreating the filter restores future retention only.
+    window: null
+    window_source: null
+    consequence: highest — this is the write that silently loses observability data.
+  - surface: Span Metrics
+    write_ops:
+    - CreateSpansMetric
+    - UpdateSpansMetric
+    - DeleteSpansMetric
+    reversal:
+      operation: CreateSpansMetric
+      kind: recreate, not undo
+      detail: Historical values of a deleted span metric are not backfilled when it is recreated.
+    window: null
+    window_source: null
+  - surface: Service Definitions
+    write_ops:
+    - CreateOrUpdateServiceDefinitions
+    - DeleteServiceDefinition
+    reversal:
+      operation: CreateOrUpdateServiceDefinitions
+      kind: true reversal by re-upsert
+      detail: >-
+        Definitions are declarative documents; a client that keeps the previous document can restore
+        it exactly. The API stores no prior version, so reversibility depends on the caller.
+    window: null
+    window_source: null
+dry_run_mode:
+  available: partial
+  detail: >-
+    CheckCanDeleteSLO (GET /api/v1/slo/can_delete) is a real pre-flight for SLO deletion. No other
+    operation offers a validate-only or dry-run mode.
+pagination:
+  styles_count: 3
+  styles:
+  - style: cursor
+    used_by:
+    - ListSpansGet
+    request: 'page[cursor], page[limit] (limit default 10, max 1000)'
+    response: meta.page.after
+  - style: cursor-in-body
+    used_by:
+    - ListSpans
+    request: 'body page.cursor, page.limit (SpansListRequestPage)'
+    response: meta.page.after
+  - style: page-number
+    used_by:
+    - ListServiceDefinitions
+    - SearchSLO
+    request: 'page[size], page[number]'
+  - style: offset
+    used_by:
+    - ListSLOs
+    - ListSLOCorrection
+    request: offset, limit
+  inconsistency: >-
+    Four distinct paging idioms across 34 operations in one product. An agent that learns paging from
+    the spans endpoint cannot page the SLO list, and the two bracket-parameter forms
+    (page[cursor]/page[limit] vs page[size]/page[number]) look alike but are not interchangeable.
+    Verified against the parameter names in openapi/ on 2026-09-05, not inferred.
+field_expansion:
+  supported: false
+  note: No expand / fields[] sparse-fieldset parameters are declared in the APM surface.
+metadata:
+  mechanism: tags
+  detail: >-
+    Datadog's universal metadata mechanism is tags (key:value strings) rather than a metadata object.
+    SLOs, services, spans and retention filters are all tag-addressable, and primary tags are an
+    org-level configuration.
+request_id_tracing:
+  header: null
+  note: >-
+    No request-id or correlation-id response header is documented for the REST API. MCP tool calls
+    are traceable instead through Datadog Audit Trail and the datadog.mcp.tool.usage metric.
+versioning:
+  scheme: URI path version
+  versions:
+  - v1
+  - v2
+  detail: >-
+    /api/v1/ and /api/v2/ coexist permanently and are not a migration path — the APM surface is split
+    across BOTH, with SLOs on v1 and spans/retention/service-definitions on v2. There is no Accept
+    header or date-based version.
+  see_also: lifecycle/datadog-apm-lifecycle.yml
+error_envelope:
+  shapes: 2
+  detail: See errors/datadog-apm-problem-types.yml — v1 returns string errors, v2 spans returns JSON:API error objects.
+rate_limit_signaling:
+  status: 429
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Period
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - X-RateLimit-Name
+  see_also: rate-limits/datadog-apm-rate-limits.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Datadog APM Service Level Objectives API
-  description: The Service Level Objectives operations of the Datadog API, extracted verbatim from the
+  title: Datadog APM — Service Level Objectives (API v1)
+  description: The Service Level Objective surface of the Datadog API v1, extracted verbatim from the
     OpenAPI definition Datadog publishes for its own API clients.
   version: '1.0'
   contact:
@@ -53,6 +53,15 @@ security:
 - apiKeyAuth: []
   appKeyAuth: []
 tags:
+- description: 'SLO Status Corrections allow you to prevent specific time periods from negatively impacting
+
+    your SLO’s status and error budget. You can use Status Corrections for various purposes, such
+
+    as removing planned maintenance windows, non-business hours, or other time periods that do
+
+    not correspond to genuine issues. See [SLO status corrections](https://docs.datadoghq.com/service_management/service_level_objectives/#slo-status-corrections)
+    for more information.'
+  name: Service Level Objective Corrections
 - description: '[Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/#configuration)
 
     (or SLOs) are a key part of the site reliability engineering toolkit.
@@ -809,6 +818,316 @@ paths:
         operator: OR
         permissions:
         - slos_read
+  /api/v1/slo/correction:
+    get:
+      description: Get all Service Level Objective corrections.
+      operationId: ListSLOCorrection
+      parameters:
+      - description: The specific offset to use as the beginning of the returned response.
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int64
+          type: integer
+      - description: The number of SLO corrections to return in the response. Default is 25.
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 25
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionListResponse'
+          description: OK
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - slos_read
+      summary: Get all SLO corrections
+      tags:
+      - Service Level Objective Corrections
+      x-pagination:
+        limitParam: limit
+        pageOffsetParam: offset
+        resultsPath: data
+      x-permission:
+        operator: OR
+        permissions:
+        - slos_read
+    post:
+      description: 'Create an SLO correction. Use `slo_id` to apply the correction to a single SLO, or
+        `slo_query` to apply the
+
+        correction to SLOs that match a query. Exactly one of `slo_id` or `slo_query` is required.'
+      operationId: CreateSLOCorrection
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Planned maintenance window for database upgrade.
+                      end: 1600003600
+                      slo_id: sloId
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+              slo_query:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Planned maintenance window for checkout services.
+                      end: 1600003600
+                      slo_query: env:prod service:checkout
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+            schema:
+              $ref: '#/components/schemas/SLOCorrectionCreateRequest'
+        description: Create an SLO Correction
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: SLO Not Found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      security:
+      - apiKeyAuth: []
+        appKeyAuth: []
+      - AuthZ:
+        - slos_corrections
+      summary: Create an SLO correction
+      tags:
+      - Service Level Objective Corrections
+      x-codegen-request-body-name: body
+      x-permission:
+        operator: OR
+        permissions:
+        - slos_corrections
+  /api/v1/slo/correction/{slo_correction_id}:
+    delete:
+      description: Permanently delete the specified SLO correction object.
+      operationId: DeleteSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: OK
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Not found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Delete an SLO correction
+      tags:
+      - Service Level Objective Corrections
+    get:
+      description: Get an SLO correction.
+      operationId: GetSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Get an SLO correction for an SLO
+      tags:
+      - Service Level Objective Corrections
+    patch:
+      description: Update the specified SLO correction object.
+      operationId: UpdateSLOCorrection
+      parameters:
+      - description: The ID of the SLO correction object.
+        in: path
+        name: slo_correction_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Updated correction for maintenance window.
+                      end: 1600003600
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+              slo_query:
+                value:
+                  data:
+                    attributes:
+                      category: Scheduled Maintenance
+                      description: Updated correction for checkout services.
+                      end: 1600003600
+                      slo_query: env:prod service:checkout
+                      start: 1600000000
+                      timezone: UTC
+                    type: correction
+            schema:
+              $ref: '#/components/schemas/SLOCorrectionUpdateRequest'
+        description: The edited SLO correction object.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        category: Scheduled Maintenance
+                        end: 1600003600
+                        slo_id: abc-123
+                        start: 1600000000
+                        timezone: UTC
+                      id: abc-123
+                      type: correction
+              schema:
+                $ref: '#/components/schemas/SLOCorrectionResponse'
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorResponse'
+          description: Not Found
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Update an SLO correction
+      tags:
+      - Service Level Objective Corrections
+      x-codegen-request-body-name: body
   /api/v1/slo/{slo_id}/corrections:
     get:
       description: Get corrections applied to an SLO
@@ -992,6 +1311,12 @@ components:
       oneOf:
       - $ref: '#/components/schemas/SLOTimeSliceSpec'
       - $ref: '#/components/schemas/SLOCountSpec'
+    SLOCorrectionResponse:
+      description: The response object of an SLO correction.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrection'
+      type: object
     SLOTimeSliceSpec:
       additionalProperties: false
       description: A time-slice SLI specification.
@@ -1166,6 +1491,12 @@ components:
           $ref: '#/components/schemas/SearchSLOResponseLinks'
         meta:
           $ref: '#/components/schemas/SearchSLOResponseMeta'
+      type: object
+    SLOCorrectionCreateRequest:
+      description: An object that defines a correction to be applied to one or more SLOs.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionCreateData'
       type: object
     SLOThreshold:
       description: SLO thresholds (target and optionally warning) for a single time window.
@@ -1451,40 +1782,32 @@ components:
       oneOf:
       - $ref: '#/components/schemas/SLOCountDefinitionWithTotalEventsFormula'
       - $ref: '#/components/schemas/SLOCountDefinitionWithBadEventsFormula'
-    SLOTimeSliceQuery:
-      description: The queries and formula used to calculate the SLI value.
-      example:
-        formulas:
-        - formula: query2/query1
-        queries:
-        - data_source: metrics
-          name: query1
-          query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-        - data_source: metrics
-          name: query1
-          query: sum:trace.servlet.request.errors{*} by {env}.as_count()
+    SLOCountDefinitionWithBadEventsFormula:
+      additionalProperties: false
+      description: SLO count definition using a bad events formula alongside a good events formula.
       properties:
-        formulas:
-          description: A list that contains exactly one formula, as only a single formula may be used
-            in a time-slice SLO.
-          example:
-          - formula: query1 - default_zero(query2)
-          items:
-            $ref: '#/components/schemas/SLOFormula'
-          maxItems: 1
-          minItems: 1
-          type: array
+        bad_events_formula:
+          $ref: '#/components/schemas/SLOFormula'
+          description: The bad events formula (recommended). Total events queries can be defined using
+            the `total_events_formula` field as an alternative. Only one of `total_events_formula` or
+            `bad_events_formula` must be provided.
+        good_events_formula:
+          $ref: '#/components/schemas/SLOFormula'
         queries:
-          description: A list of queries that are used to calculate the SLI value.
           example:
           - data_source: metrics
             name: query1
-            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+            query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
+          - data_source: metrics
+            name: query2
+            query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
           items:
             $ref: '#/components/schemas/SLODataSourceQueryDefinition'
+          minItems: 1
           type: array
       required:
-      - formulas
+      - good_events_formula
+      - bad_events_formula
       - queries
       type: object
     Creator:
@@ -1520,6 +1843,12 @@ components:
           type: array
         metadata:
           $ref: '#/components/schemas/SLOListResponseMetadata'
+      type: object
+    SLOCorrectionUpdateRequest:
+      description: An object that defines a correction to be applied to an SLO.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionUpdateData'
       type: object
     SLOHistoryResponseData:
       description: An array of service level objective objects.
@@ -1725,14 +2054,15 @@ components:
           description: Human readable error.
           type: string
       type: object
-    SLOErrorBudgetRemainingData:
-      additionalProperties:
-        description: Remaining error budget.
-        format: double
-        type: number
-      description: A mapping of threshold `timeframe` to the remaining error budget.
-      example:
-        7d: 100.0
+    SLOCorrectionCreateData:
+      description: The data object associated with the SLO correction to be created.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      required:
+      - type
       type: object
     SearchSLOResponseLinks:
       description: Pagination links.
@@ -1754,6 +2084,15 @@ components:
         self:
           description: Link to current page.
           type: string
+      type: object
+    SLOErrorBudgetRemainingData:
+      additionalProperties:
+        description: Remaining error budget.
+        format: double
+        type: number
+      description: A mapping of threshold `timeframe` to the remaining error budget.
+      example:
+        7d: 100.0
       type: object
     SLOCorrection:
       description: The response object of a list of SLO corrections.
@@ -1855,6 +2194,59 @@ components:
         query: sum:trace.servlet.request.hits{*} by {env}.as_count()
       oneOf:
       - $ref: '#/components/schemas/FormulaAndFunctionMetricQueryDefinition'
+    SLOCorrectionCreateRequestAttributes:
+      description: 'The attribute object associated with the SLO correction to be created.
+
+
+        Exactly one of `slo_id` or `slo_query` must be provided.'
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 1600000000
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules
+            for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_id:
+          description: ID of the single SLO that this correction applies to.
+          example: sloId
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
+          type: string
+      required:
+      - start
+      - category
+      type: object
     SearchSLOResponseMetaPage:
       description: Pagination metadata returned by the API.
       properties:
@@ -1997,6 +2389,14 @@ components:
           nullable: true
           type: number
       type: object
+    SLOCorrectionUpdateData:
+      description: The data object associated with the SLO correction to be updated.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
     SearchSLOResponseDataAttributes:
       description: Attributes
       properties:
@@ -2058,32 +2458,40 @@ components:
         page:
           $ref: '#/components/schemas/SLOListResponseMetadataPage'
       type: object
-    SLOCountDefinitionWithBadEventsFormula:
-      additionalProperties: false
-      description: SLO count definition using a bad events formula alongside a good events formula.
-      properties:
-        bad_events_formula:
-          $ref: '#/components/schemas/SLOFormula'
-          description: The bad events formula (recommended). Total events queries can be defined using
-            the `total_events_formula` field as an alternative. Only one of `total_events_formula` or
-            `bad_events_formula` must be provided.
-        good_events_formula:
-          $ref: '#/components/schemas/SLOFormula'
+    SLOTimeSliceQuery:
+      description: The queries and formula used to calculate the SLI value.
+      example:
+        formulas:
+        - formula: query2/query1
         queries:
+        - data_source: metrics
+          name: query1
+          query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+        - data_source: metrics
+          name: query1
+          query: sum:trace.servlet.request.errors{*} by {env}.as_count()
+      properties:
+        formulas:
+          description: A list that contains exactly one formula, as only a single formula may be used
+            in a time-slice SLO.
+          example:
+          - formula: query1 - default_zero(query2)
+          items:
+            $ref: '#/components/schemas/SLOFormula'
+          maxItems: 1
+          minItems: 1
+          type: array
+        queries:
+          description: A list of queries that are used to calculate the SLI value.
           example:
           - data_source: metrics
             name: query1
-            query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
-          - data_source: metrics
-            name: query2
-            query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
+            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
           items:
             $ref: '#/components/schemas/SLODataSourceQueryDefinition'
-          minItems: 1
           type: array
       required:
-      - good_events_formula
-      - bad_events_formula
+      - formulas
       - queries
       type: object
     SLOHistoryMetrics:
@@ -2191,6 +2599,49 @@ components:
           type: integer
         timezone:
           description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          type: string
+      type: object
+    SLOCorrectionUpdateRequestAttributes:
+      description: The attribute object associated with the SLO correction to be updated.
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 3600
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules
+            for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
           type: string
       type: object
     SLOTypeNumeric:
@@ -2472,6 +2923,61 @@ components:
             $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
           type: array
       type: object
+    FormulaAndFunctionMetricDataSource:
+      description: Data source for metrics queries.
+      enum:
+      - metrics
+      example: metrics
+      type: string
+      x-enum-varnames:
+      - METRICS
+    FormulaAndFunctionMetricSemanticMode:
+      description: Semantic mode for metrics queries. This determines how metrics from different sources
+        are combined or displayed.
+      enum:
+      - combined
+      - native
+      example: combined
+      type: string
+      x-enum-varnames:
+      - COMBINED
+      - NATIVE
+    SLOListResponseMetadataPage:
+      description: The object containing information about the pages of the list of SLOs.
+      properties:
+        total_count:
+          description: The total number of resources that could be retrieved ignoring the parameters and
+            filters in the request.
+          format: int64
+          type: integer
+        total_filtered_count:
+          description: The total number of resources that match the parameters and filters in the request.
+            This attribute can be used by a client to determine the total number of pages.
+          format: int64
+          type: integer
+      type: object
+    FormulaAndFunctionMetricAggregation:
+      description: The aggregation methods available for metrics queries.
+      enum:
+      - avg
+      - min
+      - max
+      - sum
+      - last
+      - area
+      - l2norm
+      - percentile
+      example: avg
+      type: string
+      x-enum-varnames:
+      - AVG
+      - MIN
+      - MAX
+      - SUM
+      - LAST
+      - AREA
+      - L2NORM
+      - PERCENTILE
     SearchServiceLevelObjectiveData:
       description: A service level objective ID and attributes.
       properties:
@@ -2500,6 +3006,27 @@ components:
           type: string
         name:
           description: Name of the Modifier.
+          type: string
+      type: object
+    CrossOrgUuids:
+      description: The source organization UUID for cross organization queries. Feature in Private Beta.
+      example:
+      - 6434abde-xxxx-yyyy-zzzz-da7ad0900001
+      items:
+        description: The source organization UUID.
+        example: 6434abde-xxxx-yyyy-zzzz-da7ad0900001
+        type: string
+      maxItems: 1
+      type: array
+    SearchSLOResponseDataAttributesFacetsObjectString:
+      description: Facet
+      properties:
+        count:
+          description: Count
+          format: int64
+          type: integer
+        name:
+          description: Facet
           type: string
       type: object
     SLOHistoryMetricsSeries:
@@ -2531,6 +3058,18 @@ components:
       - count
       - sum
       - values
+      type: object
+    SearchSLOResponseDataAttributesFacetsObjectInt:
+      description: Facet
+      properties:
+        count:
+          description: Count
+          format: int64
+          type: integer
+        name:
+          description: Facet
+          format: double
+          type: number
       type: object
     SearchServiceLevelObjectiveAttributes:
       description: 'A service level objective object includes a service level indicator, thresholds
@@ -2648,186 +3187,6 @@ components:
             $ref: '#/components/schemas/SearchSLOThreshold'
           type: array
       type: object
-    FormulaAndFunctionMetricDataSource:
-      description: Data source for metrics queries.
-      enum:
-      - metrics
-      example: metrics
-      type: string
-      x-enum-varnames:
-      - METRICS
-    SLOOverallStatuses:
-      description: Overall status of the SLO by timeframes.
-      properties:
-        error:
-          description: Error message if SLO status or error budget could not be calculated.
-          nullable: true
-          type: string
-        error_budget_remaining:
-          description: Remaining error budget of the SLO in percentage.
-          example: 100
-          format: double
-          nullable: true
-          type: number
-        indexed_at:
-          description: 'timestamp (UNIX time in seconds) of when the SLO status and error budget
-
-            were calculated.'
-          example: 1662496260
-          format: int64
-          type: integer
-        raw_error_budget_remaining:
-          $ref: '#/components/schemas/SLORawErrorBudgetRemaining'
-        span_precision:
-          description: The amount of decimal places the SLI value is accurate to.
-          example: 2
-          format: int64
-          nullable: true
-          type: integer
-        state:
-          $ref: '#/components/schemas/SLOState'
-        status:
-          description: The status of the SLO.
-          example: 100
-          format: double
-          nullable: true
-          type: number
-        target:
-          description: The target of the SLO.
-          example: 99
-          format: double
-          type: number
-        timeframe:
-          $ref: '#/components/schemas/SLOTimeframe'
-      type: object
-    FormulaAndFunctionMetricAggregation:
-      description: The aggregation methods available for metrics queries.
-      enum:
-      - avg
-      - min
-      - max
-      - sum
-      - last
-      - area
-      - l2norm
-      - percentile
-      example: avg
-      type: string
-      x-enum-varnames:
-      - AVG
-      - MIN
-      - MAX
-      - SUM
-      - LAST
-      - AREA
-      - L2NORM
-      - PERCENTILE
-    SLOListResponseMetadataPage:
-      description: The object containing information about the pages of the list of SLOs.
-      properties:
-        total_count:
-          description: The total number of resources that could be retrieved ignoring the parameters and
-            filters in the request.
-          format: int64
-          type: integer
-        total_filtered_count:
-          description: The total number of resources that match the parameters and filters in the request.
-            This attribute can be used by a client to determine the total number of pages.
-          format: int64
-          type: integer
-      type: object
-    FormulaAndFunctionMetricSemanticMode:
-      description: Semantic mode for metrics queries. This determines how metrics from different sources
-        are combined or displayed.
-      enum:
-      - combined
-      - native
-      example: combined
-      type: string
-      x-enum-varnames:
-      - COMBINED
-      - NATIVE
-    SLOHistoryMetricsSeriesMetadata:
-      description: Query metadata.
-      example: {}
-      properties:
-        aggr:
-          deprecated: true
-          description: Query aggregator function.
-          type: string
-        expression:
-          deprecated: true
-          description: Query expression.
-          type: string
-        metric:
-          deprecated: true
-          description: Query metric used.
-          type: string
-        query_index:
-          deprecated: true
-          description: Query index from original combined query.
-          format: int64
-          type: integer
-        scope:
-          deprecated: true
-          description: Query scope.
-          type: string
-        unit:
-          description: 'An array of metric units that contains up to two unit objects.
-
-            For example, bytes represents one unit object and bytes per second represents two unit objects.
-
-            If a metric query only has one unit object, the second array element is null.'
-          example:
-          - family: bytes
-            id: 2
-            name: byte
-            plural: bytes
-            scale_factor: 1.0
-            short_name: B
-          - null
-          items:
-            $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadataUnit'
-          nullable: true
-          type: array
-      type: object
-    SLOCreator:
-      description: The creator of the SLO
-      nullable: true
-      properties:
-        email:
-          description: Email of the creator.
-          type: string
-        id:
-          description: User ID of the creator.
-          format: int64
-          type: integer
-        name:
-          description: Name of the creator.
-          nullable: true
-          type: string
-      type: object
-    CrossOrgUuids:
-      description: The source organization UUID for cross organization queries. Feature in Private Beta.
-      example:
-      - 6434abde-xxxx-yyyy-zzzz-da7ad0900001
-      items:
-        description: The source organization UUID.
-        example: 6434abde-xxxx-yyyy-zzzz-da7ad0900001
-        type: string
-      maxItems: 1
-      type: array
-    SearchSLOResponseDataAttributesFacetsObjectString:
-      description: Facet
-      properties:
-        count:
-          description: Count
-          format: int64
-          type: integer
-        name:
-          description: Facet
-          type: string
-      type: object
     SearchSLOThreshold:
       description: SLO thresholds (target and optionally warning) for a single time window.
       properties:
@@ -2885,6 +3244,94 @@ components:
       - SEVEN_DAYS
       - THIRTY_DAYS
       - NINETY_DAYS
+    SLOOverallStatuses:
+      description: Overall status of the SLO by timeframes.
+      properties:
+        error:
+          description: Error message if SLO status or error budget could not be calculated.
+          nullable: true
+          type: string
+        error_budget_remaining:
+          description: Remaining error budget of the SLO in percentage.
+          example: 100
+          format: double
+          nullable: true
+          type: number
+        indexed_at:
+          description: 'timestamp (UNIX time in seconds) of when the SLO status and error budget
+
+            were calculated.'
+          example: 1662496260
+          format: int64
+          type: integer
+        raw_error_budget_remaining:
+          $ref: '#/components/schemas/SLORawErrorBudgetRemaining'
+        span_precision:
+          description: The amount of decimal places the SLI value is accurate to.
+          example: 2
+          format: int64
+          nullable: true
+          type: integer
+        state:
+          $ref: '#/components/schemas/SLOState'
+        status:
+          description: The status of the SLO.
+          example: 100
+          format: double
+          nullable: true
+          type: number
+        target:
+          description: The target of the SLO.
+          example: 99
+          format: double
+          type: number
+        timeframe:
+          $ref: '#/components/schemas/SLOTimeframe'
+      type: object
+    SLOHistoryMetricsSeriesMetadata:
+      description: Query metadata.
+      example: {}
+      properties:
+        aggr:
+          deprecated: true
+          description: Query aggregator function.
+          type: string
+        expression:
+          deprecated: true
+          description: Query expression.
+          type: string
+        metric:
+          deprecated: true
+          description: Query metric used.
+          type: string
+        query_index:
+          deprecated: true
+          description: Query index from original combined query.
+          format: int64
+          type: integer
+        scope:
+          deprecated: true
+          description: Query scope.
+          type: string
+        unit:
+          description: 'An array of metric units that contains up to two unit objects.
+
+            For example, bytes represents one unit object and bytes per second represents two unit objects.
+
+            If a metric query only has one unit object, the second array element is null.'
+          example:
+          - family: bytes
+            id: 2
+            name: byte
+            plural: bytes
+            scale_factor: 1.0
+            short_name: B
+          - null
+          items:
+            $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadataUnit'
+          nullable: true
+          type: array
+      type: object
     SearchSLOQuery:
       description: 'A metric-based SLO. **Required if type is `metric`**. Note that Datadog only allows
         the sum by aggregator
@@ -2916,17 +3363,21 @@ components:
           example: sum:my.custom.metric{type:good}.as_count()
           type: string
       type: object
-    SearchSLOResponseDataAttributesFacetsObjectInt:
-      description: Facet
+    SLOCreator:
+      description: The creator of the SLO
+      nullable: true
       properties:
-        count:
-          description: Count
+        email:
+          description: Email of the creator.
+          type: string
+        id:
+          description: User ID of the creator.
           format: int64
           type: integer
         name:
-          description: Facet
-          format: double
-          type: number
+          description: Name of the creator.
+          nullable: true
+          type: string
       type: object
     SLOState:
       description: State of the SLO.

@@ -1,0 +1,54 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay — Datadog APM SLO Corrections API
+  version: 1.0.0
+x-generated: '2026-09-05'
+x-method: generated
+x-source: openapi/datadog-apm-slo-corrections-api-openapi.yml
+x-note: Captures API Evangelist enrichment as an OpenAPI Overlay. The provider-published contract in openapi/
+  is never mutated.
+extends: openapi/datadog-apm-slo-corrections-api-openapi.yml
+actions:
+- target: $.info
+  description: Record the API Evangelist enrichment context alongside the provider-published contract.
+  update:
+    x-api-evangelist:
+      provider: Datadog APM
+      providerId: datadog-apm
+      artifacts:
+        authentication: authentication/datadog-apm-authentication.yml
+        scopes: scopes/datadog-apm-scopes.yml
+        conventions: conventions/datadog-apm-conventions.yml
+        errors: errors/datadog-apm-problem-types.yml
+        rate_limits: rate-limits/datadog-apm-rate-limits.yml
+        lifecycle: lifecycle/datadog-apm-lifecycle.yml
+        data_model: data-model/datadog-apm-data-model.yml
+        mcp: mcp/datadog-apm-mcp.yml
+        tool_crosswalk: mcp/datadog-apm-tool-crosswalk.yml
+- target: $.info
+  description: 'Runtime semantics an agent needs that the contract does not state: no idempotency mechanism,
+    and a 429 on every operation.'
+  update:
+    x-idempotency:
+      coverage: none
+      header: null
+      note: Datadog documents no Idempotency-Key header for the APM surface. Retrying a create duplicates
+        the resource.
+    x-rate-limit-signal:
+      status: 429
+      headers:
+      - X-RateLimit-Limit
+      - X-RateLimit-Period
+      - X-RateLimit-Remaining
+      - X-RateLimit-Reset
+      - X-RateLimit-Name
+      source: https://docs.datadoghq.com/api/latest/rate-limits/
+    x-site-scoping: The servers[] block is templated because Datadog is multi-site; an API key is valid
+      on exactly one site host.
+- target: $.servers
+  description: Name the default site host so a reader does not have to resolve the template to make a
+    call.
+  update:
+  - url: https://api.datadoghq.com
+    description: Default US1 site — the concrete resolution of https://{subdomain}.{site} with subdomain=api
+      and site=datadoghq.com. Documented at https://docs.datadoghq.com/getting_started/site/.

@@ -1,0 +1,172 @@
+generated: '2026-09-05'
+method: derived
+source: >-
+  mcp/datadog-apm-mcp.yml (tool names + descriptions from
+  https://docs.datadoghq.com/mcp_server/tools.md) bound against the operationIds in openapi/
+provider: Datadog APM
+providerId: datadog-apm
+description: >-
+  Binds each APM-relevant Datadog MCP tool to the REST operation(s) that back it. The live MCP
+  schemas are OAuth-gated (tools/list returns 401 anonymously), so bindings are made by name and
+  documented semantics and confidence is set accordingly — no inputSchema was copied, because none
+  could be read.
+surfaces:
+  openapi:
+    files:
+    - openapi/datadog-apm-slos-api-openapi.yml
+    - openapi/datadog-apm-slo-corrections-api-openapi.yml
+    - openapi/datadog-apm-services-api-openapi.yml
+    - openapi/datadog-apm-retention-filters-api-openapi.yml
+    - openapi/datadog-apm-service-definitions-api-openapi.yml
+    - openapi/datadog-apm-spans-api-openapi.yml
+    - openapi/datadog-apm-spans-metrics-api-openapi.yml
+    gated: false
+  graphql:
+    endpoint: null
+    note: Datadog publishes no public GraphQL API.
+  mcp:
+    endpoint: https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
+    gated: true
+    gate: OAuth 2.1 bearer token; anonymous tools/list returns HTTP 401.
+crosswalk:
+- tool: apm_search_spans
+  category: apm
+  rest:
+  - ListSpans
+  - ListSpansGet
+  binding: direct
+  confidence: high
+  note: >-
+    Both the tool and POST /api/v2/spans/events/search take an APM query string with pagination;
+    ListSpansGet is the GET form of the same search.
+- tool: search_datadog_spans
+  category: core
+  rest:
+  - ListSpans
+  - ListSpansGet
+  binding: direct
+  confidence: medium
+  note: Core-toolset alias of the same span search surface.
+- tool: apm_query_trace
+  category: apm
+  rest:
+  - AggregateSpans
+  binding: partial
+  confidence: medium
+  note: >-
+    Filtering, aggregating and ranking spans within one trace maps onto the span analytics aggregate
+    operation, but the tool's trace-scoped self-time ranking is not a documented REST parameter.
+- tool: apm_discover_span_tags
+  category: apm
+  rest: []
+  binding: none
+  confidence: low
+  note: >-
+    No REST operation in this repo's specs enumerates span tag keys; the closest surface is a spans
+    facet lookup Datadog does not publish in the v2 OpenAPI.
+- tool: search_datadog_services
+  category: core
+  rest:
+  - GetServiceList
+  binding: direct
+  confidence: medium
+  note: GET /api/v2/apm/services lists APM services.
+- tool: search_datadog_service_dependencies
+  category: core
+  rest: []
+  binding: none
+  confidence: low
+  note: >-
+    Datadog documents an APM service dependencies endpoint under API v1 in its docs index, but it is
+    not present in the published v1/v2 OpenAPI this repo extracted from, so nothing is bound.
+- tool: search_datadog_slos
+  category: alerting
+  rest:
+  - SearchSLO
+  - ListSLOs
+  binding: direct
+  confidence: high
+  note: GET /api/v1/slo/search and GET /api/v1/slo cover name/tag/type search and listing.
+- tool: get_datadog_trace
+  category: core
+  rest: []
+  binding: none
+  confidence: low
+  note: >-
+    Trace retrieval by ID has no operation in the published OpenAPI; the trace read path is the
+    product UI and the MCP tool.
+mcp_only:
+- tool: apm_get_primary_tag_keys
+  reason: Organization primary-tag configuration is not exposed as a documented REST operation.
+- tool: apm_search_watchdog_stories
+  reason: Watchdog anomaly stories have no published REST endpoint.
+- tool: apm_get_watchdog_story
+  reason: Watchdog anomaly stories have no published REST endpoint.
+- tool: apm_latency_bottleneck_summary
+  reason: Composite analysis (self-time attribution across traces); no single backing operation.
+- tool: get_change_stories
+  reason: Change Tracking API is not part of the published APM OpenAPI surface.
+- tool: semantic_search_change_stories
+  reason: AI-model-backed semantic search; no REST equivalent.
+- tool: apm_search_recommendations
+  reason: APM recommendations have no published REST endpoint.
+- tool: apm_get_recommendation
+  reason: APM recommendations have no published REST endpoint.
+rest_only:
+- operations:
+  - CreateSLO
+  - UpdateSLO
+  - DeleteSLO
+  - DeleteSLOTimeframeInBulk
+  - CheckCanDeleteSLO
+  - GetSLO
+  - GetSLOHistory
+  - GetSLOCorrections
+  reason: >-
+    The MCP surface exposes SLO search only; every SLO write and the history read are REST-only. An
+    agent can find an SLO through MCP but must fall back to the REST API to change one.
+- operations:
+  - ListSLOCorrection
+  - CreateSLOCorrection
+  - GetSLOCorrection
+  - UpdateSLOCorrection
+  - DeleteSLOCorrection
+  reason: SLO corrections have no MCP tool at all.
+- operations:
+  - ListApmRetentionFilters
+  - CreateApmRetentionFilter
+  - GetApmRetentionFilter
+  - UpdateApmRetentionFilter
+  - DeleteApmRetentionFilter
+  - ReorderApmRetentionFilters
+  reason: >-
+    APM retention filter configuration — which spans Datadog keeps — is REST-only. This is the
+    highest-consequence APM write surface and no agent tool reaches it.
+- operations:
+  - ListSpansMetrics
+  - CreateSpansMetric
+  - GetSpansMetric
+  - UpdateSpansMetric
+  - DeleteSpansMetric
+  reason: Span-based metric definitions are REST-only.
+- operations:
+  - ListServiceDefinitions
+  - GetServiceDefinition
+  - CreateOrUpdateServiceDefinitions
+  - DeleteServiceDefinition
+  reason: >-
+    Service catalog definitions (the schema-versioned service.datadog.yaml documents) are REST-only;
+    the MCP service tools read the live service list, not the catalog entries.
+coverage:
+  mcp_tools_considered: 16
+  rest_operations: 34
+  bound: 6
+  mcp_only: 8
+  rest_only: 28
+  note: >-
+    Bound counts tools with at least one REST operation. The divergence is one-directional and
+    unusually stark: the MCP surface is read/analysis-heavy and the REST surface is
+    configuration-heavy, so neither is a superset of the other.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

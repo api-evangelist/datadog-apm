@@ -1,0 +1,20 @@
+# Datadog Security Contact Information
+# Based on Datadog's official security policies as documented at
+# https://www.datadoghq.com/security/
+
+Contact: mailto:security@datadoghq.com
+Contact: mailto:bugbounty@datadoghq.com
+Expires: 2027-06-26T00:00:00.000Z
+Encryption: https://www.datadoghq.com/security/
+Policy: https://www.datadoghq.com/security/
+Preferred-Languages: en
+Canonical: https://mcp.datadoghq.com/.well-known/security.txt
+
+# Security Reporting Guidelines:
+# - General security issues: security@datadoghq.com (24-hour response time)
+# - Bug bounty inquiries: bugbounty@datadoghq.com
+# - Known vulnerability inquiries: Use Datadog support site
+# - Bug bounty program: Private program on HackerOne (invitation required)
+# - PGP key available for encrypted communications
+# - Responsible disclosure policy applies
+# - Do not publicly disclose until issue is reviewed and addressed

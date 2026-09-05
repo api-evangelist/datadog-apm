@@ -1,0 +1,707 @@
+openapi: 3.0.0
+info:
+  title: Datadog APM Spans Metrics API
+  description: The Spans Metrics operations of the Datadog API, extracted verbatim from the OpenAPI definition
+    Datadog publishes for its own API clients.
+  version: '1.0'
+  contact:
+    email: support@datadoghq.com
+    name: Datadog Support
+    url: https://www.datadoghq.com/support/
+  x-source: https://raw.githubusercontent.com/DataDog/datadog-api-client-go/master/.generator/schemas/v2/openapi.yaml
+  x-extracted: '2026-09-05'
+  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published
+    OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by
+    API Evangelist.
+servers:
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: The regional site for Datadog customers.
+      enum:
+      - datadoghq.com
+      - us3.datadoghq.com
+      - us5.datadoghq.com
+      - ap1.datadoghq.com
+      - ap2.datadoghq.com
+      - uk1.datadoghq.com
+      - datadoghq.eu
+      - ddog-gov.com
+      - us2.ddog-gov.com
+      - uk1.datadoghq.com
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+- url: '{protocol}://{name}'
+  variables:
+    name:
+      default: api.datadoghq.com
+      description: Full site DNS name.
+    protocol:
+      default: https
+      description: The protocol for accessing the API.
+- url: https://{subdomain}.{site}
+  variables:
+    site:
+      default: datadoghq.com
+      description: Any Datadog deployment.
+    subdomain:
+      default: api
+      description: The subdomain where the API is deployed.
+security:
+- apiKeyAuth: []
+  appKeyAuth: []
+tags:
+- description: Manage configuration of [span-based metrics](https://app.datadoghq.com/apm/traces/generate-metrics)
+    for your organization. See [Generate Metrics from Spans](https://docs.datadoghq.com/tracing/trace_pipeline/generate_metrics/)
+    for more information.
+  externalDocs:
+    description: Find out more at
+    url: https://docs.datadoghq.com/tracing/metrics/metrics_namespace/
+  name: Spans Metrics
+paths:
+  /api/v2/apm/config/metrics:
+    get:
+      description: Get the list of configured span-based metrics with their definitions.
+      operationId: ListSpansMetrics
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                    - attributes:
+                        compute:
+                          aggregation_type: distribution
+                          include_percentiles: false
+                          path: '@duration'
+                        filter:
+                          query: '@http.status_code:200 service:my-service'
+                        group_by:
+                        - path: resource_name
+                          tag_name: resource_name
+                      id: my.metric
+                      type: spans_metrics
+              schema:
+                $ref: '#/components/schemas/SpansMetricsResponse'
+          description: OK
+        '403':
+          $ref: '#/components/responses/NotAuthorizedResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Get all span-based metrics
+      tags:
+      - Spans Metrics
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_read
+    post:
+      description: 'Create a metric based on your ingested spans in your organization.
+
+        Returns the span-based metric object from the request body when the request is successful.'
+      operationId: CreateSpansMetric
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      compute:
+                        aggregation_type: distribution
+                        include_percentiles: false
+                        path: '@duration'
+                      filter:
+                        query: '@http.status_code:200 service:my-service'
+                      group_by:
+                      - path: resource_name
+                        tag_name: resource_name
+                    id: my.metric
+                    type: spans_metrics
+            schema:
+              $ref: '#/components/schemas/SpansMetricCreateRequest'
+        description: The definition of the new span-based metric.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        compute:
+                          aggregation_type: distribution
+                          include_percentiles: false
+                          path: '@duration'
+                        filter:
+                          query: '@http.status_code:200 service:my-service'
+                        group_by:
+                        - path: resource_name
+                          tag_name: resource_name
+                      id: my.metric
+                      type: spans_metrics
+              schema:
+                $ref: '#/components/schemas/SpansMetricResponse'
+          description: OK
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '403':
+          $ref: '#/components/responses/NotAuthorizedResponse'
+        '409':
+          $ref: '#/components/responses/ConflictResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Create a span-based metric
+      tags:
+      - Spans Metrics
+      x-codegen-request-body-name: body
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_generate_metrics
+  /api/v2/apm/config/metrics/{metric_id}:
+    delete:
+      description: Delete a specific span-based metric from your organization.
+      operationId: DeleteSpansMetric
+      parameters:
+      - $ref: '#/components/parameters/SpansMetricIDParameter'
+      responses:
+        '204':
+          description: OK
+        '403':
+          $ref: '#/components/responses/NotAuthorizedResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Delete a span-based metric
+      tags:
+      - Spans Metrics
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_generate_metrics
+    get:
+      description: Get a specific span-based metric from your organization.
+      operationId: GetSpansMetric
+      parameters:
+      - $ref: '#/components/parameters/SpansMetricIDParameter'
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        compute:
+                          aggregation_type: distribution
+                          include_percentiles: false
+                          path: '@duration'
+                        filter:
+                          query: '@http.status_code:200 service:my-service'
+                        group_by:
+                        - path: resource_name
+                          tag_name: resource_name
+                      id: my.metric
+                      type: spans_metrics
+              schema:
+                $ref: '#/components/schemas/SpansMetricResponse'
+          description: OK
+        '403':
+          $ref: '#/components/responses/NotAuthorizedResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Get a span-based metric
+      tags:
+      - Spans Metrics
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_read
+    patch:
+      description: 'Update a specific span-based metric from your organization.
+
+        Returns the span-based metric object from the request body when the request is successful.'
+      operationId: UpdateSpansMetric
+      parameters:
+      - $ref: '#/components/parameters/SpansMetricIDParameter'
+      requestBody:
+        content:
+          application/json:
+            examples:
+              default:
+                value:
+                  data:
+                    attributes:
+                      compute:
+                        include_percentiles: false
+                      filter:
+                        query: '@http.status_code:200 service:my-service'
+                      group_by:
+                      - path: resource_name
+                        tag_name: resource_name
+                    type: spans_metrics
+            schema:
+              $ref: '#/components/schemas/SpansMetricUpdateRequest'
+        description: New definition of the span-based metric.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              examples:
+                default:
+                  value:
+                    data:
+                      attributes:
+                        compute:
+                          aggregation_type: distribution
+                          include_percentiles: false
+                          path: '@duration'
+                        filter:
+                          query: '@http.status_code:200 service:my-service'
+                        group_by:
+                        - path: resource_name
+                          tag_name: resource_name
+                      id: my.metric
+                      type: spans_metrics
+              schema:
+                $ref: '#/components/schemas/SpansMetricResponse'
+          description: OK
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '403':
+          $ref: '#/components/responses/NotAuthorizedResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsResponse'
+      summary: Update a span-based metric
+      tags:
+      - Spans Metrics
+      x-codegen-request-body-name: body
+      x-permission:
+        operator: OR
+        permissions:
+        - apm_generate_metrics
+components:
+  schemas:
+    SpansMetricsResponse:
+      description: All the available span-based metric objects.
+      properties:
+        data:
+          description: A list of span-based metric objects.
+          items:
+            $ref: '#/components/schemas/SpansMetricResponseData'
+          type: array
+      type: object
+    SpansMetricCreateRequest:
+      description: The new span-based metric body.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricCreateData'
+      required:
+      - data
+      type: object
+    APIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
+          items:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    SpansMetricUpdateRequest:
+      description: The new span-based metric body.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricUpdateData'
+      required:
+      - data
+      type: object
+    SpansMetricCreateData:
+      description: The new span-based metric properties.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansMetricCreateAttributes'
+        id:
+          $ref: '#/components/schemas/SpansMetricID'
+        type:
+          $ref: '#/components/schemas/SpansMetricType'
+      required:
+      - id
+      - type
+      - attributes
+      type: object
+    SpansMetricResponse:
+      description: The span-based metric object.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricResponseData'
+      type: object
+    SpansMetricResponseData:
+      description: The span-based metric properties.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansMetricResponseAttributes'
+        id:
+          $ref: '#/components/schemas/SpansMetricID'
+        type:
+          $ref: '#/components/schemas/SpansMetricType'
+      type: object
+    SpansMetricResponseAttributes:
+      description: The object describing a Datadog span-based metric.
+      properties:
+        compute:
+          $ref: '#/components/schemas/SpansMetricResponseCompute'
+        filter:
+          $ref: '#/components/schemas/SpansMetricResponseFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansMetricResponseGroupBy'
+          type: array
+      type: object
+    SpansMetricResponseFilter:
+      description: The span-based metric filter. Spans matching this filter will be aggregated in this
+        metric.
+      properties:
+        query:
+          description: The search query - following the span search syntax.
+          example: '@http.status_code:200 service:my-service'
+          type: string
+      type: object
+    SpansMetricID:
+      description: The name of the span-based metric.
+      example: my.metric
+      type: string
+    SpansMetricUpdateData:
+      description: The new span-based metric properties.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansMetricUpdateAttributes'
+        type:
+          $ref: '#/components/schemas/SpansMetricType'
+      required:
+      - type
+      - attributes
+      type: object
+    SpansMetricResponseGroupBy:
+      description: A group by rule.
+      properties:
+        path:
+          description: The path to the value the span-based metric will be aggregated over.
+          example: resource_name
+          type: string
+        tag_name:
+          description: Eventual name of the tag that gets created. By default, the path attribute is used
+            as the tag name.
+          example: resource_name
+          type: string
+      type: object
+    SpansMetricType:
+      default: spans_metrics
+      description: The type of resource. The value should always be spans_metrics.
+      enum:
+      - spans_metrics
+      example: spans_metrics
+      type: string
+      x-enum-varnames:
+      - SPANS_METRICS
+    SpansMetricCreateAttributes:
+      description: The object describing the Datadog span-based metric to create.
+      properties:
+        compute:
+          $ref: '#/components/schemas/SpansMetricCompute'
+        filter:
+          $ref: '#/components/schemas/SpansMetricFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansMetricGroupBy'
+          type: array
+      required:
+      - compute
+      type: object
+    SpansMetricUpdateAttributes:
+      description: The span-based metric properties that will be updated.
+      properties:
+        compute:
+          $ref: '#/components/schemas/SpansMetricUpdateCompute'
+        filter:
+          $ref: '#/components/schemas/SpansMetricFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansMetricGroupBy'
+          type: array
+      type: object
+    SpansMetricUpdateCompute:
+      description: The compute rule to compute the span-based metric.
+      properties:
+        include_percentiles:
+          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
+      type: object
+    SpansMetricResponseCompute:
+      description: The compute rule to compute the span-based metric.
+      properties:
+        aggregation_type:
+          $ref: '#/components/schemas/SpansMetricComputeAggregationType'
+        include_percentiles:
+          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
+        path:
+          description: The path to the value the span-based metric will aggregate on (only used if the
+            aggregation type is a "distribution").
+          example: '@duration'
+          type: string
+      type: object
+    SpansMetricFilter:
+      description: The span-based metric filter. Spans matching this filter will be aggregated in this
+        metric.
+      properties:
+        query:
+          default: '*'
+          description: The search query - following the span search syntax.
+          example: '@http.status_code:200 service:my-service'
+          type: string
+      type: object
+    SpansMetricComputeIncludePercentiles:
+      description: 'Toggle to include or exclude percentile aggregations for distribution metrics.
+
+        Only present when the `aggregation_type` is `distribution`.'
+      example: false
+      type: boolean
+    SpansMetricGroupBy:
+      description: A group by rule.
+      properties:
+        path:
+          description: The path to the value the span-based metric will be aggregated over.
+          example: resource_name
+          type: string
+        tag_name:
+          description: Eventual name of the tag that gets created. By default, the path attribute is used
+            as the tag name.
+          example: resource_name
+          type: string
+      required:
+      - path
+      type: object
+    SpansMetricCompute:
+      description: The compute rule to compute the span-based metric.
+      properties:
+        aggregation_type:
+          $ref: '#/components/schemas/SpansMetricComputeAggregationType'
+        include_percentiles:
+          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
+        path:
+          description: The path to the value the span-based metric will aggregate on (only used if the
+            aggregation type is a "distribution").
+          example: '@duration'
+          type: string
+      required:
+      - aggregation_type
+      type: object
+    SpansMetricComputeAggregationType:
+      description: The type of aggregation to use.
+      enum:
+      - count
+      - distribution
+      example: distribution
+      type: string
+      x-enum-varnames:
+      - COUNT
+      - DISTRIBUTION
+  responses:
+    NotFoundResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Found
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Bad Request
+    NotAuthorizedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Authorized
+    ConflictResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Conflict
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
+  parameters:
+    SpansMetricIDParameter:
+      description: The name of the span-based metric.
+      in: path
+      name: metric_id
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    AuthZ:
+      description: This API uses OAuth 2 with the implicit grant flow.
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth2/v1/authorize
+          scopes:
+            ai_gateway_config_read: View AI Gateway configuration.
+            ai_gateway_config_write: Create, update, and delete AI Gateway configuration.
+            ai_gateway_usage: Use AI Gateway and view configuration applicable to the authenticated user.
+            apm_api_catalog_read: View API catalog and API definitions.
+            apm_api_catalog_write: Add, modify, and delete API catalog definitions.
+            apm_read: Read and query APM and Trace Analytics.
+            apm_service_catalog_read: View service catalog and service definitions.
+            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those
+              definitions are maintained by Datadog.
+            appsec_vm_read: View infrastructure, application code, and library vulnerability findings.
+            aws_configurations_manage: Manage AWS integration account configurations and related integration
+              settings.
+            billing_edit: Edit your organization's billing information.
+            billing_read: View your organization's billing information.
+            bits_investigations_read: View Bits AI investigations.
+            bits_investigations_write: Create and manage Bits AI investigations.
+            cases_read: View Cases.
+            cases_shared_settings_write: Update shared case management settings.
+            cases_write: Create and update cases.
+            ci_visibility_pipelines_write: Create CI Visibility pipeline spans using the API.
+            ci_visibility_read: View CI Visibility.
+            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards
+              and notebooks. For more details, see the Cloud Cost Management docs.
+            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For
+              more details, see the Cloud Cost Management docs.
+            code_analysis_read: View Code Analysis.
+            code_coverage_read: View Code Coverage.
+            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization
+              (PGO).
+            coterm_read: Read terminal recordings.
+            coterm_write: Write terminal recordings.
+            create_webhooks: Create webhooks integrations.
+            dashboards_embed_share: Create, modify, and delete shared dashboards with share type 'embed'.
+            dashboards_invite_share: Create, modify, and delete shared dashboards with share type 'invite'.
+            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable
+              graphs externally.
+            dashboards_read: View dashboards.
+            dashboards_write: Create and change dashboards.
+            data_scanner_read: View Data Scanner configurations.
+            data_scanner_write: Edit Data Scanner configurations.
+            embeddable_graphs_share: Generate public links to share embeddable graphs externally.
+            error_tracking_read: Read Error Tracking data.
+            error_tracking_write: Edit Error Tracking issues.
+            event_correlation_config_read: View event correlation configurations.
+            event_correlation_config_write: Create and update event correlation configurations.
+            events_read: Read Events data.
+            hosts_read: List hosts and their attributes.
+            incident_notification_settings_read: View Incident Notification Rule Settings.
+            incident_notification_settings_write: Configure Incidents Notification Rule settings.
+            incident_read: View incidents in Datadog.
+            incident_settings_read: View Incident Settings.
+            incident_settings_write: Configure Incident Settings.
+            incident_write: Create, view, and manage incidents in Datadog.
+            integrations_read: View configured integrations and their settings.
+            logs_modify_indexes: Modify log indexes, filters, exclusion filters, and configurations.
+            logs_read_data: Read log data.
+            logs_read_index_data: Read indexed log data.
+            manage_integrations: Install, uninstall, and configure integrations.
+            metrics_read: View custom metrics.
+            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute
+              and unmute monitors. The ability to write monitors is not required to set downtimes.
+            monitors_read: View monitors.
+            monitors_write: Edit, delete, and resolve individual monitors.
+            network_connections_read: Read cloud network connections.
+            org_connections_read: Read cross organization connections.
+            org_connections_write: Create, edit, and delete cross organization connections.
+            org_management: Edit org configurations, including authentication and certain security preferences
+              such as configuring SAML, renaming an org, configuring allowed login methods, creating child
+              orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
+              Remote Configuration for the entire organization.
+            security_comments_read: Read comments of vulnerabilities.
+            security_monitoring_critical_assets_read: Read Critical Assets.
+            security_monitoring_critical_assets_write: Write Critical Assets.
+            security_monitoring_filters_read: Read Security Filters.
+            security_monitoring_filters_write: Create, edit, and delete Security Filters.
+            security_monitoring_findings_read: View a list of findings that include both misconfigurations
+              and identity risks.
+            security_monitoring_rules_read: Read Detection Rules.
+            security_monitoring_rules_write: Create and edit Detection Rules.
+            security_monitoring_signals_read: View Security Signals.
+            security_monitoring_suppressions_read: Read Rule Suppressions.
+            security_monitoring_suppressions_write: Write Rule Suppressions.
+            security_pipelines_read: View Security Pipelines.
+            security_pipelines_write: Create, edit, and delete CSM Security Pipelines.
+            siem_entities_read: View Cloud SIEM entities.
+            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission
+              can make status corrections, even if they do not have permission to edit those SLOs.
+            slos_read: View SLOs and status corrections.
+            slos_write: Create, edit, and delete SLOs.
+            synthetics_global_variable_read: View, search, and use Synthetics global variables.
+            synthetics_global_variable_write: Create, edit, and delete global variables for Synthetics.
+            synthetics_private_location_read: View, search, and use Synthetics private locations.
+            synthetics_private_location_write: Create and delete private locations in addition to having
+              access to the associated installation guidelines.
+            synthetics_read: List and view configured Synthetic tests and test results.
+            synthetics_write: Create, edit, and delete Synthetic tests.
+            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
+              Team membership across all Teams, use the User Access Manage permission.
+            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and
+              which Users are on each Team.
+            test_optimization_read: View Test Optimization.
+            test_optimization_settings_write: Update service settings in Test Optimization.
+            test_optimization_write: Update flaky tests from Flaky Tests Management of Test Optimization.
+            timeseries_query: Query Timeseries data.
+            usage_read: View your organization's usage and usage attribution.
+            user_access_invite: Invite other users to your organization.
+            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure
+              logs restriction queries.
+            user_access_read: View users and their roles and settings.
+            workflows_read: View workflows.
+            workflows_run: Run workflows.
+            workflows_write: Create, edit, and delete workflows.
+          tokenUrl: /oauth2/v1/token
+      type: oauth2
+    apiKeyAuth:
+      description: Your Datadog API Key.
+      in: header
+      name: DD-API-KEY
+      type: apiKey
+      x-env-name: DD_API_KEY
+    appKeyAuth:
+      description: Your Datadog APP Key.
+      in: header
+      name: DD-APPLICATION-KEY
+      type: apiKey
+      x-env-name: DD_APP_KEY
+    bearerAuth:
+      scheme: bearer
+      type: http
+      x-env-name: DD_BEARER_TOKEN

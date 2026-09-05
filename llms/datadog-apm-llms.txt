@@ -1,5 +1,7 @@
 # Datadog documentation
 
+> This index is the canonical entry point to the documentation. Start here for reading the docs. Each link below goes to another index for that subsection of the docs.
+
 > Documentation index for the Datadog observability platform. Covers infrastructure monitoring, APM, log management, security, synthetics, RUM, CI/CD visibility, cloud cost management, incident management, and more.
 
 ## Product docs
@@ -33,6 +35,7 @@
 - [Data Streams Monitoring](https://docs.datadoghq.com/data_streams_monitoring/llms.txt)
 - [Database Monitoring](https://docs.datadoghq.com/database_monitoring/llms.txt): Learn about Database Monitoring and get started
 - [Datadog CoTerm](https://docs.datadoghq.com/datadog_coterm/llms.txt): Record terminal sessions, analyze them in Datadog, and protect against dangerous terminal commands with CoTerm's validation layer.
+- [Datadog Disaster Recovery](https://docs.datadoghq.com/datadog_disaster_recovery/llms.txt)
 - [Datadog Documentation Guides](https://docs.datadoghq.com/datadog_documentation_guides/llms.txt)
 - [Datadog Help](https://docs.datadoghq.com/datadog_help/llms.txt)
 - [Datadog IDE Plugins](https://docs.datadoghq.com/datadog_ide_plugins/llms.txt): Learn how to set up Datadog IDE plugins.
@@ -60,7 +63,7 @@
 - [Monitors](https://docs.datadoghq.com/monitors/llms.txt): Create monitors, configure notifications and automations, and manage your monitors using the alerting platform
 - [Network Monitoring](https://docs.datadoghq.com/network_monitoring/llms.txt): Explore Datadog Network Monitoring Products
 - [Notebooks](https://docs.datadoghq.com/notebooks/llms.txt): Create collaborative rich text documents with live Datadog graphs for investigations, postmortems, runbooks, and data-driven storytelling.
-- [Observability Pipelines](https://docs.datadoghq.com/observability_pipelines/llms.txt)
+- [Observability Pipelines](https://docs.datadoghq.com/observability_pipelines/llms.txt): Learn how Observability Pipelines lets you collect, process, and route logs and metrics within your own infrastructure to destinations such as Datadog, Amazon S3, Splunk, and Microsoft Sentinel.
 - [OpenTelemetry in Datadog](https://docs.datadoghq.com/opentelemetry_in_datadog/llms.txt)
 - [PR Gates](https://docs.datadoghq.com/pr_gates/llms.txt): Learn how to use PR Gates to enable your team to control what code makes it to production.
 - [Partners](https://docs.datadoghq.com/partners/llms.txt)

@@ -1,0 +1,133 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  openapi/ (extracted from Datadog's published specs),
+  https://mcp.datadoghq.com/.well-known/oauth-authorization-server,
+  https://mcp.datadoghq.com/.well-known/oauth-protected-resource,
+  https://docs.datadoghq.com/opentelemetry/,
+  https://docs.datadoghq.com/tracing/trace_collection/trace_context_propagation/,
+  https://trust.datadoghq.com/
+provider: Datadog APM
+providerId: datadog-apm
+conformance:
+- id: oauth2
+  conforms: true
+  evidence: >-
+    openapi/ declares an AuthZ oauth2 securityScheme with an authorizationCode flow and 96 named
+    scopes, applied per operation (apm_read, apm_service_catalog_read/write, slos_read/write).
+- id: oauth2.1
+  conforms: true
+  evidence: >-
+    https://mcp.datadoghq.com/.well-known/oauth-authorization-server declares oauth_version 2.1 with
+    pkce_required true and S256 the only code challenge method.
+- id: rfc8414
+  name: OAuth 2.0 Authorization Server Metadata
+  conforms: true
+  evidence: https://mcp.datadoghq.com/.well-known/oauth-authorization-server (HTTP 200, probed 2026-09-05)
+- id: rfc9728
+  name: OAuth 2.0 Protected Resource Metadata
+  conforms: true
+  evidence: https://mcp.datadoghq.com/.well-known/oauth-protected-resource (HTTP 200, probed 2026-09-05)
+- id: rfc7591
+  name: OAuth 2.0 Dynamic Client Registration
+  conforms: true
+  evidence: >-
+    registration_endpoint https://app.datadoghq.com/api/v2/oauth2/register declared in the
+    authorization server metadata.
+- id: rfc9116
+  name: security.txt
+  conforms: true
+  evidence: https://mcp.datadoghq.com/.well-known/security.txt (HTTP 200, probed 2026-09-05)
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every Datadog host probed.
+- id: rfc9457
+  name: Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    No application/problem+json media type appears anywhere in the APM surface; errors are vendor
+    JSON. See errors/datadog-apm-problem-types.yml.
+- id: 'json:api'
+  conforms: partial
+  evidence: >-
+    The API v2 half of the surface is JSON:API-shaped — data/type/id/attributes resource objects,
+    page[] bracket parameters, and a JSONAPIErrorResponse whose items carry status/title/detail/source.
+    The v1 half (SLOs) is not JSON:API at all. Datadog makes no formal JSON:API conformance claim.
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header or equivalent replay-protection mechanism is documented or declared on
+    any of the 16 mutating operations. See conventions/datadog-apm-conventions.yml.
+- id: pagination
+  conforms: true
+  evidence: >-
+    Every list operation declares paging parameters, though in four different idioms
+    (page[cursor]/page[limit], body page.cursor, page[size]/page[number], offset/limit).
+- id: rfc8594
+  name: Sunset HTTP Header
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation header and no published deprecation policy;
+    https://docs.datadoghq.com/api/latest/deprecation/ returns 404.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: >-
+    First-party remote server at https://mcp.datadoghq.com/api/unstable/mcp-server/mcp, streamable
+    HTTP transport, OAuth-gated (401 to an anonymous tools/list, probed 2026-09-05).
+    See mcp/datadog-apm-mcp.yml.
+- id: a2a
+  name: Agent2Agent
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 on all six hosts probed
+    (www, apex, api, docs, app, mcp). No agent card is published.
+domain_standards:
+- id: opentelemetry
+  name: OpenTelemetry
+  conforms: true
+  market: application performance monitoring / observability
+  evidence: >-
+    https://docs.datadoghq.com/opentelemetry/ (HTTP 200) — Datadog ingests OTLP natively and ships an
+    OpenTelemetry Collector distribution; the tracer libraries in packages/ accept OTel instrumentation.
+  significance: >-
+    This is the domain standard that decides integration cost in APM. A team already emitting OTLP
+    can send telemetry to Datadog without a bespoke exporter; a vendor that only accepts its own wire
+    format requires re-instrumentation.
+- id: w3c-trace-context
+  name: W3C Trace Context (traceparent / tracestate)
+  conforms: true
+  market: distributed tracing
+  evidence: >-
+    https://docs.datadoghq.com/tracing/trace_collection/trace_context_propagation/ (HTTP 200), and the
+    published wire protocol itself: grpc/datadog-apm-span.proto declares `string tracestate` and W3C
+    trace flags on SpanLink, copied verbatim from Datadog's own proto.
+  significance: >-
+    Header-level interoperability — a trace started in a non-Datadog service is continued rather than
+    broken, which is the difference between one trace and two.
+- id: statsd
+  name: StatsD / DogStatsD
+  conforms: true
+  market: metrics submission
+  evidence: >-
+    DogStatsD is a documented superset of the StatsD line protocol, shipped in the first-party client
+    libraries listed in packages/.
+compliance_programs:
+  source: https://trust.datadoghq.com/
+  certifications:
+  - SOC 2
+  - ISO 27001
+  - ISO 27017
+  - ISO 27018
+  - PCI DSS
+  - HIPAA
+  - FedRAMP
+  - GDPR
+  - CSA STAR
+  see_also: security/datadog-apm-trust-center.yml
+  mcp_note: >-
+    Datadog states the MCP Server is HIPAA-eligible and NOT GovCloud compatible
+    (https://docs.datadoghq.com/bits_ai/mcp_server/).
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

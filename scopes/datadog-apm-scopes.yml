@@ -1,0 +1,1163 @@
+generated: '2026-09-05'
+method: derived
+source: openapi/datadog-apm-retention-filters-api-openapi.yml, openapi/datadog-apm-service-definitions-api-openapi.yml,
+  openapi/datadog-apm-services-api-openapi.yml, openapi/datadog-apm-slo-corrections-api-openapi.yml,
+  openapi/datadog-apm-slos-api-openapi.yml, openapi/datadog-apm-spans-api-openapi.yml, openapi/datadog-apm-spans-metrics-api-openapi.yml
+schemes:
+- name: AuthZ
+  source: openapi/datadog-apm-retention-filters-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-service-definitions-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-services-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-slo-corrections-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-slos-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-spans-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+- name: AuthZ
+  source: openapi/datadog-apm-spans-metrics-api-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+  description: This API uses OAuth 2 with the implicit grant flow.
+scopes:
+- scope: ai_gateway_config_read
+  description: View AI Gateway configuration.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: ai_gateway_config_write
+  description: Create, update, and delete AI Gateway configuration.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: ai_gateway_usage
+  description: Use AI Gateway and view configuration applicable to the authenticated user.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: apm_api_catalog_read
+  description: View API catalog and API definitions.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: apm_api_catalog_write
+  description: Add, modify, and delete API catalog definitions.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: apm_read
+  description: Read and query APM and Trace Analytics.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: apm_service_catalog_read
+  description: View service catalog and service definitions.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: apm_service_catalog_write
+  description: Add, modify, and delete service catalog definitions when those definitions are
+    maintained by Datadog.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: appsec_vm_read
+  description: View infrastructure, application code, and library vulnerability findings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: aws_configurations_manage
+  description: Manage AWS integration account configurations and related integration settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: billing_edit
+  description: Edit your organization's billing information.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: billing_read
+  description: View your organization's billing information.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: bits_investigations_read
+  description: View Bits AI investigations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: bits_investigations_write
+  description: Create and manage Bits AI investigations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: cases_read
+  description: View Cases.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: cases_shared_settings_write
+  description: Update shared case management settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: cases_write
+  description: Create and update cases.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: ci_visibility_pipelines_write
+  description: Create CI Visibility pipeline spans using the API.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: ci_visibility_read
+  description: View CI Visibility.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: cloud_cost_management_read
+  description: View Cloud Cost pages and the cloud cost data source in dashboards and notebooks.
+    For more details, see the Cloud Cost Management docs.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: cloud_cost_management_write
+  description: Configure cloud cost accounts and global customizations. For more details, see
+    the Cloud Cost Management docs.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: code_analysis_read
+  description: View Code Analysis.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: code_coverage_read
+  description: View Code Coverage.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: continuous_profiler_pgo_read
+  description: Read and query Continuous Profiler data for Profile-Guided Optimization (PGO).
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: coterm_read
+  description: Read terminal recordings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: coterm_write
+  description: Write terminal recordings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: create_webhooks
+  description: Create webhooks integrations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: dashboards_embed_share
+  description: Create, modify, and delete shared dashboards with share type 'embed'.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: dashboards_invite_share
+  description: Create, modify, and delete shared dashboards with share type 'invite'.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: dashboards_public_share
+  description: Generate public and authenticated links to share dashboards or embeddable graphs
+    externally.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: dashboards_read
+  description: View dashboards.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: dashboards_write
+  description: Create and change dashboards.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: data_scanner_read
+  description: View Data Scanner configurations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: data_scanner_write
+  description: Edit Data Scanner configurations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: embeddable_graphs_share
+  description: Generate public links to share embeddable graphs externally.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: error_tracking_read
+  description: Read Error Tracking data.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: error_tracking_write
+  description: Edit Error Tracking issues.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: event_correlation_config_read
+  description: View event correlation configurations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: event_correlation_config_write
+  description: Create and update event correlation configurations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: events_read
+  description: Read Events data.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: hosts_read
+  description: List hosts and their attributes.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_notification_settings_read
+  description: View Incident Notification Rule Settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_notification_settings_write
+  description: Configure Incidents Notification Rule settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_read
+  description: View incidents in Datadog.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_settings_read
+  description: View Incident Settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_settings_write
+  description: Configure Incident Settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: incident_write
+  description: Create, view, and manage incidents in Datadog.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: integrations_read
+  description: View configured integrations and their settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: logs_modify_indexes
+  description: Modify log indexes, filters, exclusion filters, and configurations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: logs_read_data
+  description: Read log data.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: logs_read_index_data
+  description: Read indexed log data.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: manage_integrations
+  description: Install, uninstall, and configure integrations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: metrics_read
+  description: View custom metrics.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: monitors_downtime
+  description: Set downtimes to suppress alerts from any monitor in an organization. Mute and
+    unmute monitors. The ability to write monitors is not required to set downtimes.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: monitors_read
+  description: View monitors.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: monitors_write
+  description: Edit, delete, and resolve individual monitors.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: network_connections_read
+  description: Read cloud network connections.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: org_connections_read
+  description: Read cross organization connections.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: org_connections_write
+  description: Create, edit, and delete cross organization connections.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: org_management
+  description: Edit org configurations, including authentication and certain security preferences
+    such as configuring SAML, renaming an org, configuring allowed login methods, creating child
+    orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
+    Remote Configuration for the entire organization.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_comments_read
+  description: Read comments of vulnerabilities.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_critical_assets_read
+  description: Read Critical Assets.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_critical_assets_write
+  description: Write Critical Assets.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_filters_read
+  description: Read Security Filters.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_filters_write
+  description: Create, edit, and delete Security Filters.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_findings_read
+  description: View a list of findings that include both misconfigurations and identity risks.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_rules_read
+  description: Read Detection Rules.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_rules_write
+  description: Create and edit Detection Rules.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_signals_read
+  description: View Security Signals.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_suppressions_read
+  description: Read Rule Suppressions.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_monitoring_suppressions_write
+  description: Write Rule Suppressions.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_pipelines_read
+  description: View Security Pipelines.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: security_pipelines_write
+  description: Create, edit, and delete CSM Security Pipelines.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: siem_entities_read
+  description: View Cloud SIEM entities.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: slos_corrections
+  description: Apply, edit, and delete SLO status corrections. A user with this permission can
+    make status corrections, even if they do not have permission to edit those SLOs.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: slos_read
+  description: View SLOs and status corrections.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: slos_write
+  description: Create, edit, and delete SLOs.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_global_variable_read
+  description: View, search, and use Synthetics global variables.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_global_variable_write
+  description: Create, edit, and delete global variables for Synthetics.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_private_location_read
+  description: View, search, and use Synthetics private locations.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_private_location_write
+  description: Create and delete private locations in addition to having access to the associated
+    installation guidelines.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_read
+  description: List and view configured Synthetic tests and test results.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: synthetics_write
+  description: Create, edit, and delete Synthetic tests.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: teams_manage
+  description: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
+    Team membership across all Teams, use the User Access Manage permission.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: teams_read
+  description: Read Teams data. A User with this permission can view Team names, metadata, and
+    which Users are on each Team.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: test_optimization_read
+  description: View Test Optimization.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: test_optimization_settings_write
+  description: Update service settings in Test Optimization.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: test_optimization_write
+  description: Update flaky tests from Flaky Tests Management of Test Optimization.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: timeseries_query
+  description: Query Timeseries data.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: usage_read
+  description: View your organization's usage and usage attribution.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: user_access_invite
+  description: Invite other users to your organization.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: user_access_manage
+  description: Disable users, manage user roles, manage SAML-to-role mappings, and configure
+    logs restriction queries.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: user_access_read
+  description: View users and their roles and settings.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: workflows_read
+  description: View workflows.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: workflows_run
+  description: Run workflows.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- scope: workflows_write
+  description: Create, edit, and delete workflows.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml

@@ -1,0 +1,71 @@
+generated: '2026-09-05'
+method: searched
+source: https://github.com/DataDog/datadog-api-client-go/blob/master/CHANGELOG.md
+provider: Datadog APM
+providerId: datadog-apm
+scheme: semver on the generated client, dated per release
+cadence: roughly every 2-4 weeks
+current_version: 2.65.0
+current_version_date: '2026-09-02'
+note: >-
+  Datadog publishes no dated changelog for the HTTP API itself. The authoritative dated record of API
+  change is the CHANGELOG.md of the generated clients, because the clients are regenerated from the
+  same OpenAPI documents this repo's openapi/ artifacts were extracted from — an entry there IS a
+  spec change. Entries are grouped Added / Changed / Fixed / Removed / Deprecated, so breaking change
+  is signalled structurally. The in-product release notes at https://app.datadoghq.com/release-notes
+  cover the product rather than the contract and rendered as an application shell to an anonymous fetch.
+window: 2026-02-17 to 2026-09-02 (APM-relevant entries only)
+entries:
+- version: 2.65.0
+  date: '2026-09-02'
+  breaking: false
+  highlights:
+  - Deprecated - Mark unused AWS logs v1 endpoints as deprecated (first Deprecated section in this window).
+  - Changed - Rename Tag Policies to Tag Rules and move to /api/v2/governance/tag_rules (a path move, outside APM).
+  apm_relevant: false
+- version: 2.63.0
+  date: '2026-08-06'
+  breaking: false
+  changed:
+  - Deprecate report-related endpoints from SLO documentation.
+  apm_relevant: true
+  note: >-
+    The v2 SLO report endpoints (/api/v2/slo/report...) were marked deprecated in documentation. They
+    are deliberately NOT part of this repo's extracted APM subset.
+- version: 2.61.0
+  date: '2026-06-17'
+  breaking: false
+  added:
+  - Add slo_query to SLO Correction API for global correction support.
+  - Add OpenAPI spec for APM spans-public-api trace endpoints.
+  apm_relevant: true
+- version: 2.58.0
+  date: '2026-04-16'
+  breaking: false
+  added:
+  - Add fleet tracers, clusters, and instrumented pods endpoints.
+  apm_relevant: true
+- version: 2.57.0
+  date: '2026-04-01'
+  breaking: false
+  added:
+  - Add bad events support in metric SLOs.
+  apm_relevant: true
+- version: 2.55.0
+  date: '2026-02-17'
+  breaking: true
+  fixed:
+  - Add mandatory filter env parameter to APM services endpoint.
+  added:
+  - Create OpenAPI for SLO status endpoint.
+  changed:
+  - Update permissions in docs api for apm retention filters.
+  - Changed Metric SLO to support SLI specification.
+  apm_relevant: true
+  note: >-
+    Making filter[env] mandatory on GET /api/v2/apm/services is a breaking change to an existing
+    operation, shipped under a "Fixed" heading. It is visible in the spec this repo extracted:
+    GetServiceList declares filter[env] as its only parameter.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

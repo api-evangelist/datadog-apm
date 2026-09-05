@@ -1,0 +1,85 @@
+generated: '2026-09-05'
+method: derived
+source: openapi/datadog-apm-retention-filters-api-openapi.yml, openapi/datadog-apm-service-definitions-api-openapi.yml,
+  openapi/datadog-apm-services-api-openapi.yml, openapi/datadog-apm-slo-corrections-api-openapi.yml,
+  openapi/datadog-apm-slos-api-openapi.yml, openapi/datadog-apm-spans-api-openapi.yml, openapi/datadog-apm-spans-metrics-api-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  - oauth2
+  api_key_in:
+  - header
+  - query
+  oauth2_flows:
+  - authorizationCode
+schemes:
+- name: AuthZ
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /oauth2/v1/authorize
+    tokenUrl: /oauth2/v1/token
+    scopes: 96
+  description: This API uses OAuth 2 with the implicit grant flow.
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: DD-API-KEY
+  description: Your Datadog API Key.
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- name: appKeyAuth
+  type: apiKey
+  in: header
+  parameter: DD-APPLICATION-KEY
+  description: Your Datadog APP Key.
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/datadog-apm-retention-filters-api-openapi.yml
+  - openapi/datadog-apm-service-definitions-api-openapi.yml
+  - openapi/datadog-apm-services-api-openapi.yml
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+  - openapi/datadog-apm-spans-api-openapi.yml
+  - openapi/datadog-apm-spans-metrics-api-openapi.yml
+- name: apiKeyAuthQuery
+  type: apiKey
+  in: query
+  parameter: api_key
+  description: Deprecated API Key as query argument.
+  sources:
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml
+- name: appKeyAuthQuery
+  type: apiKey
+  in: query
+  parameter: application_key
+  description: Deprecated APP Key as query argument.
+  sources:
+  - openapi/datadog-apm-slo-corrections-api-openapi.yml
+  - openapi/datadog-apm-slos-api-openapi.yml

@@ -1,0 +1,44 @@
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://www.npmjs.com/package/@datadog/datadog-ci, https://github.com/DataDog/datadog-ci,
+  https://docs.datadoghq.com/
+provider: Datadog APM
+providerId: datadog-apm
+name: datadog-ci
+official: true
+version: 5.23.0
+published: '2026-08-17'
+description: >-
+  Datadog's first-party command line interface. It is a CI/CD-oriented CLI rather than a general REST
+  API client — it uploads artifacts and results to Datadog and gates pipelines on Datadog signals.
+  There is no first-party CLI that wraps the SLO / spans / retention-filter REST surface in openapi/;
+  that surface is reached through the generated client libraries in packages/.
+install:
+- method: npm
+  command: npm install -g @datadog/datadog-ci
+- method: npx
+  command: npx @datadog/datadog-ci <command>
+- method: standalone binary
+  note: >-
+    Standalone binaries are published on the GitHub releases page; the exact asset names were not
+    fetched and are not listed rather than guessed.
+repository: https://github.com/DataDog/datadog-ci
+package: packages/datadog-apm-packages.yml
+command_groups:
+  note: >-
+    Command groups are recorded only where the CLI's own published surface names them. This list is
+    deliberately not exhaustive — it is not derived from a fetched --help output.
+  apm_relevant:
+  - group: trace
+    purpose: Instrument CI pipeline commands so they appear as APM traces/spans in Datadog.
+  - group: deployment
+    purpose: Mark deployments and gate them, feeding Change Tracking, which the MCP change-story tools read.
+related_cli:
+- name: ddev
+  official: true
+  purpose: Datadog Agent integration developer tooling — building and testing Agent integrations.
+  note: Not an API client; recorded so the two Datadog CLIs are not conflated.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

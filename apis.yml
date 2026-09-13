@@ -38,6 +38,17 @@ tags:
   - Observability
   - Performance Monitoring
   - Spans
+  - SLO
+  - Service Catalog
+  - OpenTelemetry
+  - MCP
+tags_raw:
+  - APM
+  - Distributed Tracing
+  - Microservices
+  - Observability
+  - Performance Monitoring
+  - Spans
   - Service Level Objectives
   - Service Catalog
   - OpenTelemetry
@@ -164,7 +175,7 @@ apis:
   humanURL: https://docs.datadoghq.com/api/latest/service-level-objective-corrections/
   baseURL: https://api.datadoghq.com
   tags:
-  - SLO
+  - Service Level Objective Corrections
   tags_raw:
   - Service Level Objective Corrections
   properties:

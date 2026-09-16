@@ -61,9 +61,10 @@ access: 3rd-Party
 apis:
 - aid: datadog-apm:datadog-apm-spans-api
   name: Datadog APM Spans API
-  description: Search, list and aggregate APM spans. Three operations covering cursor-paginated span search
-    (POST and GET forms) and a span analytics aggregation that returns single numbers, single strings
-    or timeseries buckets.
+  description: >-
+    Search, list and aggregate APM spans. Three operations covering cursor-paginated span search (POST
+    and GET forms) and a span analytics aggregation that returns single numbers, single strings or timeseries
+    buckets.
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
@@ -79,8 +80,9 @@ apis:
     url: skills/datadog-apm-search-spans.md
 - aid: datadog-apm:datadog-apm-spans-metrics-api
   name: Datadog APM Spans Metrics API
-  description: Create, read, update and delete span-based metric definitions — a compute over a span attribute,
-    a filter query and group-by tags. Five operations.
+  description: >-
+    Create, read, update and delete span-based metric definitions — a compute over a span attribute, a
+    filter query and group-by tags. Five operations.
   humanURL: https://docs.datadoghq.com/api/latest/spans-metrics/
   baseURL: https://api.datadoghq.com
   tags:
@@ -92,95 +94,13 @@ apis:
     url: overlays/datadog-apm-spans-metrics-overlay.yaml
   - type: Documentation
     url: https://docs.datadoghq.com/api/latest/spans-metrics/
-- aid: datadog-apm:datadog-apm-retention-filters-api
-  name: Datadog APM Retention Filters API
-  description: Manage the ordered list of retention filters that decide which spans Datadog indexes and
-    for how long. Six operations including a whole-list reorder. The highest-consequence write surface
-    in Datadog APM — a deleted filter loses observability data that cannot be recovered.
-  humanURL: https://docs.datadoghq.com/api/latest/apm-retention-filters/
-  baseURL: https://api.datadoghq.com
-  tags:
-  - APM Retention Filters
-  properties:
-  - type: OpenAPI
-    url: openapi/datadog-apm-retention-filters-api-openapi.yml
-  - type: Overlay
-    url: overlays/datadog-apm-retention-filters-overlay.yaml
-  - type: Documentation
-    url: https://docs.datadoghq.com/api/latest/apm-retention-filters/
-- aid: datadog-apm:datadog-apm-services-api
-  name: Datadog APM Services API
-  description: List the APM services observed in an environment. One operation, GET /api/v2/apm/services,
-    whose filter[env] parameter became mandatory in the 2026-02-17 release.
-  humanURL: https://docs.datadoghq.com/api/latest/apm/
-  baseURL: https://api.datadoghq.com
-  tags:
-  - APM
-  properties:
-  - type: OpenAPI
-    url: openapi/datadog-apm-services-api-openapi.yml
-  - type: Overlay
-    url: overlays/datadog-apm-services-overlay.yaml
-  - type: Documentation
-    url: https://docs.datadoghq.com/api/latest/apm/
-- aid: datadog-apm:datadog-apm-service-definitions-api
-  name: Datadog APM Service Definitions API
-  description: Read and upsert service catalog definitions — the declarative service.datadog.yaml documents
-    carrying ownership, contacts, links and integrations. Four operations across four coexisting schema
-    versions (v1, v2, v2.1, v2.2).
-  humanURL: https://docs.datadoghq.com/api/latest/service-definition/
-  baseURL: https://api.datadoghq.com
-  tags:
-  - Service Definition
-  properties:
-  - type: OpenAPI
-    url: openapi/datadog-apm-service-definitions-api-openapi.yml
-  - type: Overlay
-    url: overlays/datadog-apm-service-definitions-overlay.yaml
-  - type: Documentation
-    url: https://docs.datadoghq.com/api/latest/service-definition/
-- aid: datadog-apm:datadog-apm-slos-api
-  name: Datadog APM Service Level Objectives API
-  description: Create, search, read, update and delete Service Level Objectives, read SLI history, and
-    check whether an SLO can be deleted before deleting it. Ten operations on Datadog API v1.
-  humanURL: https://docs.datadoghq.com/api/latest/service-level-objectives/
-  baseURL: https://api.datadoghq.com
-  tags:
-  - SLO
-  tags_raw:
-  - Service Level Objectives
-  properties:
-  - type: OpenAPI
-    url: openapi/datadog-apm-slos-api-openapi.yml
-  - type: Overlay
-    url: overlays/datadog-apm-slos-overlay.yaml
-  - type: Documentation
-    url: https://docs.datadoghq.com/api/latest/service-level-objectives/
-  - type: AgentSkill
-    url: skills/datadog-apm-manage-slos.md
-- aid: datadog-apm:datadog-apm-slo-corrections-api
-  name: Datadog APM SLO Corrections API
-  description: Manage time-boxed corrections that exclude a window from an SLO error budget, optionally
-    recurring by rrule. Five operations, and the only genuinely reversible write in the APM surface.
-  humanURL: https://docs.datadoghq.com/api/latest/service-level-objective-corrections/
-  baseURL: https://api.datadoghq.com
-  tags:
-  - Service Level Objective Corrections
-  tags_raw:
-  - Service Level Objective Corrections
-  properties:
-  - type: OpenAPI
-    url: openapi/datadog-apm-slo-corrections-api-openapi.yml
-  - type: Overlay
-    url: overlays/datadog-apm-slo-corrections-overlay.yaml
-  - type: Documentation
-    url: https://docs.datadoghq.com/api/latest/service-level-objective-corrections/
 - aid: datadog-apm:datadog-apm-mcp-server
   name: Datadog MCP Server
-  description: Datadog's first-party remote Model Context Protocol server. OAuth 2.1 with PKCE and dynamic
-    client registration; a dedicated apm toolset covering span search, trace queries, Watchdog anomaly
-    stories, latency-bottleneck analysis and APM recommendations. An anonymous tools/list returns HTTP
-    401, so the live schemas are auth-gated.
+  description: >-
+    Datadog's first-party remote Model Context Protocol server. OAuth 2.1 with PKCE and dynamic client
+    registration; a dedicated apm toolset covering span search, trace queries, Watchdog anomaly stories,
+    latency-bottleneck analysis and APM recommendations. An anonymous tools/list returns HTTP 401, so
+    the live schemas are auth-gated.
   humanURL: https://docs.datadoghq.com/bits_ai/mcp_server/
   baseURL: https://mcp.datadoghq.com/api/unstable/mcp-server/mcp
   tags:
@@ -197,7 +117,8 @@ apis:
     url: https://docs.datadoghq.com/mcp_server/setup/
 - aid: datadog-apm:datadog-apm-apm-api
   name: Datadog APM API
-  description: Observe, troubleshoot, and improve cloud-scale applications with all telemetry in context
+  description: >-
+    Observe, troubleshoot, and improve cloud-scale applications with all telemetry in context
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
@@ -207,7 +128,8 @@ apis:
     url: openapi/datadog-apm-apm-api-openapi.yml
 - aid: datadog-apm:datadog-apm-apm-retention-filters-api
   name: Datadog APM Retention Filters API
-  description: Manage configuration of [APM retention filters](https://app.datadoghq.com/apm/traces/retention-filters)
+  description: >-
+    Manage configuration of [APM retention filters](https://app.datadoghq.com/apm/traces/retention-filters)
     for your organization. You need an API and application key with Admin rights to interact with this
     endpoint. See [retention filters](https://docs.datadoghq.com/tracing/trace_pipeline/trace_retention/#retention-filters)
     on the Trace Retention page for more information.
@@ -220,11 +142,12 @@ apis:
     url: openapi/datadog-apm-apm-retention-filters-api-openapi.yml
 - aid: datadog-apm:datadog-apm-service-definition-api
   name: Datadog APM Service Definition API
-  description: 'API to create, update, retrieve and delete service definitions.
+  description: >-
+    API to create, update, retrieve and delete service definitions.
 
     Note: Service Catalog [v3.0 schema](https://docs.datadoghq.com/service_catalog/service_definitions/v3-0/)
     has new API endpoints documented under [Software Catalog](https://docs.datadoghq.com/api/latest/software-catalog/).
-    Use the following Service Definition endpoints for v2.2 and earlier.'
+    Use the following Service Definition endpoints for v2.2 and earlier.
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
@@ -234,14 +157,15 @@ apis:
     url: openapi/datadog-apm-service-definition-api-openapi.yml
 - aid: datadog-apm:datadog-apm-service-level-objective-corrections-api
   name: Datadog APM Service Level Objective Corrections API
-  description: 'SLO Status Corrections allow you to prevent specific time periods from negatively impacting
+  description: >-
+    SLO Status Corrections allow you to prevent specific time periods from negatively impacting
 
     your SLO’s status and error budget. You can use Status Corrections for various purposes, such
 
     as removing planned maintenance windows, non-business hours, or other time periods that do
 
     not correspond to genuine issues. See [SLO status corrections](https://docs.datadoghq.com/service_management/service_level_objectives/#slo-status-corrections)
-    for more information.'
+    for more information.
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
@@ -251,7 +175,8 @@ apis:
     url: openapi/datadog-apm-service-level-objective-corrections-api-openapi.yml
 - aid: datadog-apm:datadog-apm-service-level-objectives-api
   name: Datadog APM Service Level Objectives API
-  description: '[Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/#configuration)
+  description: >-
+    [Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/#configuration)
 
     (or SLOs) are a key part of the site reliability engineering toolkit.
 
@@ -261,7 +186,7 @@ apis:
 
     balance feature development with platform stability,
 
-    and improve communication with internal and external users.'
+    and improve communication with internal and external users.
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
@@ -270,6 +195,18 @@ apis:
   - type: OpenAPI
     url: openapi/datadog-apm-service-level-objectives-api-openapi.yml
 common:
+- type: Overlay
+  url: overlays/datadog-apm-retention-filters-overlay.yaml
+- type: Overlay
+  url: overlays/datadog-apm-services-overlay.yaml
+- type: Overlay
+  url: overlays/datadog-apm-service-definitions-overlay.yaml
+- type: Overlay
+  url: overlays/datadog-apm-slos-overlay.yaml
+- type: AgentSkill
+  url: skills/datadog-apm-manage-slos.md
+- type: Overlay
+  url: overlays/datadog-apm-slo-corrections-overlay.yaml
 - type: Website
   url: https://www.datadoghq.com/
 - type: DeveloperPortal

@@ -190,6 +190,8 @@ apis:
   humanURL: https://docs.datadoghq.com/api/latest/spans/
   baseURL: https://api.datadoghq.com
   tags:
+  - SLO
+  tags_raw:
   - Service Level Objectives
   properties:
   - type: OpenAPI

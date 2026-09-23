@@ -1,0 +1,29 @@
+# Front Door AI Index — datadog-apm — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: datadog-apm
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.datadoghq.com
+  final_host: www.datadoghq.com
+  ownership: unresolved
+  owner: null
+  shares_host_with:
+  - datadog
+  inherited_from: null
+  verdict: scored
+  score: null
+  host_score: 14
+  density: null
+  words: 1214
+  tiers:
+    agentic: 1
+    core: 12
+    model: 1
+  ambiguous: 6
+  top_terms:
+    AI: 12
+    agent: 6
+    OpenAI: 1
+    agentic: 1

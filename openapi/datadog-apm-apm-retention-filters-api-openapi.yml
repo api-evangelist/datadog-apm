@@ -1,8 +1,7 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Datadog APM Retention Filters API
-  description: The APM Retention Filters operations of the Datadog API, extracted verbatim from the OpenAPI
-    definition Datadog publishes for its own API clients.
+  title: Datadog APM — APM, Spans and Service Definitions (API v2)…
+  description: The APM, retention filter, span, span-metric and service-definition surface of the Datadog API v2, extracted verbatim from the OpenAPI definition Datadog publishes for its own API clients.
   version: '1.0'
   contact:
     email: support@datadoghq.com
@@ -10,9 +9,7 @@ info:
     url: https://www.datadoghq.com/support/
   x-source: https://raw.githubusercontent.com/DataDog/datadog-api-client-go/master/.generator/schemas/v2/openapi.yaml
   x-extracted: '2026-09-05'
-  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published
-    OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by
-    API Evangelist.
+  x-extraction-note: Path items, components and security schemes copied VERBATIM from the Datadog-published OpenAPI at x-source; only the APM-relevant subset of paths is retained. No content was authored by API Evangelist.
 servers:
 - url: https://{subdomain}.{site}
   variables:
@@ -53,10 +50,7 @@ security:
 - apiKeyAuth: []
   appKeyAuth: []
 tags:
-- description: Manage configuration of [APM retention filters](https://app.datadoghq.com/apm/traces/retention-filters)
-    for your organization. You need an API and application key with Admin rights to interact with this
-    endpoint. See [retention filters](https://docs.datadoghq.com/tracing/trace_pipeline/trace_retention/#retention-filters)
-    on the Trace Retention page for more information.
+- description: Manage configuration of APM retention filters for your organization. You need an API and application key with Admin rights to interact with this endpoint. See retention filters on the Trace Retention page for more information.
   externalDocs:
     description: Find out more at
     url: https://docs.datadoghq.com/tracing/trace_pipeline/trace_retention/
@@ -103,8 +97,7 @@ paths:
         Returns the retention filter definition when the request is successful.
 
 
-        Default filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor
-        cannot be created.'
+        Default filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor cannot be created.'
       operationId: CreateApmRetentionFilter
       requestBody:
         content:
@@ -201,8 +194,7 @@ paths:
       description: 'Delete a specific retention filter from your organization.
 
 
-        Default filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor
-        cannot be deleted.'
+        Default filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor cannot be deleted.'
       operationId: DeleteApmRetentionFilter
       parameters:
       - $ref: '#/components/parameters/RetentionFilterIdParam'
@@ -264,8 +256,7 @@ paths:
       description: 'Update a retention filter from your organization.
 
 
-        Default filters (filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor)
-        cannot be renamed or removed.'
+        Default filters (filters with types spans-errors-sampling-processor and spans-appsec-sampling-processor) cannot be renamed or removed.'
       operationId: UpdateApmRetentionFilter
       parameters:
       - $ref: '#/components/parameters/RetentionFilterIdParam'
@@ -328,159 +319,6 @@ paths:
         - apm_retention_filter_write
 components:
   schemas:
-    RetentionFiltersResponse:
-      description: An ordered list of retention filters.
-      properties:
-        data:
-          description: A list of retention filters objects.
-          items:
-            $ref: '#/components/schemas/RetentionFilterAll'
-          type: array
-      required:
-      - data
-      type: object
-    RetentionFilterCreateRequest:
-      description: The body of the retention filter to be created.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilterCreateData'
-      required:
-      - data
-      type: object
-    RetentionFilterResponse:
-      description: The retention filters definition.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilterAll'
-      type: object
-    RetentionFilterAll:
-      description: The definition of the retention filter.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterAllAttributes'
-        id:
-          description: The ID of the retention filter.
-          example: 7RBOb7dLSYWI01yc3pIH8w
-          type: string
-        type:
-          $ref: '#/components/schemas/ApmRetentionFilterType'
-      required:
-      - id
-      - type
-      - attributes
-      type: object
-    RetentionFilterCreateData:
-      description: The body of the retention filter to be created.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterCreateAttributes'
-        type:
-          $ref: '#/components/schemas/ApmRetentionFilterType'
-      required:
-      - attributes
-      - type
-      type: object
-    RetentionFilterCreateResponse:
-      description: The retention filters definition.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilter'
-      type: object
-    RetentionFilter:
-      description: The definition of the retention filter.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterAttributes'
-        id:
-          description: The ID of the retention filter.
-          example: 7RBOb7dLSYWI01yc3pIH8w
-          type: string
-        type:
-          $ref: '#/components/schemas/ApmRetentionFilterType'
-      required:
-      - id
-      - type
-      - attributes
-      type: object
-    ReorderRetentionFiltersRequest:
-      description: A list of retention filters to reorder.
-      properties:
-        data:
-          description: A list of retention filters objects.
-          items:
-            $ref: '#/components/schemas/RetentionFilterWithoutAttributes'
-          type: array
-      required:
-      - data
-      type: object
-    APIErrorResponse:
-      description: API error response.
-      properties:
-        errors:
-          description: A list of errors.
-          example:
-          - Bad Request
-          items:
-            description: A list of items.
-            example: Bad Request
-            type: string
-          type: array
-      required:
-      - errors
-      type: object
-    RetentionFilterCreateAttributes:
-      description: The object describing the configuration of the retention filter to create/update.
-      properties:
-        enabled:
-          description: Enable/Disable the retention filter.
-          example: true
-          type: boolean
-        filter:
-          $ref: '#/components/schemas/SpansFilterCreate'
-        filter_type:
-          $ref: '#/components/schemas/RetentionFilterType'
-        name:
-          description: The name of the retention filter.
-          example: my retention filter
-          type: string
-        rate:
-          description: 'Sample rate to apply to spans going through this retention filter.
-
-            A value of 1.0 keeps all spans matching the query.'
-          example: 1.0
-          format: double
-          type: number
-        trace_rate:
-          description: 'Sample rate to apply to traces containing spans going through this retention filter.
-
-            A value of 1.0 keeps all traces with spans matching the query.'
-          example: 1.0
-          format: double
-          type: number
-      required:
-      - name
-      - filter
-      - enabled
-      - filter_type
-      - rate
-      type: object
-    RetentionFilterUpdateRequest:
-      description: The body of the retention filter to be updated.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilterUpdateData'
-      required:
-      - data
-      type: object
-    ApmRetentionFilterType:
-      default: apm_retention_filter
-      description: The type of the resource.
-      enum:
-      - apm_retention_filter
-      example: apm_retention_filter
-      type: string
-      x-enum-varnames:
-      - apm_retention_filter
     RetentionFilterAttributes:
       description: The attributes of the retention filter.
       properties:
@@ -533,13 +371,48 @@ components:
           format: double
           type: number
       type: object
-    SpansFilter:
-      description: The spans filter used to index spans.
+    APIErrorResponse:
+      description: API error response.
       properties:
-        query:
-          description: The search query - following the [span search syntax](https://docs.datadoghq.com/tracing/trace_explorer/query_syntax/).
-          example: '@http.status_code:200 service:my-service'
-          type: string
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
+          items:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    RetentionFilterResponse:
+      description: The retention filters definition.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilterAll'
+      type: object
+    ReorderRetentionFiltersRequest:
+      description: A list of retention filters to reorder.
+      properties:
+        data:
+          description: A list of retention filters objects.
+          items:
+            $ref: '#/components/schemas/RetentionFilterWithoutAttributes'
+          type: array
+      required:
+      - data
+      type: object
+    RetentionFiltersResponse:
+      description: An ordered list of retention filters.
+      properties:
+        data:
+          description: A list of retention filters objects.
+          items:
+            $ref: '#/components/schemas/RetentionFilterAll'
+          type: array
+      required:
+      - data
       type: object
     RetentionFilterAllAttributes:
       description: The attributes of the retention filter.
@@ -606,6 +479,60 @@ components:
       - id
       - type
       type: object
+    ApmRetentionFilterType:
+      default: apm_retention_filter
+      description: The type of the resource.
+      enum:
+      - apm_retention_filter
+      example: apm_retention_filter
+      type: string
+      x-enum-varnames:
+      - apm_retention_filter
+    RetentionFilterCreateAttributes:
+      description: The object describing the configuration of the retention filter to create/update.
+      properties:
+        enabled:
+          description: Enable/Disable the retention filter.
+          example: true
+          type: boolean
+        filter:
+          $ref: '#/components/schemas/SpansFilterCreate'
+        filter_type:
+          $ref: '#/components/schemas/RetentionFilterType'
+        name:
+          description: The name of the retention filter.
+          example: my retention filter
+          type: string
+        rate:
+          description: 'Sample rate to apply to spans going through this retention filter.
+
+            A value of 1.0 keeps all spans matching the query.'
+          example: 1.0
+          format: double
+          type: number
+        trace_rate:
+          description: 'Sample rate to apply to traces containing spans going through this retention filter.
+
+            A value of 1.0 keeps all traces with spans matching the query.'
+          example: 1.0
+          format: double
+          type: number
+      required:
+      - name
+      - filter
+      - enabled
+      - filter_type
+      - rate
+      type: object
+    RetentionFilterType:
+      default: spans-sampling-processor
+      description: The type of retention filter. The value should always be spans-sampling-processor.
+      enum:
+      - spans-sampling-processor
+      example: spans-sampling-processor
+      type: string
+      x-enum-varnames:
+      - SPANS_SAMPLING_PROCESSOR
     RetentionFilterUpdateData:
       description: The body of the retention filter to be updated.
       properties:
@@ -622,15 +549,36 @@ components:
       - attributes
       - type
       type: object
-    RetentionFilterType:
-      default: spans-sampling-processor
-      description: The type of retention filter. The value should always be spans-sampling-processor.
-      enum:
-      - spans-sampling-processor
-      example: spans-sampling-processor
-      type: string
-      x-enum-varnames:
-      - SPANS_SAMPLING_PROCESSOR
+    RetentionFilterAll:
+      description: The definition of the retention filter.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterAllAttributes'
+        id:
+          description: The ID of the retention filter.
+          example: 7RBOb7dLSYWI01yc3pIH8w
+          type: string
+        type:
+          $ref: '#/components/schemas/ApmRetentionFilterType'
+      required:
+      - id
+      - type
+      - attributes
+      type: object
+    RetentionFilterCreateResponse:
+      description: The retention filters definition.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilter'
+      type: object
+    RetentionFilterUpdateRequest:
+      description: The body of the retention filter to be updated.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilterUpdateData'
+      required:
+      - data
+      type: object
     SpansFilterCreate:
       description: The spans filter. Spans matching this filter will be indexed and stored.
       properties:
@@ -641,19 +589,49 @@ components:
       required:
       - query
       type: object
-    RetentionFilterAllType:
-      default: spans-sampling-processor
-      description: The type of retention filter.
-      enum:
-      - spans-sampling-processor
-      - spans-errors-sampling-processor
-      - spans-appsec-sampling-processor
-      example: spans-sampling-processor
-      type: string
-      x-enum-varnames:
-      - SPANS_SAMPLING_PROCESSOR
-      - SPANS_ERRORS_SAMPLING_PROCESSOR
-      - SPANS_APPSEC_SAMPLING_PROCESSOR
+    RetentionFilterCreateData:
+      description: The body of the retention filter to be created.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterCreateAttributes'
+        type:
+          $ref: '#/components/schemas/ApmRetentionFilterType'
+      required:
+      - attributes
+      - type
+      type: object
+    RetentionFilter:
+      description: The definition of the retention filter.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterAttributes'
+        id:
+          description: The ID of the retention filter.
+          example: 7RBOb7dLSYWI01yc3pIH8w
+          type: string
+        type:
+          $ref: '#/components/schemas/ApmRetentionFilterType'
+      required:
+      - id
+      - type
+      - attributes
+      type: object
+    RetentionFilterCreateRequest:
+      description: The body of the retention filter to be created.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilterCreateData'
+      required:
+      - data
+      type: object
+    SpansFilter:
+      description: The spans filter used to index spans.
+      properties:
+        query:
+          description: The search query - following the [span search syntax](https://docs.datadoghq.com/tracing/trace_explorer/query_syntax/).
+          example: '@http.status_code:200 service:my-service'
+          type: string
+      type: object
     RetentionFilterUpdateAttributes:
       description: The object describing the configuration of the retention filter to create/update.
       properties:
@@ -690,15 +668,38 @@ components:
       - filter_type
       - rate
       type: object
-  parameters:
-    RetentionFilterIdParam:
-      description: The ID of the retention filter.
-      in: path
-      name: filter_id
-      required: true
-      schema:
-        type: string
+    RetentionFilterAllType:
+      default: spans-sampling-processor
+      description: The type of retention filter.
+      enum:
+      - spans-sampling-processor
+      - spans-errors-sampling-processor
+      - spans-appsec-sampling-processor
+      example: spans-sampling-processor
+      type: string
+      x-enum-varnames:
+      - SPANS_SAMPLING_PROCESSOR
+      - SPANS_ERRORS_SAMPLING_PROCESSOR
+      - SPANS_APPSEC_SAMPLING_PROCESSOR
   responses:
+    NotAuthorizedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Authorized
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
+    ConflictResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Conflict
     NotFoundResponse:
       content:
         application/json:
@@ -711,24 +712,14 @@ components:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Bad Request
-    NotAuthorizedResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Not Authorized
-    ConflictResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Conflict
-    TooManyRequestsResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Too many requests
+  parameters:
+    RetentionFilterIdParam:
+      description: The ID of the retention filter.
+      in: path
+      name: filter_id
+      required: true
+      schema:
+        type: string
   securitySchemes:
     AuthZ:
       description: This API uses OAuth 2 with the implicit grant flow.
@@ -743,11 +734,9 @@ components:
             apm_api_catalog_write: Add, modify, and delete API catalog definitions.
             apm_read: Read and query APM and Trace Analytics.
             apm_service_catalog_read: View service catalog and service definitions.
-            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those
-              definitions are maintained by Datadog.
+            apm_service_catalog_write: Add, modify, and delete service catalog definitions when those definitions are maintained by Datadog.
             appsec_vm_read: View infrastructure, application code, and library vulnerability findings.
-            aws_configurations_manage: Manage AWS integration account configurations and related integration
-              settings.
+            aws_configurations_manage: Manage AWS integration account configurations and related integration settings.
             billing_edit: Edit your organization's billing information.
             billing_read: View your organization's billing information.
             bits_investigations_read: View Bits AI investigations.
@@ -757,21 +746,17 @@ components:
             cases_write: Create and update cases.
             ci_visibility_pipelines_write: Create CI Visibility pipeline spans using the API.
             ci_visibility_read: View CI Visibility.
-            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards
-              and notebooks. For more details, see the Cloud Cost Management docs.
-            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For
-              more details, see the Cloud Cost Management docs.
+            cloud_cost_management_read: View Cloud Cost pages and the cloud cost data source in dashboards and notebooks. For more details, see the Cloud Cost Management docs.
+            cloud_cost_management_write: Configure cloud cost accounts and global customizations. For more details, see the Cloud Cost Management docs.
             code_analysis_read: View Code Analysis.
             code_coverage_read: View Code Coverage.
-            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization
-              (PGO).
+            continuous_profiler_pgo_read: Read and query Continuous Profiler data for Profile-Guided Optimization (PGO).
             coterm_read: Read terminal recordings.
             coterm_write: Write terminal recordings.
             create_webhooks: Create webhooks integrations.
             dashboards_embed_share: Create, modify, and delete shared dashboards with share type 'embed'.
             dashboards_invite_share: Create, modify, and delete shared dashboards with share type 'invite'.
-            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable
-              graphs externally.
+            dashboards_public_share: Generate public and authenticated links to share dashboards or embeddable graphs externally.
             dashboards_read: View dashboards.
             dashboards_write: Create and change dashboards.
             data_scanner_read: View Data Scanner configurations.
@@ -795,24 +780,19 @@ components:
             logs_read_index_data: Read indexed log data.
             manage_integrations: Install, uninstall, and configure integrations.
             metrics_read: View custom metrics.
-            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute
-              and unmute monitors. The ability to write monitors is not required to set downtimes.
+            monitors_downtime: Set downtimes to suppress alerts from any monitor in an organization. Mute and unmute monitors. The ability to write monitors is not required to set downtimes.
             monitors_read: View monitors.
             monitors_write: Edit, delete, and resolve individual monitors.
             network_connections_read: Read cloud network connections.
             org_connections_read: Read cross organization connections.
             org_connections_write: Create, edit, and delete cross organization connections.
-            org_management: Edit org configurations, including authentication and certain security preferences
-              such as configuring SAML, renaming an org, configuring allowed login methods, creating child
-              orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling
-              Remote Configuration for the entire organization.
+            org_management: Edit org configurations, including authentication and certain security preferences such as configuring SAML, renaming an org, configuring allowed login methods, creating child orgs, subscribing & unsubscribing from apps in the marketplace, and enabling & disabling Remote Configuration for the entire organization.
             security_comments_read: Read comments of vulnerabilities.
             security_monitoring_critical_assets_read: Read Critical Assets.
             security_monitoring_critical_assets_write: Write Critical Assets.
             security_monitoring_filters_read: Read Security Filters.
             security_monitoring_filters_write: Create, edit, and delete Security Filters.
-            security_monitoring_findings_read: View a list of findings that include both misconfigurations
-              and identity risks.
+            security_monitoring_findings_read: View a list of findings that include both misconfigurations and identity risks.
             security_monitoring_rules_read: Read Detection Rules.
             security_monitoring_rules_write: Create and edit Detection Rules.
             security_monitoring_signals_read: View Security Signals.
@@ -821,29 +801,24 @@ components:
             security_pipelines_read: View Security Pipelines.
             security_pipelines_write: Create, edit, and delete CSM Security Pipelines.
             siem_entities_read: View Cloud SIEM entities.
-            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission
-              can make status corrections, even if they do not have permission to edit those SLOs.
+            slos_corrections: Apply, edit, and delete SLO status corrections. A user with this permission can make status corrections, even if they do not have permission to edit those SLOs.
             slos_read: View SLOs and status corrections.
             slos_write: Create, edit, and delete SLOs.
             synthetics_global_variable_read: View, search, and use Synthetics global variables.
             synthetics_global_variable_write: Create, edit, and delete global variables for Synthetics.
             synthetics_private_location_read: View, search, and use Synthetics private locations.
-            synthetics_private_location_write: Create and delete private locations in addition to having
-              access to the associated installation guidelines.
+            synthetics_private_location_write: Create and delete private locations in addition to having access to the associated installation guidelines.
             synthetics_read: List and view configured Synthetic tests and test results.
             synthetics_write: Create, edit, and delete Synthetic tests.
-            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control
-              Team membership across all Teams, use the User Access Manage permission.
-            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and
-              which Users are on each Team.
+            teams_manage: Manage Teams. Create, delete, rename, and edit metadata of all Teams. To control Team membership across all Teams, use the User Access Manage permission.
+            teams_read: Read Teams data. A User with this permission can view Team names, metadata, and which Users are on each Team.
             test_optimization_read: View Test Optimization.
             test_optimization_settings_write: Update service settings in Test Optimization.
             test_optimization_write: Update flaky tests from Flaky Tests Management of Test Optimization.
             timeseries_query: Query Timeseries data.
             usage_read: View your organization's usage and usage attribution.
             user_access_invite: Invite other users to your organization.
-            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure
-              logs restriction queries.
+            user_access_manage: Disable users, manage user roles, manage SAML-to-role mappings, and configure logs restriction queries.
             user_access_read: View users and their roles and settings.
             workflows_read: View workflows.
             workflows_run: Run workflows.

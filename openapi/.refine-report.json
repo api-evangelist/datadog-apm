@@ -1,0 +1,34 @@
+{
+  "provider": "datadog-apm",
+  "sources": [
+    "_original/datadog-apm-v1-slo-api.yml",
+    "_original/datadog-apm-v2-apm-api.yml"
+  ],
+  "outputs": [
+    "datadog-apm-service-level-objective-corrections-api-openapi.yml",
+    "datadog-apm-service-level-objectives-api-openapi.yml",
+    "datadog-apm-apm-api-openapi.yml",
+    "datadog-apm-apm-retention-filters-api-openapi.yml",
+    "datadog-apm-service-definition-api-openapi.yml",
+    "datadog-apm-spans-api-openapi.yml",
+    "datadog-apm-spans-metrics-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "datadog-apm-v1-slo-api.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "datadog-apm-v2-apm-api.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "datadog-apm-apm-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-apm-retention-filters-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-service-definition-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-service-level-objective-corrections-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-service-level-objectives-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-spans-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datadog-apm-spans-metrics-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

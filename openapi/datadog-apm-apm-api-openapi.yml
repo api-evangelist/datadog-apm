@@ -93,60 +93,12 @@ paths:
       tags:
       - APM
 components:
-  responses:
-    TooManyRequestsResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Too many requests
   schemas:
-    ServiceListDataType:
-      default: services_list
-      description: Services list resource type.
-      enum:
-      - services_list
-      example: services_list
-      type: string
-      x-enum-varnames:
-      - SERVICES_LIST
-    ServiceListData:
-      description: A single data item in the service list response.
+    ServiceList:
+      description: The response body for the service list endpoint.
       properties:
-        attributes:
-          $ref: '#/components/schemas/ServiceListDataAttributes'
-        id:
-          description: The unique identifier of the service.
-          type: string
-        type:
-          $ref: '#/components/schemas/ServiceListDataType'
-      required:
-      - type
-      type: object
-    ServiceListDataAttributesMetadataItems:
-      description: An object containing metadata flags for a service, indicating whether it is traced by APM or monitored through Universal Service Monitoring.
-      properties:
-        isTraced:
-          description: Indicates whether the service is traced by APM.
-          type: boolean
-        isUsm:
-          description: Indicates whether the service uses Universal Service Monitoring.
-          type: boolean
-      type: object
-    ServiceListDataAttributes:
-      description: Attributes of a service list entry, containing metadata and a list of service names.
-      properties:
-        metadata:
-          description: A list of metadata items associated with the service.
-          items:
-            $ref: '#/components/schemas/ServiceListDataAttributesMetadataItems'
-          type: array
-        services:
-          description: A list of service names.
-          items:
-            description: A single service name.
-            type: string
-          type: array
+        data:
+          $ref: '#/components/schemas/ServiceListData'
       type: object
     APIErrorResponse:
       description: API error response.
@@ -163,12 +115,60 @@ components:
       required:
       - errors
       type: object
-    ServiceList:
-      description: The response body for the service list endpoint.
+    ServiceListDataAttributesMetadataItems:
+      description: An object containing metadata flags for a service, indicating whether it is traced by APM or monitored through Universal Service Monitoring.
       properties:
-        data:
-          $ref: '#/components/schemas/ServiceListData'
+        isTraced:
+          description: Indicates whether the service is traced by APM.
+          type: boolean
+        isUsm:
+          description: Indicates whether the service uses Universal Service Monitoring.
+          type: boolean
       type: object
+    ServiceListData:
+      description: A single data item in the service list response.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/ServiceListDataAttributes'
+        id:
+          description: The unique identifier of the service.
+          type: string
+        type:
+          $ref: '#/components/schemas/ServiceListDataType'
+      required:
+      - type
+      type: object
+    ServiceListDataType:
+      default: services_list
+      description: Services list resource type.
+      enum:
+      - services_list
+      example: services_list
+      type: string
+      x-enum-varnames:
+      - SERVICES_LIST
+    ServiceListDataAttributes:
+      description: Attributes of a service list entry, containing metadata and a list of service names.
+      properties:
+        metadata:
+          description: A list of metadata items associated with the service.
+          items:
+            $ref: '#/components/schemas/ServiceListDataAttributesMetadataItems'
+          type: array
+        services:
+          description: A list of service names.
+          items:
+            description: A single service name.
+            type: string
+          type: array
+      type: object
+  responses:
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
   securitySchemes:
     AuthZ:
       description: This API uses OAuth 2 with the implicit grant flow.

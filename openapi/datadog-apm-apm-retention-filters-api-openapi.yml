@@ -319,39 +319,32 @@ paths:
         - apm_retention_filter_write
 components:
   schemas:
-    RetentionFilterAttributes:
-      description: The attributes of the retention filter.
+    APIErrorResponse:
+      description: API error response.
       properties:
-        created_at:
-          description: The creation timestamp of the retention filter.
-          format: int64
-          type: integer
-        created_by:
-          description: The creator of the retention filter.
-          type: string
-        editable:
-          description: Shows whether the filter can be edited.
-          example: true
-          type: boolean
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
+          items:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    RetentionFilterUpdateAttributes:
+      description: The object describing the configuration of the retention filter to create/update.
+      properties:
         enabled:
-          description: The status of the retention filter (Enabled/Disabled).
+          description: Enable/Disable the retention filter.
           example: true
           type: boolean
-        execution_order:
-          description: The execution order of the retention filter.
-          format: int64
-          type: integer
         filter:
-          $ref: '#/components/schemas/SpansFilter'
+          $ref: '#/components/schemas/SpansFilterCreate'
         filter_type:
-          $ref: '#/components/schemas/RetentionFilterType'
-        modified_at:
-          description: The modification timestamp of the retention filter.
-          format: int64
-          type: integer
-        modified_by:
-          description: The modifier of the retention filter.
-          type: string
+          $ref: '#/components/schemas/RetentionFilterAllType'
         name:
           description: The name of the retention filter.
           example: my retention filter
@@ -370,21 +363,12 @@ components:
           example: 1.0
           format: double
           type: number
-      type: object
-    APIErrorResponse:
-      description: API error response.
-      properties:
-        errors:
-          description: A list of errors.
-          example:
-          - Bad Request
-          items:
-            description: A list of items.
-            example: Bad Request
-            type: string
-          type: array
       required:
-      - errors
+      - name
+      - filter
+      - enabled
+      - filter_type
+      - rate
       type: object
     RetentionFilterResponse:
       description: The retention filters definition.
@@ -392,28 +376,28 @@ components:
         data:
           $ref: '#/components/schemas/RetentionFilterAll'
       type: object
-    ReorderRetentionFiltersRequest:
-      description: A list of retention filters to reorder.
-      properties:
-        data:
-          description: A list of retention filters objects.
-          items:
-            $ref: '#/components/schemas/RetentionFilterWithoutAttributes'
-          type: array
-      required:
-      - data
-      type: object
-    RetentionFiltersResponse:
-      description: An ordered list of retention filters.
-      properties:
-        data:
-          description: A list of retention filters objects.
-          items:
-            $ref: '#/components/schemas/RetentionFilterAll'
-          type: array
-      required:
-      - data
-      type: object
+    RetentionFilterType:
+      default: spans-sampling-processor
+      description: The type of retention filter. The value should always be spans-sampling-processor.
+      enum:
+      - spans-sampling-processor
+      example: spans-sampling-processor
+      type: string
+      x-enum-varnames:
+      - SPANS_SAMPLING_PROCESSOR
+    RetentionFilterAllType:
+      default: spans-sampling-processor
+      description: The type of retention filter.
+      enum:
+      - spans-sampling-processor
+      - spans-errors-sampling-processor
+      - spans-appsec-sampling-processor
+      example: spans-sampling-processor
+      type: string
+      x-enum-varnames:
+      - SPANS_SAMPLING_PROCESSOR
+      - SPANS_ERRORS_SAMPLING_PROCESSOR
+      - SPANS_APPSEC_SAMPLING_PROCESSOR
     RetentionFilterAllAttributes:
       description: The attributes of the retention filter.
       properties:
@@ -466,28 +450,80 @@ components:
           format: double
           type: number
       type: object
-    RetentionFilterWithoutAttributes:
-      description: The retention filter object .
+    RetentionFilterCreateData:
+      description: The body of the retention filter to be created.
       properties:
-        id:
-          description: The ID of the retention filter.
-          example: 7RBOb7dLSYWI01yc3pIH8w
-          type: string
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterCreateAttributes'
         type:
           $ref: '#/components/schemas/ApmRetentionFilterType'
       required:
-      - id
+      - attributes
       - type
       type: object
-    ApmRetentionFilterType:
-      default: apm_retention_filter
-      description: The type of the resource.
-      enum:
-      - apm_retention_filter
-      example: apm_retention_filter
-      type: string
-      x-enum-varnames:
-      - apm_retention_filter
+    RetentionFilterAttributes:
+      description: The attributes of the retention filter.
+      properties:
+        created_at:
+          description: The creation timestamp of the retention filter.
+          format: int64
+          type: integer
+        created_by:
+          description: The creator of the retention filter.
+          type: string
+        editable:
+          description: Shows whether the filter can be edited.
+          example: true
+          type: boolean
+        enabled:
+          description: The status of the retention filter (Enabled/Disabled).
+          example: true
+          type: boolean
+        execution_order:
+          description: The execution order of the retention filter.
+          format: int64
+          type: integer
+        filter:
+          $ref: '#/components/schemas/SpansFilter'
+        filter_type:
+          $ref: '#/components/schemas/RetentionFilterType'
+        modified_at:
+          description: The modification timestamp of the retention filter.
+          format: int64
+          type: integer
+        modified_by:
+          description: The modifier of the retention filter.
+          type: string
+        name:
+          description: The name of the retention filter.
+          example: my retention filter
+          type: string
+        rate:
+          description: 'Sample rate to apply to spans going through this retention filter.
+
+            A value of 1.0 keeps all spans matching the query.'
+          example: 1.0
+          format: double
+          type: number
+        trace_rate:
+          description: 'Sample rate to apply to traces containing spans going through this retention filter.
+
+            A value of 1.0 keeps all traces with spans matching the query.'
+          example: 1.0
+          format: double
+          type: number
+      type: object
+    RetentionFiltersResponse:
+      description: An ordered list of retention filters.
+      properties:
+        data:
+          description: A list of retention filters objects.
+          items:
+            $ref: '#/components/schemas/RetentionFilterAll'
+          type: array
+      required:
+      - data
+      type: object
     RetentionFilterCreateAttributes:
       description: The object describing the configuration of the retention filter to create/update.
       properties:
@@ -524,61 +560,6 @@ components:
       - filter_type
       - rate
       type: object
-    RetentionFilterType:
-      default: spans-sampling-processor
-      description: The type of retention filter. The value should always be spans-sampling-processor.
-      enum:
-      - spans-sampling-processor
-      example: spans-sampling-processor
-      type: string
-      x-enum-varnames:
-      - SPANS_SAMPLING_PROCESSOR
-    RetentionFilterUpdateData:
-      description: The body of the retention filter to be updated.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterUpdateAttributes'
-        id:
-          description: The ID of the retention filter.
-          example: retention-filter-id
-          type: string
-        type:
-          $ref: '#/components/schemas/ApmRetentionFilterType'
-      required:
-      - id
-      - attributes
-      - type
-      type: object
-    RetentionFilterAll:
-      description: The definition of the retention filter.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterAllAttributes'
-        id:
-          description: The ID of the retention filter.
-          example: 7RBOb7dLSYWI01yc3pIH8w
-          type: string
-        type:
-          $ref: '#/components/schemas/ApmRetentionFilterType'
-      required:
-      - id
-      - type
-      - attributes
-      type: object
-    RetentionFilterCreateResponse:
-      description: The retention filters definition.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilter'
-      type: object
-    RetentionFilterUpdateRequest:
-      description: The body of the retention filter to be updated.
-      properties:
-        data:
-          $ref: '#/components/schemas/RetentionFilterUpdateData'
-      required:
-      - data
-      type: object
     SpansFilterCreate:
       description: The spans filter. Spans matching this filter will be indexed and stored.
       properties:
@@ -589,15 +570,17 @@ components:
       required:
       - query
       type: object
-    RetentionFilterCreateData:
-      description: The body of the retention filter to be created.
+    RetentionFilterWithoutAttributes:
+      description: The retention filter object .
       properties:
-        attributes:
-          $ref: '#/components/schemas/RetentionFilterCreateAttributes'
+        id:
+          description: The ID of the retention filter.
+          example: 7RBOb7dLSYWI01yc3pIH8w
+          type: string
         type:
           $ref: '#/components/schemas/ApmRetentionFilterType'
       required:
-      - attributes
+      - id
       - type
       type: object
     RetentionFilter:
@@ -616,13 +599,32 @@ components:
       - type
       - attributes
       type: object
-    RetentionFilterCreateRequest:
-      description: The body of the retention filter to be created.
+    ReorderRetentionFiltersRequest:
+      description: A list of retention filters to reorder.
       properties:
         data:
-          $ref: '#/components/schemas/RetentionFilterCreateData'
+          description: A list of retention filters objects.
+          items:
+            $ref: '#/components/schemas/RetentionFilterWithoutAttributes'
+          type: array
       required:
       - data
+      type: object
+    RetentionFilterAll:
+      description: The definition of the retention filter.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterAllAttributes'
+        id:
+          description: The ID of the retention filter.
+          example: 7RBOb7dLSYWI01yc3pIH8w
+          type: string
+        type:
+          $ref: '#/components/schemas/ApmRetentionFilterType'
+      required:
+      - id
+      - type
+      - attributes
       type: object
     SpansFilter:
       description: The spans filter used to index spans.
@@ -632,55 +634,53 @@ components:
           example: '@http.status_code:200 service:my-service'
           type: string
       type: object
-    RetentionFilterUpdateAttributes:
-      description: The object describing the configuration of the retention filter to create/update.
-      properties:
-        enabled:
-          description: Enable/Disable the retention filter.
-          example: true
-          type: boolean
-        filter:
-          $ref: '#/components/schemas/SpansFilterCreate'
-        filter_type:
-          $ref: '#/components/schemas/RetentionFilterAllType'
-        name:
-          description: The name of the retention filter.
-          example: my retention filter
-          type: string
-        rate:
-          description: 'Sample rate to apply to spans going through this retention filter.
-
-            A value of 1.0 keeps all spans matching the query.'
-          example: 1.0
-          format: double
-          type: number
-        trace_rate:
-          description: 'Sample rate to apply to traces containing spans going through this retention filter.
-
-            A value of 1.0 keeps all traces with spans matching the query.'
-          example: 1.0
-          format: double
-          type: number
-      required:
-      - name
-      - filter
-      - enabled
-      - filter_type
-      - rate
-      type: object
-    RetentionFilterAllType:
-      default: spans-sampling-processor
-      description: The type of retention filter.
+    ApmRetentionFilterType:
+      default: apm_retention_filter
+      description: The type of the resource.
       enum:
-      - spans-sampling-processor
-      - spans-errors-sampling-processor
-      - spans-appsec-sampling-processor
-      example: spans-sampling-processor
+      - apm_retention_filter
+      example: apm_retention_filter
       type: string
       x-enum-varnames:
-      - SPANS_SAMPLING_PROCESSOR
-      - SPANS_ERRORS_SAMPLING_PROCESSOR
-      - SPANS_APPSEC_SAMPLING_PROCESSOR
+      - apm_retention_filter
+    RetentionFilterUpdateData:
+      description: The body of the retention filter to be updated.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/RetentionFilterUpdateAttributes'
+        id:
+          description: The ID of the retention filter.
+          example: retention-filter-id
+          type: string
+        type:
+          $ref: '#/components/schemas/ApmRetentionFilterType'
+      required:
+      - id
+      - attributes
+      - type
+      type: object
+    RetentionFilterCreateResponse:
+      description: The retention filters definition.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilter'
+      type: object
+    RetentionFilterCreateRequest:
+      description: The body of the retention filter to be created.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilterCreateData'
+      required:
+      - data
+      type: object
+    RetentionFilterUpdateRequest:
+      description: The body of the retention filter to be updated.
+      properties:
+        data:
+          $ref: '#/components/schemas/RetentionFilterUpdateData'
+      required:
+      - data
+      type: object
   responses:
     NotAuthorizedResponse:
       content:
@@ -688,30 +688,30 @@ components:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Not Authorized
-    TooManyRequestsResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Too many requests
-    ConflictResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Conflict
-    NotFoundResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Not Found
     BadRequestResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Bad Request
+    NotFoundResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Found
+    ConflictResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Conflict
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
   parameters:
     RetentionFilterIdParam:
       description: The ID of the retention filter.

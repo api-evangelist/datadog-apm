@@ -864,217 +864,261 @@ paths:
         - slos_read
 components:
   schemas:
-    SLOCorrectionResponseAttributes:
-      description: The attribute object associated with the SLO correction.
+    SLOHistoryMetricsSeriesMetadataUnit:
+      description: An Object of metric units.
       properties:
-        category:
-          $ref: '#/components/schemas/SLOCorrectionCategory'
-        created_at:
-          description: The epoch timestamp of when the correction was created at.
-          format: int64
-          type:
-          - integer
-          - 'null'
-        creator:
-          $ref: '#/components/schemas/Creator'
-        description:
-          description: Description of the correction being made.
+        family:
+          description: The family of metric unit, for example `bytes` is the family for `kibibyte`, `byte`, and `bit` units.
           type: string
-        duration:
-          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
-          example: 3600
-          format: int64
-          type:
-          - integer
-          - 'null'
-        end:
-          description: Ending time of the correction in epoch seconds.
-          format: int64
-          type:
-          - integer
-          - 'null'
-        modified_at:
-          description: The epoch timestamp of when the correction was modified at.
-          format: int64
-          type:
-          - integer
-          - 'null'
-        modifier:
-          $ref: '#/components/schemas/SLOCorrectionResponseAttributesModifier'
-        rrule:
-          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
-
-            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
-          example: FREQ=DAILY;INTERVAL=10;COUNT=5
-          type:
-          - string
-          - 'null'
-        slo_id:
-          description: ID of the single SLO that this correction applies to.
-          type:
-          - string
-          - 'null'
-        slo_query:
-          description: Query that matches the SLOs this correction applies to.
-          type:
-          - string
-          - 'null'
-        start:
-          description: Starting time of the correction in epoch seconds.
+        id:
+          description: The ID of the metric unit.
           format: int64
           type: integer
-        timezone:
-          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+        name:
+          description: The unit of the metric, for instance `byte`.
           type: string
-      type: object
-    SLOSliSpec:
-      description: A generic SLI specification. This is used for time-slice and count-based (metric) SLOs only.
-      oneOf:
-      - $ref: '#/components/schemas/SLOTimeSliceSpec'
-      - $ref: '#/components/schemas/SLOCountSpec'
-    SLOHistoryMetricsSeries:
-      description: 'A representation of `metric` based SLO timeseries for the provided queries.
-
-        This is the same response type from `batch_query` endpoint.'
+        plural:
+          description: The plural Unit of metric, for instance `bytes`.
+          type:
+          - string
+          - 'null'
+        scale_factor:
+          description: The scale factor of metric unit, for instance `1.0`.
+          format: double
+          type: number
+        short_name:
+          description: A shorter and abbreviated version of the metric unit, for instance `B`.
+          type:
+          - string
+          - 'null'
+      type:
+      - object
+      - 'null'
+    SLOCountSpec:
+      additionalProperties: false
+      description: A metric SLI specification.
+      example:
+        count:
+          bad_events_formula: query2
+          good_events_formula: query1
+          queries:
+          - data_source: metrics
+            name: query1
+            query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
+          - data_source: metrics
+            name: query2
+            query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
       properties:
         count:
-          description: Count of submitted metrics.
+          $ref: '#/components/schemas/SLOCountDefinition'
+      required:
+      - count
+      type: object
+    SLOHistoryResponseData:
+      description: An array of service level objective objects.
+      properties:
+        from_ts:
+          description: The `from` timestamp in epoch seconds.
+          example: 1615323990
+          format: int64
+          type: integer
+        group_by:
+          description: 'For `metric` based SLOs where the query includes a group-by clause, this represents the list of grouping parameters.
+
+
+            This is not included in responses for `monitor` based SLOs.'
+          items:
+            description: A grouping parameter.
+            type: string
+          type: array
+        groups:
+          description: 'For grouped SLOs, this represents SLI data for specific groups.
+
+
+            This is not included in the responses for `metric` based SLOs.'
+          items:
+            $ref: '#/components/schemas/SLOHistoryMonitor'
+          type: array
+        monitors:
+          description: 'For multi-monitor SLOs, this represents SLI data for specific monitors.
+
+
+            This is not included in the responses for `metric` based SLOs.'
+          items:
+            $ref: '#/components/schemas/SLOHistoryMonitor'
+          type: array
+        overall:
+          $ref: '#/components/schemas/SLOHistorySLIData'
+        series:
+          $ref: '#/components/schemas/SLOHistoryMetrics'
+        thresholds:
+          additionalProperties:
+            $ref: '#/components/schemas/SLOThreshold'
+          description: mapping of string timeframe to the SLO threshold.
+          example:
+            my_service:
+              target: 95
+              timeframe: 7d
+          type: object
+        to_ts:
+          description: The `to` timestamp in epoch seconds.
+          example: 1615928790
+          format: int64
+          type: integer
+        type:
+          $ref: '#/components/schemas/SLOType'
+        type_id:
+          $ref: '#/components/schemas/SLOTypeNumeric'
+      type: object
+    SLOHistoryMonitor:
+      description: 'An object that holds an SLI value and its associated data. It can represent an SLO''s overall SLI value.
+
+        This can also represent the SLI value for a specific monitor in multi-monitor SLOs, or a group in grouped SLOs.'
+      properties:
+        error_budget_remaining:
+          $ref: '#/components/schemas/SLOErrorBudgetRemainingData'
+        errors:
+          description: An array of error objects returned while querying the history data for the service level objective.
+          items:
+            $ref: '#/components/schemas/SLOHistoryResponseErrorWithType'
+          type: array
+        group:
+          description: For groups in a grouped SLO, this is the group name.
+          example: name
+          type: string
+        history:
+          description: 'The state transition history for the monitor. It is represented as
+
+            an array of pairs. Each pair is an array containing the timestamp of the transition
+
+            as an integer in Unix epoch format in the first element, and the state as an integer in the
+
+            second element. An integer value of `0` for state means uptime, `1` means downtime, and `2` means no data.
+
+            Periods of no data are counted either as uptime or downtime depending on monitor settings.
+
+            See [SLO documentation](https://docs.datadoghq.com/service_management/service_level_objectives/monitor/#missing-data)
+
+            for detailed information.'
+          example:
+          - - 1579212382
+            - 0
+          items:
+            description: Represents an array timeseries data.
+            example:
+            - 1579212382
+            - 0
+            items:
+              description: A timeseries data point which is a tuple of (timestamp, value).
+              format: double
+              type: number
+            maxItems: 2
+            minItems: 2
+            type: array
+          type: array
+        monitor_modified:
+          description: For `monitor` based SLOs, this is the last modified timestamp in epoch seconds of the monitor.
+          example: 1615867200
+          format: int64
+          type: integer
+        monitor_type:
+          description: For `monitor` based SLOs, this describes the type of monitor.
+          example: string
+          type: string
+        name:
+          description: For groups in a grouped SLO, this is the group name. For monitors in a multi-monitor SLO, this is the monitor name.
+          example: string
+          type: string
+        precision:
+          deprecated: true
+          description: The amount of decimal places the SLI value is accurate to for the given from `&&` to timestamp. Use `span_precision` instead.
+          example: 2.0
+          format: double
+          type: number
+        preview:
+          description: 'For `monitor` based SLOs, when `true` this indicates that a replay is in progress to give an accurate uptime
+
+            calculation.'
+          example: true
+          type: boolean
+        sli_value:
+          description: The current SLI value of the SLO over the history window.
+          example: 99.99
+          format: double
+          type:
+          - number
+          - 'null'
+        span_precision:
+          description: The amount of decimal places the SLI value is accurate to for the given from `&&` to timestamp.
+          example: 2.0
+          format: double
+          type: number
+        uptime:
+          deprecated: true
+          description: Use `sli_value` instead.
+          example: 99.99
+          format: double
+          type: number
+      type: object
+    SLOCorrection:
+      description: The response object of a list of SLO corrections.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
+        id:
+          description: The ID of the SLO correction.
+          type: string
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    SLOHistoryMetrics:
+      description: 'A `metric` based SLO history response.
+
+
+        This is not included in responses for `monitor` based SLOs.'
+      properties:
+        denominator:
+          $ref: '#/components/schemas/SLOHistoryMetricsSeries'
+        interval:
+          description: The aggregated query interval for the series data. It's implicit based on the query time window.
           example: 0
           format: int64
           type: integer
-        metadata:
-          $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadata'
-        sum:
-          description: Total sum of the query.
-          example: 0.0
-          format: double
-          type: number
-        values:
-          description: The query values for each metric.
+        message:
+          description: Optional message if there are specific query issues/warnings.
+          example: ''
+          type: string
+        numerator:
+          $ref: '#/components/schemas/SLOHistoryMetricsSeries'
+        query:
+          description: The combined numerator and denominator query CSV.
+          example: ''
+          type: string
+        res_type:
+          description: The series result type. This mimics `batch_query` response type.
+          example: ''
+          type: string
+        resp_version:
+          description: The series response version type. This mimics `batch_query` response type.
+          example: 0
+          format: int64
+          type: integer
+        times:
+          description: An array of query timestamps in EPOCH milliseconds.
           example: []
           items:
-            description: A metric name and its value.
+            description: A timestamp in EPOCH milliseconds.
             format: double
             type: number
           type: array
       required:
-      - count
-      - sum
-      - values
-      type: object
-    SearchSLOResponseMetaPage:
-      description: Pagination metadata returned by the API.
-      properties:
-        first_number:
-          description: The first number.
-          format: int64
-          type: integer
-        last_number:
-          description: The last number.
-          format: int64
-          type: integer
-        next_number:
-          description: The next number.
-          format: int64
-          type: integer
-        number:
-          description: The page number.
-          format: int64
-          type: integer
-        prev_number:
-          description: The previous page number.
-          format: int64
-          type: integer
-        size:
-          description: The size of the response.
-          format: int64
-          type: integer
-        total:
-          description: The total number of SLOs in the response.
-          format: int64
-          type: integer
-        type:
-          description: Type of pagination.
-          type: string
-      type: object
-    SLODeleteResponse:
-      description: A response list of all service level objective deleted.
-      properties:
-        data:
-          description: An array containing the ID of the deleted service level objective object.
-          items:
-            description: ID of a deleted SLO.
-            type: string
-          type: array
-        errors:
-          additionalProperties:
-            description: Error preventing the SLO deletion.
-            type: string
-          description: An dictionary containing the ID of the SLO as key and a deletion error as value.
-          type: object
-      type: object
-    SLOTimeSliceQuery:
-      description: The queries and formula used to calculate the SLI value.
-      example:
-        formulas:
-        - formula: query2/query1
-        queries:
-        - data_source: metrics
-          name: query1
-          query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-        - data_source: metrics
-          name: query1
-          query: sum:trace.servlet.request.errors{*} by {env}.as_count()
-      properties:
-        formulas:
-          description: A list that contains exactly one formula, as only a single formula may be used in a time-slice SLO.
-          example:
-          - formula: query1 - default_zero(query2)
-          items:
-            $ref: '#/components/schemas/SLOFormula'
-          maxItems: 1
-          minItems: 1
-          type: array
-        queries:
-          description: A list of queries that are used to calculate the SLI value.
-          example:
-          - data_source: metrics
-            name: query1
-            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-          items:
-            $ref: '#/components/schemas/SLODataSourceQueryDefinition'
-          type: array
-      required:
-      - formulas
-      - queries
-      type: object
-    SearchSLOResponse:
-      description: A search SLO response containing results from the search query.
-      properties:
-        data:
-          $ref: '#/components/schemas/SearchSLOResponseData'
-        links:
-          $ref: '#/components/schemas/SearchSLOResponseLinks'
-        meta:
-          $ref: '#/components/schemas/SearchSLOResponseMeta'
-      type: object
-    SLOHistoryResponseError:
-      description: A list of errors while querying the history data for the service level objective.
-      properties:
-        error:
-          description: Human readable error.
-          type: string
-      type: object
-    SearchSLOResponseDataAttributesFacetsObjectString:
-      description: Facet
-      properties:
-        count:
-          description: Count
-          format: int64
-          type: integer
-        name:
-          description: Facet
-          type: string
+      - res_type
+      - interval
+      - resp_version
+      - query
+      - times
+      - numerator
+      - denominator
       type: object
     SLOCountDefinitionWithTotalEventsFormula:
       additionalProperties: false
@@ -1102,134 +1146,11 @@ components:
       - total_events_formula
       - queries
       type: object
-    SLOState:
-      description: State of the SLO.
-      enum:
-      - breached
-      - warning
-      - ok
-      - no_data
-      example: ok
-      type: string
-      x-enum-varnames:
-      - BREACHED
-      - WARNING
-      - OK
-      - NO_DATA
-    CheckCanDeleteSLOResponse:
-      description: A service level objective response containing the requested object.
-      properties:
-        data:
-          $ref: '#/components/schemas/CheckCanDeleteSLOResponseData'
-        errors:
-          additionalProperties:
-            description: Description of the service level objective reference.
-            type: string
-          description: A mapping of SLO id to it's current usages.
-          type: object
-      type: object
-    SLOCorrectionType:
-      default: correction
-      description: SLO correction resource type.
-      enum:
-      - correction
-      example: correction
-      type: string
-      x-enum-varnames:
-      - CORRECTION
-    SearchServiceLevelObjectiveData:
-      description: A service level objective ID and attributes.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SearchServiceLevelObjectiveAttributes'
-        id:
-          description: 'A unique identifier for the service level objective object.
-
-
-            Always included in service level objective responses.'
-          readOnly: true
-          type: string
-        type:
-          description: The type of the object, must be `slo`.
-          type: string
-      type: object
-    SearchSLOResponseLinks:
-      description: Pagination links.
-      properties:
-        first:
-          description: Link to last page.
-          type: string
-        last:
-          description: Link to first page.
-          type:
-          - string
-          - 'null'
-        next:
-          description: Link to the next page.
-          type: string
-        prev:
-          description: Link to previous page.
-          type:
-          - string
-          - 'null'
-        self:
-          description: Link to current page.
-          type: string
-      type: object
-    CrossOrgUuids:
-      description: The source organization UUID for cross organization queries. Feature in Private Beta.
-      example:
-      - 6434abde-xxxx-yyyy-zzzz-da7ad0900001
-      items:
-        description: The source organization UUID.
-        example: 6434abde-xxxx-yyyy-zzzz-da7ad0900001
-        type: string
-      maxItems: 1
-      type: array
-    SLOTimeSliceSpec:
-      additionalProperties: false
-      description: A time-slice SLI specification.
-      example:
-        time_slice:
-          comparator: <
-          query:
-            formulas:
-            - formula: query2/query1
-            queries:
-            - data_source: metrics
-              name: query1
-              query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-            - data_source: metrics
-              name: query2
-              query: sum:trace.servlet.request.errors{*} by {env}.as_count()
-          threshold: 5
-      properties:
-        time_slice:
-          $ref: '#/components/schemas/SLOTimeSliceCondition'
-      required:
-      - time_slice
-      type: object
-    ResponseMetaAttributes:
-      description: Object describing meta attributes of response.
-      properties:
-        page:
-          $ref: '#/components/schemas/Pagination'
-      type: object
-    ServiceLevelObjective:
+    ServiceLevelObjectiveRequest:
       description: 'A service level objective object includes a service level indicator, thresholds
 
         for one or more timeframes, and metadata (`name`, `description`, `tags`, etc.).'
       properties:
-        created_at:
-          description: 'Creation timestamp (UNIX time in seconds)
-
-
-            Always included in service level objective responses.'
-          format: int64
-          readOnly: true
-          type: integer
-        creator:
-          $ref: '#/components/schemas/Creator'
         description:
           description: 'A user-defined description of the service level objective.
 
@@ -1256,45 +1177,14 @@ components:
             description: A group name, for instance `env:prod`.
             type: string
           type: array
-        id:
-          description: 'A unique identifier for the service level objective object.
-
-
-            Always included in service level objective responses.'
-          readOnly: true
-          type: string
-        modified_at:
-          description: 'Modification timestamp (UNIX time in seconds)
-
-
-            Always included in service level objective responses.'
-          format: int64
-          readOnly: true
-          type: integer
         monitor_ids:
-          description: 'A list of monitor ids that defines the scope of a monitor service level
+          description: 'A list of monitor IDs that defines the scope of a monitor service level
 
             objective. **Required if type is `monitor`**.'
           items:
             description: A monitor ID.
             format: int64
             type: integer
-          type: array
-        monitor_tags:
-          description: 'The union of monitor tags for all monitors referenced by the `monitor_ids`
-
-            field.
-
-            Always included in service level objective responses for monitor-based service level
-
-            objectives (but may be empty). Ignored in create/update requests. Does not
-
-            affect which monitors are included in the service level objective (that is
-
-            determined entirely by the `monitor_ids` field).'
-          items:
-            description: A monitor tag.
-            type: string
           type: array
         name:
           description: The name of the service level objective object.
@@ -1357,105 +1247,94 @@ components:
       - thresholds
       - type
       type: object
-    SLOTimeSliceComparator:
-      description: The comparator used to compare the SLI value to the threshold.
+    SLODataSourceQueryDefinition:
+      description: A formula and function query.
+      example:
+        data_source: metrics
+        name: query1
+        query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+      oneOf:
+      - $ref: '#/components/schemas/FormulaAndFunctionMetricQueryDefinition'
+    FormulaAndFunctionMetricAggregation:
+      description: The aggregation methods available for metrics queries.
       enum:
-      - '>'
-      - '>='
-      - <
-      - <=
-      example: '>'
+      - avg
+      - min
+      - max
+      - sum
+      - last
+      - area
+      - l2norm
+      - percentile
+      example: avg
       type: string
       x-enum-varnames:
-      - GREATER
-      - GREATER_EQUAL
-      - LESS
-      - LESS_EQUAL
-    SLOCreator:
-      description: The creator of the SLO
+      - AVG
+      - MIN
+      - MAX
+      - SUM
+      - LAST
+      - AREA
+      - L2NORM
+      - PERCENTILE
+    SearchSLOResponseData:
+      description: Data from search SLO response.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SearchSLOResponseDataAttributes'
+        type:
+          description: Type of service level objective result.
+          example: ''
+          type: string
+      type: object
+    Creator:
+      description: Object describing the creator of the shared element.
       properties:
         email:
           description: Email of the creator.
           type: string
-        id:
-          description: User ID of the creator.
-          format: int64
-          type: integer
+        handle:
+          description: Handle of the creator.
+          type: string
         name:
           description: Name of the creator.
           type:
           - string
           - 'null'
-      type:
-      - object
-      - 'null'
-    CheckCanDeleteSLOResponseData:
-      description: An array of service level objective objects.
+      readOnly: true
+      type: object
+    APIErrorResponse:
+      description: Error response object.
       properties:
-        ok:
-          description: An array of SLO IDs that can be safely deleted.
+        errors:
+          description: Array of errors returned by the API.
+          example:
+          - Bad Request
           items:
-            description: An SLO ID.
+            description: Error description.
+            example: Bad Request
             type: string
           type: array
-      type: object
-    SLOHistoryMetricsSeriesMetadata:
-      description: Query metadata.
-      example: {}
-      properties:
-        aggr:
-          deprecated: true
-          description: Query aggregator function.
-          type: string
-        expression:
-          deprecated: true
-          description: Query expression.
-          type: string
-        metric:
-          deprecated: true
-          description: Query metric used.
-          type: string
-        query_index:
-          deprecated: true
-          description: Query index from original combined query.
-          format: int64
-          type: integer
-        scope:
-          deprecated: true
-          description: Query scope.
-          type: string
-        unit:
-          description: 'An array of metric units that contains up to two unit objects.
-
-            For example, bytes represents one unit object and bytes per second represents two unit objects.
-
-            If a metric query only has one unit object, the second array element is null.'
-          example:
-          - family: bytes
-            id: 2
-            name: byte
-            plural: bytes
-            scale_factor: 1.0
-            short_name: B
-          - null
-          items:
-            $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadataUnit'
-          type:
-          - array
-          - 'null'
-      type: object
-    SLOFormula:
-      description: A formula that specifies how to combine the results of multiple queries.
-      example:
-        formula: query1 - default_zero(query2)
-      properties:
-        formula:
-          description: The formula string, which is an expression involving named queries.
-          example: query1 - default_zero(query2)
-          type: string
       required:
-      - formula
+      - errors
       type: object
+    CheckCanDeleteSLOResponse:
+      description: A service level objective response containing the requested object.
+      properties:
+        data:
+          $ref: '#/components/schemas/CheckCanDeleteSLOResponseData'
+        errors:
+          additionalProperties:
+            description: Description of the service level objective reference.
+            type: string
+          description: A mapping of SLO id to it's current usages.
+          type: object
+      type: object
+    SLOSliSpec:
+      description: A generic SLI specification. This is used for time-slice and count-based (metric) SLOs only.
+      oneOf:
+      - $ref: '#/components/schemas/SLOTimeSliceSpec'
+      - $ref: '#/components/schemas/SLOCountSpec'
     SLOHistorySLIData:
       description: 'An object that holds an SLI value and its associated data. It can represent an SLO''s overall SLI value.
 
@@ -1554,73 +1433,50 @@ components:
           - number
           - 'null'
       type: object
-    SLODataSourceQueryDefinition:
-      description: A formula and function query.
-      example:
-        data_source: metrics
-        name: query1
-        query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-      oneOf:
-      - $ref: '#/components/schemas/FormulaAndFunctionMetricQueryDefinition'
-    SLOTimeframe:
-      description: 'The SLO time window options. Note that "custom" is not a valid option for creating
-
-        or updating SLOs. It is only used when querying SLO history over custom timeframes.'
-      enum:
-      - 7d
-      - 30d
-      - 90d
-      - custom
-      example: 30d
-      type: string
-      x-enum-varnames:
-      - SEVEN_DAYS
-      - THIRTY_DAYS
-      - NINETY_DAYS
-      - CUSTOM
-    SearchSLOResponseDataAttributesFacets:
-      description: Facets
+    SearchSLOResponseDataAttributesFacetsObjectString:
+      description: Facet
       properties:
-        all_tags:
-          description: All tags associated with an SLO.
+        count:
+          description: Count
+          format: int64
+          type: integer
+        name:
+          description: Facet
+          type: string
+      type: object
+    SLOCorrectionListResponse:
+      description: A list of  SLO correction objects.
+      properties:
+        data:
+          description: The list of SLO corrections objects.
           items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+            $ref: '#/components/schemas/SLOCorrection'
           type: array
-        creator_name:
-          description: Creator of an SLO.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
-          type: array
-        env_tags:
-          description: Tags with the `env` tag key.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
-          type: array
-        service_tags:
-          description: Tags with the `service` tag key.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
-          type: array
-        slo_type:
-          description: Type of SLO.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectInt'
-          type: array
-        target:
-          description: SLO Target
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectInt'
-          type: array
-        team_tags:
-          description: Tags with the `team` tag key.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
-          type: array
-        timeframe:
-          description: Timeframes of SLOs.
-          items:
-            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
-          type: array
+        meta:
+          $ref: '#/components/schemas/ResponseMetaAttributes'
+      type: object
+    SearchSLOResponseLinks:
+      description: Pagination links.
+      properties:
+        first:
+          description: Link to last page.
+          type: string
+        last:
+          description: Link to first page.
+          type:
+          - string
+          - 'null'
+        next:
+          description: Link to the next page.
+          type: string
+        prev:
+          description: Link to previous page.
+          type:
+          - string
+          - 'null'
+        self:
+          description: Link to current page.
+          type: string
       type: object
     SearchSLOResponseDataAttributesFacetsObjectInt:
       description: Facet
@@ -1634,39 +1490,79 @@ components:
           format: double
           type: number
       type: object
-    FormulaAndFunctionMetricQueryDefinition:
-      description: A formula and functions metrics query.
-      example:
-        data_source: metrics
-        name: my_query
-        query: avg:system.cpu.user{*}
+    SLOThreshold:
+      description: SLO thresholds (target and optionally warning) for a single time window.
       properties:
-        aggregator:
-          $ref: '#/components/schemas/FormulaAndFunctionMetricAggregation'
-        cross_org_uuids:
-          $ref: '#/components/schemas/CrossOrgUuids'
-        data_source:
-          $ref: '#/components/schemas/FormulaAndFunctionMetricDataSource'
-        name:
-          description: Name of the query for use in formulas.
-          example: my_query
+        target:
+          description: 'The target value for the service level indicator within the corresponding
+
+            timeframe.'
+          example: 99.9
+          format: double
+          type: number
+        target_display:
+          description: 'A string representation of the target that indicates its precision.
+
+            It uses trailing zeros to show significant decimal places (for example `98.00`).
+
+
+            Always included in service level objective responses. Ignored in
+
+            create/update requests.'
+          example: '99.9'
           type: string
-        query:
-          description: Metrics query definition.
-          example: avg:system.cpu.user{*}
+        timeframe:
+          $ref: '#/components/schemas/SLOTimeframe'
+        warning:
+          description: The warning value for the service level objective.
+          example: 90.0
+          format: double
+          type: number
+        warning_display:
+          description: 'A string representation of the warning target (see the description of
+
+            the `target_display` field for details).
+
+
+            Included in service level objective responses if a warning target exists.
+
+            Ignored in create/update requests.'
+          example: '90.0'
           type: string
-        semantic_mode:
-          $ref: '#/components/schemas/FormulaAndFunctionMetricSemanticMode'
       required:
-      - data_source
-      - query
-      - name
+      - timeframe
+      - target
       type: object
-    SearchServiceLevelObjective:
-      description: A service level objective data container.
+    SLOErrorTimeframe:
+      description: 'The timeframe of the threshold associated with this error
+
+        or "all" if all thresholds are affected.'
+      enum:
+      - 7d
+      - 30d
+      - 90d
+      - all
+      example: 30d
+      type: string
+      x-enum-varnames:
+      - SEVEN_DAYS
+      - THIRTY_DAYS
+      - NINETY_DAYS
+      - ALL
+    SLOHistoryResponseErrorWithType:
+      description: An object describing the error with error type and error message.
       properties:
-        data:
-          $ref: '#/components/schemas/SearchServiceLevelObjectiveData'
+        error_message:
+          description: A message with more details about the error.
+          example: ''
+          type: string
+        error_type:
+          description: Type of the error.
+          example: ''
+          type: string
+      required:
+      - error_type
+      - error_message
       type: object
     SearchSLOThreshold:
       description: SLO thresholds (target and optionally warning) for a single time window.
@@ -1715,94 +1611,6 @@ components:
       - timeframe
       - target
       type: object
-    SLOCorrection:
-      description: The response object of a list of SLO corrections.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
-        id:
-          description: The ID of the SLO correction.
-          type: string
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      type: object
-    FormulaAndFunctionMetricAggregation:
-      description: The aggregation methods available for metrics queries.
-      enum:
-      - avg
-      - min
-      - max
-      - sum
-      - last
-      - area
-      - l2norm
-      - percentile
-      example: avg
-      type: string
-      x-enum-varnames:
-      - AVG
-      - MIN
-      - MAX
-      - SUM
-      - LAST
-      - AREA
-      - L2NORM
-      - PERCENTILE
-    SLOType:
-      description: The type of the service level objective.
-      enum:
-      - metric
-      - monitor
-      - time_slice
-      example: metric
-      type: string
-      x-enum-varnames:
-      - METRIC
-      - MONITOR
-      - TIME_SLICE
-    FormulaAndFunctionMetricSemanticMode:
-      description: Semantic mode for metrics queries. This determines how metrics from different sources are combined or displayed.
-      enum:
-      - combined
-      - native
-      example: combined
-      type: string
-      x-enum-varnames:
-      - COMBINED
-      - NATIVE
-    SLOErrorTimeframe:
-      description: 'The timeframe of the threshold associated with this error
-
-        or "all" if all thresholds are affected.'
-      enum:
-      - 7d
-      - 30d
-      - 90d
-      - all
-      example: 30d
-      type: string
-      x-enum-varnames:
-      - SEVEN_DAYS
-      - THIRTY_DAYS
-      - NINETY_DAYS
-      - ALL
-    SLOBulkDelete:
-      additionalProperties:
-        description: An array of all SLO timeframes.
-        items:
-          $ref: '#/components/schemas/SLOTimeframe'
-        type: array
-      description: 'A map of service level objective object IDs to arrays of timeframes,
-
-        which indicate the thresholds to delete for each ID.'
-      example:
-        id1:
-        - 7d
-        - 30d
-        id2:
-        - 7d
-        - 30d
-      type: object
     SLOCountDefinitionWithBadEventsFormula:
       additionalProperties: false
       description: SLO count definition using a bad events formula alongside a good events formula.
@@ -1829,45 +1637,99 @@ components:
       - bad_events_formula
       - queries
       type: object
-    SLOCountSpec:
-      additionalProperties: false
-      description: A metric SLI specification.
-      example:
-        count:
-          bad_events_formula: query2
-          good_events_formula: query1
-          queries:
-          - data_source: metrics
-            name: query1
-            query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
-          - data_source: metrics
-            name: query2
-            query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
+    SearchSLOResponse:
+      description: A search SLO response containing results from the search query.
       properties:
-        count:
-          $ref: '#/components/schemas/SLOCountDefinition'
-      required:
-      - count
+        data:
+          $ref: '#/components/schemas/SearchSLOResponseData'
+        links:
+          $ref: '#/components/schemas/SearchSLOResponseLinks'
+        meta:
+          $ref: '#/components/schemas/SearchSLOResponseMeta'
       type: object
-    SLOErrorBudgetRemainingData:
-      additionalProperties:
-        description: Remaining error budget.
-        format: double
-        type: number
-      description: A mapping of threshold `timeframe` to the remaining error budget.
-      example:
-        7d: 100.0
-      type: object
-    SearchSLOResponseDataAttributes:
-      description: Attributes
+    SLOHistoryResponseError:
+      description: A list of errors while querying the history data for the service level objective.
       properties:
-        facets:
-          $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacets'
-        slos:
-          description: SLOs
-          items:
-            $ref: '#/components/schemas/SearchServiceLevelObjective'
-          type: array
+        error:
+          description: Human readable error.
+          type: string
+      type: object
+    SLOTimeSliceComparator:
+      description: The comparator used to compare the SLI value to the threshold.
+      enum:
+      - '>'
+      - '>='
+      - <
+      - <=
+      example: '>'
+      type: string
+      x-enum-varnames:
+      - GREATER
+      - GREATER_EQUAL
+      - LESS
+      - LESS_EQUAL
+    SLOCorrectionResponseAttributes:
+      description: The attribute object associated with the SLO correction.
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        created_at:
+          description: The epoch timestamp of when the correction was created at.
+          format: int64
+          type:
+          - integer
+          - 'null'
+        creator:
+          $ref: '#/components/schemas/Creator'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 3600
+          format: int64
+          type:
+          - integer
+          - 'null'
+        end:
+          description: Ending time of the correction in epoch seconds.
+          format: int64
+          type:
+          - integer
+          - 'null'
+        modified_at:
+          description: The epoch timestamp of when the correction was modified at.
+          format: int64
+          type:
+          - integer
+          - 'null'
+        modifier:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributesModifier'
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type:
+          - string
+          - 'null'
+        slo_id:
+          description: ID of the single SLO that this correction applies to.
+          type:
+          - string
+          - 'null'
+        slo_query:
+          description: Query that matches the SLOs this correction applies to.
+          type:
+          - string
+          - 'null'
+        start:
+          description: Starting time of the correction in epoch seconds.
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          type: string
       type: object
     SLOResponseData:
       description: 'A service level objective object includes a service level indicator, thresholds
@@ -2020,371 +1882,57 @@ components:
           format: double
           type: number
       type: object
-    ServiceLevelObjectiveRequest:
-      description: 'A service level objective object includes a service level indicator, thresholds
-
-        for one or more timeframes, and metadata (`name`, `description`, `tags`, etc.).'
+    SLORawErrorBudgetRemaining:
+      description: Error budget remaining for an SLO.
       properties:
-        description:
-          description: 'A user-defined description of the service level objective.
-
-
-            Always included in service level objective responses (but may be `null`).
-
-            Optional in create/update requests.'
-          type:
-          - string
-          - 'null'
-        groups:
-          description: 'A list of (up to 100) monitor groups that narrow the scope of a monitor service level objective.
-
-
-            Included in service level objective responses if it is not empty. Optional in
-
-            create/update requests for monitor service level objectives, but may only be
-
-            used when then length of the `monitor_ids` field is one.'
-          example:
-          - env:prod
-          - role:mysql
-          items:
-            description: A group name, for instance `env:prod`.
-            type: string
-          type: array
-        monitor_ids:
-          description: 'A list of monitor IDs that defines the scope of a monitor service level
-
-            objective. **Required if type is `monitor`**.'
-          items:
-            description: A monitor ID.
-            format: int64
-            type: integer
-          type: array
-        name:
-          description: The name of the service level objective object.
-          example: Custom Metric SLO
+        unit:
+          description: Error budget remaining unit.
+          example: requests
           type: string
-        query:
-          $ref: '#/components/schemas/ServiceLevelObjectiveQuery'
-        sli_specification:
-          $ref: '#/components/schemas/SLOSliSpec'
-        tags:
-          description: 'A list of tags associated with this service level objective.
-
-            Always included in service level objective responses (but may be empty).
-
-            Optional in create/update requests.'
-          example:
-          - env:prod
-          - app:core
-          items:
-            description: A tag to apply to your SLO.
-            type: string
-          type: array
-        target_threshold:
-          description: 'The target threshold such that when the service level indicator is above this
-
-            threshold over the given timeframe, the objective is being met.'
-          example: 99.9
+        value:
+          description: Error budget remaining value.
+          example: 60
           format: double
           type: number
-        thresholds:
-          description: 'The thresholds (timeframes and associated targets) for this service level
-
-            objective object.'
-          example:
-          - target: 95
-            timeframe: 7d
-          - target: 95
-            timeframe: 30d
-            warning: 97
-          items:
-            $ref: '#/components/schemas/SLOThreshold'
-          type: array
-        timeframe:
-          $ref: '#/components/schemas/SLOTimeframe'
-        type:
-          $ref: '#/components/schemas/SLOType'
-        warning_threshold:
-          description: 'The optional warning threshold such that when the service level indicator is
-
-            below this value for the given threshold, but above the target threshold, the
-
-            objective appears in a "warning" state. This value must be greater than the target
-
-            threshold.'
-          example: 99.95
-          format: double
-          type: number
-      required:
-      - name
-      - thresholds
-      - type
-      type: object
-    SLOResponse:
-      description: A service level objective response containing a single service level objective.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOResponseData'
-        errors:
-          description: 'An array of error messages. Each endpoint documents how/whether this field is
-
-            used.'
-          items:
-            description: The error message.
-            type: string
-          type: array
-      type: object
-    SLOBulkDeleteResponse:
-      description: 'The bulk partial delete service level objective object endpoint
-
-        response.
-
-
-        This endpoint operates on multiple service level objective objects, so
-
-        it may be partially successful. In such cases, the "data" and "error"
-
-        fields in this response indicate which deletions succeeded and failed.'
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOBulkDeleteResponseData'
-        errors:
-          description: Array of errors object returned.
-          items:
-            $ref: '#/components/schemas/SLOBulkDeleteError'
-          type: array
-      type: object
-    SLOOverallStatuses:
-      description: Overall status of the SLO by timeframes.
-      properties:
-        error:
-          description: Error message if SLO status or error budget could not be calculated.
-          type:
-          - string
-          - 'null'
-        error_budget_remaining:
-          description: Remaining error budget of the SLO in percentage.
-          example: 100
-          format: double
-          type:
-          - number
-          - 'null'
-        indexed_at:
-          description: 'timestamp (UNIX time in seconds) of when the SLO status and error budget
-
-            were calculated.'
-          example: 1662496260
-          format: int64
-          type: integer
-        raw_error_budget_remaining:
-          $ref: '#/components/schemas/SLORawErrorBudgetRemaining'
-        span_precision:
-          description: The amount of decimal places the SLI value is accurate to.
-          example: 2
-          format: int64
-          type:
-          - integer
-          - 'null'
-        state:
-          $ref: '#/components/schemas/SLOState'
-        status:
-          description: The status of the SLO.
-          example: 100
-          format: double
-          type:
-          - number
-          - 'null'
-        target:
-          description: The target of the SLO.
-          example: 99
-          format: double
-          type: number
-        timeframe:
-          $ref: '#/components/schemas/SLOTimeframe'
-      type: object
-    Creator:
-      description: Object describing the creator of the shared element.
-      properties:
-        email:
-          description: Email of the creator.
-          type: string
-        handle:
-          description: Handle of the creator.
-          type: string
-        name:
-          description: Name of the creator.
-          type:
-          - string
-          - 'null'
-      readOnly: true
-      type: object
-    SLOListResponse:
-      description: A response with one or more service level objective.
-      properties:
-        data:
-          description: An array of service level objective objects.
-          items:
-            $ref: '#/components/schemas/ServiceLevelObjective'
-          type: array
-        errors:
-          description: 'An array of error messages. Each endpoint documents how/whether this field is
-
-            used.'
-          items:
-            description: The error message.
-            type: string
-          type: array
-        metadata:
-          $ref: '#/components/schemas/SLOListResponseMetadata'
-      type: object
-    SLOHistoryResponseData:
-      description: An array of service level objective objects.
-      properties:
-        from_ts:
-          description: The `from` timestamp in epoch seconds.
-          example: 1615323990
-          format: int64
-          type: integer
-        group_by:
-          description: 'For `metric` based SLOs where the query includes a group-by clause, this represents the list of grouping parameters.
-
-
-            This is not included in responses for `monitor` based SLOs.'
-          items:
-            description: A grouping parameter.
-            type: string
-          type: array
-        groups:
-          description: 'For grouped SLOs, this represents SLI data for specific groups.
-
-
-            This is not included in the responses for `metric` based SLOs.'
-          items:
-            $ref: '#/components/schemas/SLOHistoryMonitor'
-          type: array
-        monitors:
-          description: 'For multi-monitor SLOs, this represents SLI data for specific monitors.
-
-
-            This is not included in the responses for `metric` based SLOs.'
-          items:
-            $ref: '#/components/schemas/SLOHistoryMonitor'
-          type: array
-        overall:
-          $ref: '#/components/schemas/SLOHistorySLIData'
-        series:
-          $ref: '#/components/schemas/SLOHistoryMetrics'
-        thresholds:
-          additionalProperties:
-            $ref: '#/components/schemas/SLOThreshold'
-          description: mapping of string timeframe to the SLO threshold.
-          example:
-            my_service:
-              target: 95
-              timeframe: 7d
-          type: object
-        to_ts:
-          description: The `to` timestamp in epoch seconds.
-          example: 1615928790
-          format: int64
-          type: integer
-        type:
-          $ref: '#/components/schemas/SLOType'
-        type_id:
-          $ref: '#/components/schemas/SLOTypeNumeric'
-      type: object
-    SLOTimeSliceCondition:
-      description: 'The time-slice condition, composed of 3 parts: 1. the metric timeseries query, 2. the comparator,
-
-        and 3. the threshold. Optionally, a fourth part, the query interval, can be provided.'
-      example:
-        comparator: <
-        query:
-          formulas:
-          - formula: query2/query1
-          queries:
-          - data_source: metrics
-            name: query1
-            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
-          - data_source: metrics
-            name: query1
-            query: sum:trace.servlet.request.errors{*} by {env}.as_count()
-        threshold: 5
-      properties:
-        comparator:
-          $ref: '#/components/schemas/SLOTimeSliceComparator'
-        query:
-          $ref: '#/components/schemas/SLOTimeSliceQuery'
-        query_interval_seconds:
-          $ref: '#/components/schemas/SLOTimeSliceInterval'
-        threshold:
-          description: The threshold value to which each SLI value will be compared.
-          example: 5
-          format: double
-          type: number
-      required:
-      - comparator
-      - threshold
-      - query
-      type: object
-    SLOTimeSliceInterval:
-      description: 'The interval used when querying data, which defines the size of a time slice.
-
-        Two values are allowed: 60 (1 minute) and 300 (5 minutes).
-
-        If not provided, the value defaults to 300 (5 minutes).'
-      enum:
-      - 60
-      - 300
-      example: 300
-      format: int32
-      type: integer
-      x-enum-varnames:
-      - ONE_MINUTE
-      - FIVE_MINUTES
-    Pagination:
-      description: Pagination object.
-      properties:
-        total_count:
-          description: Total count.
-          format: int64
-          type: integer
-        total_filtered_count:
-          description: Total count of elements matched by the filter.
-          format: int64
-          type: integer
-      type: object
-    SLOHistoryMetricsSeriesMetadataUnit:
-      description: An Object of metric units.
-      properties:
-        family:
-          description: The family of metric unit, for example `bytes` is the family for `kibibyte`, `byte`, and `bit` units.
-          type: string
-        id:
-          description: The ID of the metric unit.
-          format: int64
-          type: integer
-        name:
-          description: The unit of the metric, for instance `byte`.
-          type: string
-        plural:
-          description: The plural Unit of metric, for instance `bytes`.
-          type:
-          - string
-          - 'null'
-        scale_factor:
-          description: The scale factor of metric unit, for instance `1.0`.
-          format: double
-          type: number
-        short_name:
-          description: A shorter and abbreviated version of the metric unit, for instance `B`.
-          type:
-          - string
-          - 'null'
       type:
       - object
       - 'null'
+    SearchSLOResponseDataAttributes:
+      description: Attributes
+      properties:
+        facets:
+          $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacets'
+        slos:
+          description: SLOs
+          items:
+            $ref: '#/components/schemas/SearchServiceLevelObjective'
+          type: array
+      type: object
+    ResponseMetaAttributes:
+      description: Object describing meta attributes of response.
+      properties:
+        page:
+          $ref: '#/components/schemas/Pagination'
+      type: object
+    ServiceLevelObjectiveQuery:
+      description: 'A count-based (metric) SLO query. This field is superseded by `sli_specification` but is retained for backwards compatibility. Note that Datadog only allows the sum by aggregator
+
+        to be used because this will sum up all request counts instead of averaging them, or taking the max or
+
+        min of all of those requests.'
+      properties:
+        denominator:
+          description: A Datadog metric query for total (valid) events.
+          example: sum:my.custom.metric{*}.as_count()
+          type: string
+        numerator:
+          description: A Datadog metric query for good events.
+          example: sum:my.custom.metric{type:good}.as_count()
+          type: string
+      required:
+      - numerator
+      - denominator
+      type: object
     SearchServiceLevelObjectiveAttributes:
       description: 'A service level objective object includes a service level indicator, thresholds
 
@@ -2503,93 +2051,70 @@ components:
             $ref: '#/components/schemas/SearchSLOThreshold'
           type: array
       type: object
-    SearchSLOResponseMeta:
-      description: Searches metadata returned by the API.
-      properties:
-        pagination:
-          $ref: '#/components/schemas/SearchSLOResponseMetaPage'
-      type: object
-    SLOListResponseMetadata:
-      description: The metadata object containing additional information about the list of SLOs.
-      properties:
-        page:
-          $ref: '#/components/schemas/SLOListResponseMetadataPage'
-      type: object
-    ServiceLevelObjectiveQuery:
-      description: 'A count-based (metric) SLO query. This field is superseded by `sli_specification` but is retained for backwards compatibility. Note that Datadog only allows the sum by aggregator
+    CrossOrgUuids:
+      description: The source organization UUID for cross organization queries. Feature in Private Beta.
+      example:
+      - 6434abde-xxxx-yyyy-zzzz-da7ad0900001
+      items:
+        description: The source organization UUID.
+        example: 6434abde-xxxx-yyyy-zzzz-da7ad0900001
+        type: string
+      maxItems: 1
+      type: array
+    SLOBulkDeleteResponse:
+      description: 'The bulk partial delete service level objective object endpoint
 
-        to be used because this will sum up all request counts instead of averaging them, or taking the max or
+        response.
 
-        min of all of those requests.'
-      properties:
-        denominator:
-          description: A Datadog metric query for total (valid) events.
-          example: sum:my.custom.metric{*}.as_count()
-          type: string
-        numerator:
-          description: A Datadog metric query for good events.
-          example: sum:my.custom.metric{type:good}.as_count()
-          type: string
-      required:
-      - numerator
-      - denominator
-      type: object
-    SearchSLOResponseData:
-      description: Data from search SLO response.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SearchSLOResponseDataAttributes'
-        type:
-          description: Type of service level objective result.
-          example: ''
-          type: string
-      type: object
-    SLOHistoryResponse:
-      description: A service level objective history response.
+
+        This endpoint operates on multiple service level objective objects, so
+
+        it may be partially successful. In such cases, the "data" and "error"
+
+        fields in this response indicate which deletions succeeded and failed.'
       properties:
         data:
-          $ref: '#/components/schemas/SLOHistoryResponseData'
+          $ref: '#/components/schemas/SLOBulkDeleteResponseData'
         errors:
-          description: A list of errors while querying the history data for the service level objective.
+          description: Array of errors object returned.
           items:
-            $ref: '#/components/schemas/SLOHistoryResponseError'
-          type:
-          - array
-          - 'null'
-      type: object
-    SLOCountDefinition:
-      description: 'A count-based (metric) SLI specification, composed of three parts: the good events formula,
-
-        the bad or total events formula, and the underlying queries.
-
-        Exactly one of `total_events_formula` or `bad_events_formula` must be provided.'
-      example:
-        bad_events_formula: query2
-        good_events_formula: query1
-        queries:
-        - data_source: metrics
-          name: query1
-          query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
-        - data_source: metrics
-          name: query2
-          query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
-      oneOf:
-      - $ref: '#/components/schemas/SLOCountDefinitionWithTotalEventsFormula'
-      - $ref: '#/components/schemas/SLOCountDefinitionWithBadEventsFormula'
-    APIErrorResponse:
-      description: Error response object.
-      properties:
-        errors:
-          description: Array of errors returned by the API.
-          example:
-          - Bad Request
-          items:
-            description: Error description.
-            example: Bad Request
-            type: string
+            $ref: '#/components/schemas/SLOBulkDeleteError'
           type: array
-      required:
-      - errors
+      type: object
+    SearchSLOResponseMetaPage:
+      description: Pagination metadata returned by the API.
+      properties:
+        first_number:
+          description: The first number.
+          format: int64
+          type: integer
+        last_number:
+          description: The last number.
+          format: int64
+          type: integer
+        next_number:
+          description: The next number.
+          format: int64
+          type: integer
+        number:
+          description: The page number.
+          format: int64
+          type: integer
+        prev_number:
+          description: The previous page number.
+          format: int64
+          type: integer
+        size:
+          description: The size of the response.
+          format: int64
+          type: integer
+        total:
+          description: The total number of SLOs in the response.
+          format: int64
+          type: integer
+        type:
+          description: Type of pagination.
+          type: string
       type: object
     SLOCorrectionResponseAttributesModifier:
       description: Modifier of the object.
@@ -2606,233 +2131,186 @@ components:
       type:
       - object
       - 'null'
-    SLOHistoryResponseErrorWithType:
-      description: An object describing the error with error type and error message.
-      properties:
-        error_message:
-          description: A message with more details about the error.
-          example: ''
-          type: string
-        error_type:
-          description: Type of the error.
-          example: ''
-          type: string
-      required:
-      - error_type
-      - error_message
-      type: object
-    SLOCorrectionListResponse:
-      description: A list of  SLO correction objects.
+    SLOCorrectionType:
+      default: correction
+      description: SLO correction resource type.
+      enum:
+      - correction
+      example: correction
+      type: string
+      x-enum-varnames:
+      - CORRECTION
+    SLOType:
+      description: The type of the service level objective.
+      enum:
+      - metric
+      - monitor
+      - time_slice
+      example: metric
+      type: string
+      x-enum-varnames:
+      - METRIC
+      - MONITOR
+      - TIME_SLICE
+    SearchServiceLevelObjective:
+      description: A service level objective data container.
       properties:
         data:
-          description: The list of SLO corrections objects.
-          items:
-            $ref: '#/components/schemas/SLOCorrection'
-          type: array
-        meta:
-          $ref: '#/components/schemas/ResponseMetaAttributes'
+          $ref: '#/components/schemas/SearchServiceLevelObjectiveData'
       type: object
-    SLOBulkDeleteResponseData:
-      description: An array of service level objective objects.
+    FormulaAndFunctionMetricQueryDefinition:
+      description: A formula and functions metrics query.
+      example:
+        data_source: metrics
+        name: my_query
+        query: avg:system.cpu.user{*}
       properties:
-        deleted:
-          description: 'An array of service level objective object IDs that indicates
-
-            which objects that were completely deleted.'
-          items:
-            description: A deleted SLO ID.
-            type: string
-          type: array
-        updated:
-          description: 'An array of service level objective object IDs that indicates
-
-            which objects that were modified (objects for which at least one
-
-            threshold was deleted, but that were not completely deleted).'
-          items:
-            description: An updated SLO ID.
-            type: string
-          type: array
-      type: object
-    SearchSLOQuery:
-      description: 'A metric-based SLO. **Required if type is `metric`**. Note that Datadog only allows the sum by aggregator
-
-        to be used because this will sum up all request counts instead of averaging them, or taking the max or
-
-        min of all of those requests.'
-      properties:
-        denominator:
-          description: A Datadog metric query for total (valid) events.
-          example: sum:my.custom.metric{*}.as_count()
+        aggregator:
+          $ref: '#/components/schemas/FormulaAndFunctionMetricAggregation'
+        cross_org_uuids:
+          $ref: '#/components/schemas/CrossOrgUuids'
+        data_source:
+          $ref: '#/components/schemas/FormulaAndFunctionMetricDataSource'
+        name:
+          description: Name of the query for use in formulas.
+          example: my_query
           type: string
-        metrics:
-          description: 'Metric names used in the query''s numerator and denominator.
+        query:
+          description: Metrics query definition.
+          example: avg:system.cpu.user{*}
+          type: string
+        semantic_mode:
+          $ref: '#/components/schemas/FormulaAndFunctionMetricSemanticMode'
+      required:
+      - data_source
+      - query
+      - name
+      type: object
+    SLOResponse:
+      description: A service level objective response containing a single service level objective.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOResponseData'
+        errors:
+          description: 'An array of error messages. Each endpoint documents how/whether this field is
 
-            This field will return null and will be implemented in the next version of this endpoint.'
-          example:
-          - my.custom.metric
-          - my.other.custom.metric
+            used.'
           items:
-            description: Metric name.
+            description: The error message.
             type: string
+          type: array
+      type: object
+    SLOHistoryMetricsSeries:
+      description: 'A representation of `metric` based SLO timeseries for the provided queries.
+
+        This is the same response type from `batch_query` endpoint.'
+      properties:
+        count:
+          description: Count of submitted metrics.
+          example: 0
+          format: int64
+          type: integer
+        metadata:
+          $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadata'
+        sum:
+          description: Total sum of the query.
+          example: 0.0
+          format: double
+          type: number
+        values:
+          description: The query values for each metric.
+          example: []
+          items:
+            description: A metric name and its value.
+            format: double
+            type: number
+          type: array
+      required:
+      - count
+      - sum
+      - values
+      type: object
+    FormulaAndFunctionMetricSemanticMode:
+      description: Semantic mode for metrics queries. This determines how metrics from different sources are combined or displayed.
+      enum:
+      - combined
+      - native
+      example: combined
+      type: string
+      x-enum-varnames:
+      - COMBINED
+      - NATIVE
+    SLOHistoryMetricsSeriesMetadata:
+      description: Query metadata.
+      example: {}
+      properties:
+        aggr:
+          deprecated: true
+          description: Query aggregator function.
+          type: string
+        expression:
+          deprecated: true
+          description: Query expression.
+          type: string
+        metric:
+          deprecated: true
+          description: Query metric used.
+          type: string
+        query_index:
+          deprecated: true
+          description: Query index from original combined query.
+          format: int64
+          type: integer
+        scope:
+          deprecated: true
+          description: Query scope.
+          type: string
+        unit:
+          description: 'An array of metric units that contains up to two unit objects.
+
+            For example, bytes represents one unit object and bytes per second represents two unit objects.
+
+            If a metric query only has one unit object, the second array element is null.'
+          example:
+          - family: bytes
+            id: 2
+            name: byte
+            plural: bytes
+            scale_factor: 1.0
+            short_name: B
+          - null
+          items:
+            $ref: '#/components/schemas/SLOHistoryMetricsSeriesMetadataUnit'
           type:
           - array
           - 'null'
-        numerator:
-          description: A Datadog metric query for good events.
-          example: sum:my.custom.metric{type:good}.as_count()
-          type: string
-      type:
-      - object
-      - 'null'
-    SLORawErrorBudgetRemaining:
-      description: Error budget remaining for an SLO.
-      properties:
-        unit:
-          description: Error budget remaining unit.
-          example: requests
-          type: string
-        value:
-          description: Error budget remaining value.
-          example: 60
-          format: double
-          type: number
-      type:
-      - object
-      - 'null'
-    SLOListResponseMetadataPage:
-      description: The object containing information about the pages of the list of SLOs.
-      properties:
-        total_count:
-          description: The total number of resources that could be retrieved ignoring the parameters and filters in the request.
-          format: int64
-          type: integer
-        total_filtered_count:
-          description: The total number of resources that match the parameters and filters in the request. This attribute can be used by a client to determine the total number of pages.
-          format: int64
-          type: integer
       type: object
-    SearchSLOTimeframe:
-      description: The SLO time window options.
-      enum:
-      - 7d
-      - 30d
-      - 90d
-      example: 30d
-      type: string
-      x-enum-varnames:
-      - SEVEN_DAYS
-      - THIRTY_DAYS
-      - NINETY_DAYS
-    SLOBulkDeleteError:
-      description: Object describing the error.
+    CheckCanDeleteSLOResponseData:
+      description: An array of service level objective objects.
       properties:
-        id:
-          description: 'The ID of the service level objective object associated with
-
-            this error.'
-          example: ''
-          type: string
-        message:
-          description: The error message.
-          example: ''
-          type: string
-        timeframe:
-          $ref: '#/components/schemas/SLOErrorTimeframe'
-      required:
-      - id
-      - timeframe
-      - message
+        ok:
+          description: An array of SLO IDs that can be safely deleted.
+          items:
+            description: An SLO ID.
+            type: string
+          type: array
       type: object
-    SLOHistoryMonitor:
-      description: 'An object that holds an SLI value and its associated data. It can represent an SLO''s overall SLI value.
+    SLOBulkDelete:
+      additionalProperties:
+        description: An array of all SLO timeframes.
+        items:
+          $ref: '#/components/schemas/SLOTimeframe'
+        type: array
+      description: 'A map of service level objective object IDs to arrays of timeframes,
 
-        This can also represent the SLI value for a specific monitor in multi-monitor SLOs, or a group in grouped SLOs.'
-      properties:
-        error_budget_remaining:
-          $ref: '#/components/schemas/SLOErrorBudgetRemainingData'
-        errors:
-          description: An array of error objects returned while querying the history data for the service level objective.
-          items:
-            $ref: '#/components/schemas/SLOHistoryResponseErrorWithType'
-          type: array
-        group:
-          description: For groups in a grouped SLO, this is the group name.
-          example: name
-          type: string
-        history:
-          description: 'The state transition history for the monitor. It is represented as
-
-            an array of pairs. Each pair is an array containing the timestamp of the transition
-
-            as an integer in Unix epoch format in the first element, and the state as an integer in the
-
-            second element. An integer value of `0` for state means uptime, `1` means downtime, and `2` means no data.
-
-            Periods of no data are counted either as uptime or downtime depending on monitor settings.
-
-            See [SLO documentation](https://docs.datadoghq.com/service_management/service_level_objectives/monitor/#missing-data)
-
-            for detailed information.'
-          example:
-          - - 1579212382
-            - 0
-          items:
-            description: Represents an array timeseries data.
-            example:
-            - 1579212382
-            - 0
-            items:
-              description: A timeseries data point which is a tuple of (timestamp, value).
-              format: double
-              type: number
-            maxItems: 2
-            minItems: 2
-            type: array
-          type: array
-        monitor_modified:
-          description: For `monitor` based SLOs, this is the last modified timestamp in epoch seconds of the monitor.
-          example: 1615867200
-          format: int64
-          type: integer
-        monitor_type:
-          description: For `monitor` based SLOs, this describes the type of monitor.
-          example: string
-          type: string
-        name:
-          description: For groups in a grouped SLO, this is the group name. For monitors in a multi-monitor SLO, this is the monitor name.
-          example: string
-          type: string
-        precision:
-          deprecated: true
-          description: The amount of decimal places the SLI value is accurate to for the given from `&&` to timestamp. Use `span_precision` instead.
-          example: 2.0
-          format: double
-          type: number
-        preview:
-          description: 'For `monitor` based SLOs, when `true` this indicates that a replay is in progress to give an accurate uptime
-
-            calculation.'
-          example: true
-          type: boolean
-        sli_value:
-          description: The current SLI value of the SLO over the history window.
-          example: 99.99
-          format: double
-          type:
-          - number
-          - 'null'
-        span_precision:
-          description: The amount of decimal places the SLI value is accurate to for the given from `&&` to timestamp.
-          example: 2.0
-          format: double
-          type: number
-        uptime:
-          deprecated: true
-          description: Use `sli_value` instead.
-          example: 99.99
-          format: double
-          type: number
+        which indicate the thresholds to delete for each ID.'
+      example:
+        id1:
+        - 7d
+        - 30d
+        id2:
+        - 7d
+        - 30d
       type: object
     SLOStatus:
       description: Status of the SLO's primary timeframe.
@@ -2875,55 +2353,608 @@ components:
         state:
           $ref: '#/components/schemas/SLOState'
       type: object
-    SLOHistoryMetrics:
-      description: 'A `metric` based SLO history response.
-
-
-        This is not included in responses for `monitor` based SLOs.'
+    SearchSLOTimeframe:
+      description: The SLO time window options.
+      enum:
+      - 7d
+      - 30d
+      - 90d
+      example: 30d
+      type: string
+      x-enum-varnames:
+      - SEVEN_DAYS
+      - THIRTY_DAYS
+      - NINETY_DAYS
+    SLOListResponseMetadataPage:
+      description: The object containing information about the pages of the list of SLOs.
       properties:
-        denominator:
-          $ref: '#/components/schemas/SLOHistoryMetricsSeries'
-        interval:
-          description: The aggregated query interval for the series data. It's implicit based on the query time window.
-          example: 0
+        total_count:
+          description: The total number of resources that could be retrieved ignoring the parameters and filters in the request.
           format: int64
           type: integer
-        message:
-          description: Optional message if there are specific query issues/warnings.
-          example: ''
-          type: string
-        numerator:
-          $ref: '#/components/schemas/SLOHistoryMetricsSeries'
-        query:
-          description: The combined numerator and denominator query CSV.
-          example: ''
-          type: string
-        res_type:
-          description: The series result type. This mimics `batch_query` response type.
-          example: ''
-          type: string
-        resp_version:
-          description: The series response version type. This mimics `batch_query` response type.
-          example: 0
+        total_filtered_count:
+          description: The total number of resources that match the parameters and filters in the request. This attribute can be used by a client to determine the total number of pages.
           format: int64
           type: integer
-        times:
-          description: An array of query timestamps in EPOCH milliseconds.
-          example: []
+      type: object
+    SLOListResponseMetadata:
+      description: The metadata object containing additional information about the list of SLOs.
+      properties:
+        page:
+          $ref: '#/components/schemas/SLOListResponseMetadataPage'
+      type: object
+    SLOTimeframe:
+      description: 'The SLO time window options. Note that "custom" is not a valid option for creating
+
+        or updating SLOs. It is only used when querying SLO history over custom timeframes.'
+      enum:
+      - 7d
+      - 30d
+      - 90d
+      - custom
+      example: 30d
+      type: string
+      x-enum-varnames:
+      - SEVEN_DAYS
+      - THIRTY_DAYS
+      - NINETY_DAYS
+      - CUSTOM
+    FormulaAndFunctionMetricDataSource:
+      description: Data source for metrics queries.
+      enum:
+      - metrics
+      example: metrics
+      type: string
+      x-enum-varnames:
+      - METRICS
+    SLOErrorBudgetRemainingData:
+      additionalProperties:
+        description: Remaining error budget.
+        format: double
+        type: number
+      description: A mapping of threshold `timeframe` to the remaining error budget.
+      example:
+        7d: 100.0
+      type: object
+    SearchSLOResponseMeta:
+      description: Searches metadata returned by the API.
+      properties:
+        pagination:
+          $ref: '#/components/schemas/SearchSLOResponseMetaPage'
+      type: object
+    SLOOverallStatuses:
+      description: Overall status of the SLO by timeframes.
+      properties:
+        error:
+          description: Error message if SLO status or error budget could not be calculated.
+          type:
+          - string
+          - 'null'
+        error_budget_remaining:
+          description: Remaining error budget of the SLO in percentage.
+          example: 100
+          format: double
+          type:
+          - number
+          - 'null'
+        indexed_at:
+          description: 'timestamp (UNIX time in seconds) of when the SLO status and error budget
+
+            were calculated.'
+          example: 1662496260
+          format: int64
+          type: integer
+        raw_error_budget_remaining:
+          $ref: '#/components/schemas/SLORawErrorBudgetRemaining'
+        span_precision:
+          description: The amount of decimal places the SLI value is accurate to.
+          example: 2
+          format: int64
+          type:
+          - integer
+          - 'null'
+        state:
+          $ref: '#/components/schemas/SLOState'
+        status:
+          description: The status of the SLO.
+          example: 100
+          format: double
+          type:
+          - number
+          - 'null'
+        target:
+          description: The target of the SLO.
+          example: 99
+          format: double
+          type: number
+        timeframe:
+          $ref: '#/components/schemas/SLOTimeframe'
+      type: object
+    SLOListResponse:
+      description: A response with one or more service level objective.
+      properties:
+        data:
+          description: An array of service level objective objects.
           items:
-            description: A timestamp in EPOCH milliseconds.
-            format: double
-            type: number
+            $ref: '#/components/schemas/ServiceLevelObjective'
+          type: array
+        errors:
+          description: 'An array of error messages. Each endpoint documents how/whether this field is
+
+            used.'
+          items:
+            description: The error message.
+            type: string
+          type: array
+        metadata:
+          $ref: '#/components/schemas/SLOListResponseMetadata'
+      type: object
+    SLOFormula:
+      description: A formula that specifies how to combine the results of multiple queries.
+      example:
+        formula: query1 - default_zero(query2)
+      properties:
+        formula:
+          description: The formula string, which is an expression involving named queries.
+          example: query1 - default_zero(query2)
+          type: string
+      required:
+      - formula
+      type: object
+    SLOHistoryResponse:
+      description: A service level objective history response.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOHistoryResponseData'
+        errors:
+          description: A list of errors while querying the history data for the service level objective.
+          items:
+            $ref: '#/components/schemas/SLOHistoryResponseError'
+          type:
+          - array
+          - 'null'
+      type: object
+    SLOTimeSliceSpec:
+      additionalProperties: false
+      description: A time-slice SLI specification.
+      example:
+        time_slice:
+          comparator: <
+          query:
+            formulas:
+            - formula: query2/query1
+            queries:
+            - data_source: metrics
+              name: query1
+              query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+            - data_source: metrics
+              name: query2
+              query: sum:trace.servlet.request.errors{*} by {env}.as_count()
+          threshold: 5
+      properties:
+        time_slice:
+          $ref: '#/components/schemas/SLOTimeSliceCondition'
+      required:
+      - time_slice
+      type: object
+    SLOTimeSliceInterval:
+      description: 'The interval used when querying data, which defines the size of a time slice.
+
+        Two values are allowed: 60 (1 minute) and 300 (5 minutes).
+
+        If not provided, the value defaults to 300 (5 minutes).'
+      enum:
+      - 60
+      - 300
+      example: 300
+      format: int32
+      type: integer
+      x-enum-varnames:
+      - ONE_MINUTE
+      - FIVE_MINUTES
+    SLOCreator:
+      description: The creator of the SLO
+      properties:
+        email:
+          description: Email of the creator.
+          type: string
+        id:
+          description: User ID of the creator.
+          format: int64
+          type: integer
+        name:
+          description: Name of the creator.
+          type:
+          - string
+          - 'null'
+      type:
+      - object
+      - 'null'
+    SearchSLOResponseDataAttributesFacets:
+      description: Facets
+      properties:
+        all_tags:
+          description: All tags associated with an SLO.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+        creator_name:
+          description: Creator of an SLO.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+        env_tags:
+          description: Tags with the `env` tag key.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+        service_tags:
+          description: Tags with the `service` tag key.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+        slo_type:
+          description: Type of SLO.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectInt'
+          type: array
+        target:
+          description: SLO Target
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectInt'
+          type: array
+        team_tags:
+          description: Tags with the `team` tag key.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+        timeframe:
+          description: Timeframes of SLOs.
+          items:
+            $ref: '#/components/schemas/SearchSLOResponseDataAttributesFacetsObjectString'
+          type: array
+      type: object
+    SLOTimeSliceQuery:
+      description: The queries and formula used to calculate the SLI value.
+      example:
+        formulas:
+        - formula: query2/query1
+        queries:
+        - data_source: metrics
+          name: query1
+          query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+        - data_source: metrics
+          name: query1
+          query: sum:trace.servlet.request.errors{*} by {env}.as_count()
+      properties:
+        formulas:
+          description: A list that contains exactly one formula, as only a single formula may be used in a time-slice SLO.
+          example:
+          - formula: query1 - default_zero(query2)
+          items:
+            $ref: '#/components/schemas/SLOFormula'
+          maxItems: 1
+          minItems: 1
+          type: array
+        queries:
+          description: A list of queries that are used to calculate the SLI value.
+          example:
+          - data_source: metrics
+            name: query1
+            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+          items:
+            $ref: '#/components/schemas/SLODataSourceQueryDefinition'
           type: array
       required:
-      - res_type
-      - interval
-      - resp_version
-      - query
-      - times
-      - numerator
-      - denominator
+      - formulas
+      - queries
       type: object
+    SLOCorrectionCategory:
+      description: Category the SLO correction belongs to.
+      enum:
+      - Scheduled Maintenance
+      - Outside Business Hours
+      - Deployment
+      - Other
+      example: Scheduled Maintenance
+      type: string
+      x-enum-varnames:
+      - SCHEDULED_MAINTENANCE
+      - OUTSIDE_BUSINESS_HOURS
+      - DEPLOYMENT
+      - OTHER
+    SearchServiceLevelObjectiveData:
+      description: A service level objective ID and attributes.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SearchServiceLevelObjectiveAttributes'
+        id:
+          description: 'A unique identifier for the service level objective object.
+
+
+            Always included in service level objective responses.'
+          readOnly: true
+          type: string
+        type:
+          description: The type of the object, must be `slo`.
+          type: string
+      type: object
+    SearchSLOQuery:
+      description: 'A metric-based SLO. **Required if type is `metric`**. Note that Datadog only allows the sum by aggregator
+
+        to be used because this will sum up all request counts instead of averaging them, or taking the max or
+
+        min of all of those requests.'
+      properties:
+        denominator:
+          description: A Datadog metric query for total (valid) events.
+          example: sum:my.custom.metric{*}.as_count()
+          type: string
+        metrics:
+          description: 'Metric names used in the query''s numerator and denominator.
+
+            This field will return null and will be implemented in the next version of this endpoint.'
+          example:
+          - my.custom.metric
+          - my.other.custom.metric
+          items:
+            description: Metric name.
+            type: string
+          type:
+          - array
+          - 'null'
+        numerator:
+          description: A Datadog metric query for good events.
+          example: sum:my.custom.metric{type:good}.as_count()
+          type: string
+      type:
+      - object
+      - 'null'
+    SLODeleteResponse:
+      description: A response list of all service level objective deleted.
+      properties:
+        data:
+          description: An array containing the ID of the deleted service level objective object.
+          items:
+            description: ID of a deleted SLO.
+            type: string
+          type: array
+        errors:
+          additionalProperties:
+            description: Error preventing the SLO deletion.
+            type: string
+          description: An dictionary containing the ID of the SLO as key and a deletion error as value.
+          type: object
+      type: object
+    SLOState:
+      description: State of the SLO.
+      enum:
+      - breached
+      - warning
+      - ok
+      - no_data
+      example: ok
+      type: string
+      x-enum-varnames:
+      - BREACHED
+      - WARNING
+      - OK
+      - NO_DATA
+    Pagination:
+      description: Pagination object.
+      properties:
+        total_count:
+          description: Total count.
+          format: int64
+          type: integer
+        total_filtered_count:
+          description: Total count of elements matched by the filter.
+          format: int64
+          type: integer
+      type: object
+    SLOBulkDeleteResponseData:
+      description: An array of service level objective objects.
+      properties:
+        deleted:
+          description: 'An array of service level objective object IDs that indicates
+
+            which objects that were completely deleted.'
+          items:
+            description: A deleted SLO ID.
+            type: string
+          type: array
+        updated:
+          description: 'An array of service level objective object IDs that indicates
+
+            which objects that were modified (objects for which at least one
+
+            threshold was deleted, but that were not completely deleted).'
+          items:
+            description: An updated SLO ID.
+            type: string
+          type: array
+      type: object
+    SLOBulkDeleteError:
+      description: Object describing the error.
+      properties:
+        id:
+          description: 'The ID of the service level objective object associated with
+
+            this error.'
+          example: ''
+          type: string
+        message:
+          description: The error message.
+          example: ''
+          type: string
+        timeframe:
+          $ref: '#/components/schemas/SLOErrorTimeframe'
+      required:
+      - id
+      - timeframe
+      - message
+      type: object
+    ServiceLevelObjective:
+      description: 'A service level objective object includes a service level indicator, thresholds
+
+        for one or more timeframes, and metadata (`name`, `description`, `tags`, etc.).'
+      properties:
+        created_at:
+          description: 'Creation timestamp (UNIX time in seconds)
+
+
+            Always included in service level objective responses.'
+          format: int64
+          readOnly: true
+          type: integer
+        creator:
+          $ref: '#/components/schemas/Creator'
+        description:
+          description: 'A user-defined description of the service level objective.
+
+
+            Always included in service level objective responses (but may be `null`).
+
+            Optional in create/update requests.'
+          type:
+          - string
+          - 'null'
+        groups:
+          description: 'A list of (up to 100) monitor groups that narrow the scope of a monitor service level objective.
+
+
+            Included in service level objective responses if it is not empty. Optional in
+
+            create/update requests for monitor service level objectives, but may only be
+
+            used when then length of the `monitor_ids` field is one.'
+          example:
+          - env:prod
+          - role:mysql
+          items:
+            description: A group name, for instance `env:prod`.
+            type: string
+          type: array
+        id:
+          description: 'A unique identifier for the service level objective object.
+
+
+            Always included in service level objective responses.'
+          readOnly: true
+          type: string
+        modified_at:
+          description: 'Modification timestamp (UNIX time in seconds)
+
+
+            Always included in service level objective responses.'
+          format: int64
+          readOnly: true
+          type: integer
+        monitor_ids:
+          description: 'A list of monitor ids that defines the scope of a monitor service level
+
+            objective. **Required if type is `monitor`**.'
+          items:
+            description: A monitor ID.
+            format: int64
+            type: integer
+          type: array
+        monitor_tags:
+          description: 'The union of monitor tags for all monitors referenced by the `monitor_ids`
+
+            field.
+
+            Always included in service level objective responses for monitor-based service level
+
+            objectives (but may be empty). Ignored in create/update requests. Does not
+
+            affect which monitors are included in the service level objective (that is
+
+            determined entirely by the `monitor_ids` field).'
+          items:
+            description: A monitor tag.
+            type: string
+          type: array
+        name:
+          description: The name of the service level objective object.
+          example: Custom Metric SLO
+          type: string
+        query:
+          $ref: '#/components/schemas/ServiceLevelObjectiveQuery'
+        sli_specification:
+          $ref: '#/components/schemas/SLOSliSpec'
+        tags:
+          description: 'A list of tags associated with this service level objective.
+
+            Always included in service level objective responses (but may be empty).
+
+            Optional in create/update requests.'
+          example:
+          - env:prod
+          - app:core
+          items:
+            description: A tag to apply to your SLO.
+            type: string
+          type: array
+        target_threshold:
+          description: 'The target threshold such that when the service level indicator is above this
+
+            threshold over the given timeframe, the objective is being met.'
+          example: 99.9
+          format: double
+          type: number
+        thresholds:
+          description: 'The thresholds (timeframes and associated targets) for this service level
+
+            objective object.'
+          example:
+          - target: 95
+            timeframe: 7d
+          - target: 95
+            timeframe: 30d
+            warning: 97
+          items:
+            $ref: '#/components/schemas/SLOThreshold'
+          type: array
+        timeframe:
+          $ref: '#/components/schemas/SLOTimeframe'
+        type:
+          $ref: '#/components/schemas/SLOType'
+        warning_threshold:
+          description: 'The optional warning threshold such that when the service level indicator is
+
+            below this value for the given threshold, but above the target threshold, the
+
+            objective appears in a "warning" state. This value must be greater than the target
+
+            threshold.'
+          example: 99.95
+          format: double
+          type: number
+      required:
+      - name
+      - thresholds
+      - type
+      type: object
+    SLOCountDefinition:
+      description: 'A count-based (metric) SLI specification, composed of three parts: the good events formula,
+
+        the bad or total events formula, and the underlying queries.
+
+        Exactly one of `total_events_formula` or `bad_events_formula` must be provided.'
+      example:
+        bad_events_formula: query2
+        good_events_formula: query1
+        queries:
+        - data_source: metrics
+          name: query1
+          query: sum:trace.servlet.request.hits{!http.status_code:500} by {env}.as_count()
+        - data_source: metrics
+          name: query2
+          query: sum:trace.servlet.request.hits{http.status_code:500} by {env}.as_count()
+      oneOf:
+      - $ref: '#/components/schemas/SLOCountDefinitionWithTotalEventsFormula'
+      - $ref: '#/components/schemas/SLOCountDefinitionWithBadEventsFormula'
     SLOTypeNumeric:
       description: 'A numeric representation of the type of the service level objective (`0` for
 
@@ -2941,71 +2972,40 @@ components:
       - MONITOR
       - METRIC
       - TIME_SLICE
-    SLOCorrectionCategory:
-      description: Category the SLO correction belongs to.
-      enum:
-      - Scheduled Maintenance
-      - Outside Business Hours
-      - Deployment
-      - Other
-      example: Scheduled Maintenance
-      type: string
-      x-enum-varnames:
-      - SCHEDULED_MAINTENANCE
-      - OUTSIDE_BUSINESS_HOURS
-      - DEPLOYMENT
-      - OTHER
-    SLOThreshold:
-      description: SLO thresholds (target and optionally warning) for a single time window.
+    SLOTimeSliceCondition:
+      description: 'The time-slice condition, composed of 3 parts: 1. the metric timeseries query, 2. the comparator,
+
+        and 3. the threshold. Optionally, a fourth part, the query interval, can be provided.'
+      example:
+        comparator: <
+        query:
+          formulas:
+          - formula: query2/query1
+          queries:
+          - data_source: metrics
+            name: query1
+            query: sum:trace.servlet.request.hits{*} by {env}.as_count()
+          - data_source: metrics
+            name: query1
+            query: sum:trace.servlet.request.errors{*} by {env}.as_count()
+        threshold: 5
       properties:
-        target:
-          description: 'The target value for the service level indicator within the corresponding
-
-            timeframe.'
-          example: 99.9
+        comparator:
+          $ref: '#/components/schemas/SLOTimeSliceComparator'
+        query:
+          $ref: '#/components/schemas/SLOTimeSliceQuery'
+        query_interval_seconds:
+          $ref: '#/components/schemas/SLOTimeSliceInterval'
+        threshold:
+          description: The threshold value to which each SLI value will be compared.
+          example: 5
           format: double
           type: number
-        target_display:
-          description: 'A string representation of the target that indicates its precision.
-
-            It uses trailing zeros to show significant decimal places (for example `98.00`).
-
-
-            Always included in service level objective responses. Ignored in
-
-            create/update requests.'
-          example: '99.9'
-          type: string
-        timeframe:
-          $ref: '#/components/schemas/SLOTimeframe'
-        warning:
-          description: The warning value for the service level objective.
-          example: 90.0
-          format: double
-          type: number
-        warning_display:
-          description: 'A string representation of the warning target (see the description of
-
-            the `target_display` field for details).
-
-
-            Included in service level objective responses if a warning target exists.
-
-            Ignored in create/update requests.'
-          example: '90.0'
-          type: string
       required:
-      - timeframe
-      - target
+      - comparator
+      - threshold
+      - query
       type: object
-    FormulaAndFunctionMetricDataSource:
-      description: Data source for metrics queries.
-      enum:
-      - metrics
-      example: metrics
-      type: string
-      x-enum-varnames:
-      - METRICS
   responses:
     TooManyRequestsResponse:
       content:

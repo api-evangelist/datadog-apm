@@ -292,6 +292,31 @@ paths:
         - apm_generate_metrics
 components:
   schemas:
+    SpansMetricsResponse:
+      description: All the available span-based metric objects.
+      properties:
+        data:
+          description: A list of span-based metric objects.
+          items:
+            $ref: '#/components/schemas/SpansMetricResponseData'
+          type: array
+      type: object
+    SpansMetricResponseGroupBy:
+      description: A group by rule.
+      properties:
+        path:
+          description: The path to the value the span-based metric will be aggregated over.
+          example: resource_name
+          type: string
+        tag_name:
+          description: Eventual name of the tag that gets created. By default, the path attribute is used as the tag name.
+          example: resource_name
+          type: string
+      type: object
+    SpansMetricID:
+      description: The name of the span-based metric.
+      example: my.metric
+      type: string
     SpansMetricCompute:
       description: The compute rule to compute the span-based metric.
       properties:
@@ -306,6 +331,29 @@ components:
       required:
       - aggregation_type
       type: object
+    SpansMetricResponse:
+      description: The span-based metric object.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricResponseData'
+      type: object
+    SpansMetricUpdateData:
+      description: The new span-based metric properties.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansMetricUpdateAttributes'
+        type:
+          $ref: '#/components/schemas/SpansMetricType'
+      required:
+      - type
+      - attributes
+      type: object
+    SpansMetricComputeIncludePercentiles:
+      description: 'Toggle to include or exclude percentile aggregations for distribution metrics.
+
+        Only present when the `aggregation_type` is `distribution`.'
+      example: false
+      type: boolean
     APIErrorResponse:
       description: API error response.
       properties:
@@ -321,6 +369,81 @@ components:
       required:
       - errors
       type: object
+    SpansMetricUpdateCompute:
+      description: The compute rule to compute the span-based metric.
+      properties:
+        include_percentiles:
+          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
+      type: object
+    SpansMetricResponseCompute:
+      description: The compute rule to compute the span-based metric.
+      properties:
+        aggregation_type:
+          $ref: '#/components/schemas/SpansMetricComputeAggregationType'
+        include_percentiles:
+          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
+        path:
+          description: The path to the value the span-based metric will aggregate on (only used if the aggregation type is a "distribution").
+          example: '@duration'
+          type: string
+      type: object
+    SpansMetricCreateRequest:
+      description: The new span-based metric body.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricCreateData'
+      required:
+      - data
+      type: object
+    SpansMetricComputeAggregationType:
+      description: The type of aggregation to use.
+      enum:
+      - count
+      - distribution
+      example: distribution
+      type: string
+      x-enum-varnames:
+      - COUNT
+      - DISTRIBUTION
+    SpansMetricFilter:
+      description: The span-based metric filter. Spans matching this filter will be aggregated in this metric.
+      properties:
+        query:
+          default: '*'
+          description: The search query - following the span search syntax.
+          example: '@http.status_code:200 service:my-service'
+          type: string
+      type: object
+    SpansMetricResponseAttributes:
+      description: The object describing a Datadog span-based metric.
+      properties:
+        compute:
+          $ref: '#/components/schemas/SpansMetricResponseCompute'
+        filter:
+          $ref: '#/components/schemas/SpansMetricResponseFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansMetricResponseGroupBy'
+          type: array
+      type: object
+    SpansMetricType:
+      default: spans_metrics
+      description: The type of resource. The value should always be spans_metrics.
+      enum:
+      - spans_metrics
+      example: spans_metrics
+      type: string
+      x-enum-varnames:
+      - SPANS_METRICS
+    SpansMetricUpdateRequest:
+      description: The new span-based metric body.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansMetricUpdateData'
+      required:
+      - data
+      type: object
     SpansMetricUpdateAttributes:
       description: The span-based metric properties that will be updated.
       properties:
@@ -334,16 +457,23 @@ components:
             $ref: '#/components/schemas/SpansMetricGroupBy'
           type: array
       type: object
-    SpansMetricUpdateData:
-      description: The new span-based metric properties.
+    SpansMetricResponseData:
+      description: The span-based metric properties.
       properties:
         attributes:
-          $ref: '#/components/schemas/SpansMetricUpdateAttributes'
+          $ref: '#/components/schemas/SpansMetricResponseAttributes'
+        id:
+          $ref: '#/components/schemas/SpansMetricID'
         type:
           $ref: '#/components/schemas/SpansMetricType'
-      required:
-      - type
-      - attributes
+      type: object
+    SpansMetricResponseFilter:
+      description: The span-based metric filter. Spans matching this filter will be aggregated in this metric.
+      properties:
+        query:
+          description: The search query - following the span search syntax.
+          example: '@http.status_code:200 service:my-service'
+          type: string
       type: object
     SpansMetricCreateData:
       description: The new span-based metric properties.
@@ -374,56 +504,6 @@ components:
       required:
       - compute
       type: object
-    SpansMetricID:
-      description: The name of the span-based metric.
-      example: my.metric
-      type: string
-    SpansMetricComputeIncludePercentiles:
-      description: 'Toggle to include or exclude percentile aggregations for distribution metrics.
-
-        Only present when the `aggregation_type` is `distribution`.'
-      example: false
-      type: boolean
-    SpansMetricUpdateRequest:
-      description: The new span-based metric body.
-      properties:
-        data:
-          $ref: '#/components/schemas/SpansMetricUpdateData'
-      required:
-      - data
-      type: object
-    SpansMetricResponse:
-      description: The span-based metric object.
-      properties:
-        data:
-          $ref: '#/components/schemas/SpansMetricResponseData'
-      type: object
-    SpansMetricsResponse:
-      description: All the available span-based metric objects.
-      properties:
-        data:
-          description: A list of span-based metric objects.
-          items:
-            $ref: '#/components/schemas/SpansMetricResponseData'
-          type: array
-      type: object
-    SpansMetricCreateRequest:
-      description: The new span-based metric body.
-      properties:
-        data:
-          $ref: '#/components/schemas/SpansMetricCreateData'
-      required:
-      - data
-      type: object
-    SpansMetricType:
-      default: spans_metrics
-      description: The type of resource. The value should always be spans_metrics.
-      enum:
-      - spans_metrics
-      example: spans_metrics
-      type: string
-      x-enum-varnames:
-      - SPANS_METRICS
     SpansMetricGroupBy:
       description: A group by rule.
       properties:
@@ -438,113 +518,7 @@ components:
       required:
       - path
       type: object
-    SpansMetricResponseGroupBy:
-      description: A group by rule.
-      properties:
-        path:
-          description: The path to the value the span-based metric will be aggregated over.
-          example: resource_name
-          type: string
-        tag_name:
-          description: Eventual name of the tag that gets created. By default, the path attribute is used as the tag name.
-          example: resource_name
-          type: string
-      type: object
-    SpansMetricResponseAttributes:
-      description: The object describing a Datadog span-based metric.
-      properties:
-        compute:
-          $ref: '#/components/schemas/SpansMetricResponseCompute'
-        filter:
-          $ref: '#/components/schemas/SpansMetricResponseFilter'
-        group_by:
-          description: The rules for the group by.
-          items:
-            $ref: '#/components/schemas/SpansMetricResponseGroupBy'
-          type: array
-      type: object
-    SpansMetricComputeAggregationType:
-      description: The type of aggregation to use.
-      enum:
-      - count
-      - distribution
-      example: distribution
-      type: string
-      x-enum-varnames:
-      - COUNT
-      - DISTRIBUTION
-    SpansMetricResponseCompute:
-      description: The compute rule to compute the span-based metric.
-      properties:
-        aggregation_type:
-          $ref: '#/components/schemas/SpansMetricComputeAggregationType'
-        include_percentiles:
-          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
-        path:
-          description: The path to the value the span-based metric will aggregate on (only used if the aggregation type is a "distribution").
-          example: '@duration'
-          type: string
-      type: object
-    SpansMetricResponseData:
-      description: The span-based metric properties.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SpansMetricResponseAttributes'
-        id:
-          $ref: '#/components/schemas/SpansMetricID'
-        type:
-          $ref: '#/components/schemas/SpansMetricType'
-      type: object
-    SpansMetricResponseFilter:
-      description: The span-based metric filter. Spans matching this filter will be aggregated in this metric.
-      properties:
-        query:
-          description: The search query - following the span search syntax.
-          example: '@http.status_code:200 service:my-service'
-          type: string
-      type: object
-    SpansMetricFilter:
-      description: The span-based metric filter. Spans matching this filter will be aggregated in this metric.
-      properties:
-        query:
-          default: '*'
-          description: The search query - following the span search syntax.
-          example: '@http.status_code:200 service:my-service'
-          type: string
-      type: object
-    SpansMetricUpdateCompute:
-      description: The compute rule to compute the span-based metric.
-      properties:
-        include_percentiles:
-          $ref: '#/components/schemas/SpansMetricComputeIncludePercentiles'
-      type: object
-  parameters:
-    SpansMetricIDParameter:
-      description: The name of the span-based metric.
-      in: path
-      name: metric_id
-      required: true
-      schema:
-        type: string
   responses:
-    NotAuthorizedResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Not Authorized
-    BadRequestResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Bad Request
-    NotFoundResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Not Found
     ConflictResponse:
       content:
         application/json:
@@ -557,6 +531,32 @@ components:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Too many requests
+    NotAuthorizedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Authorized
+    NotFoundResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Not Found
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Bad Request
+  parameters:
+    SpansMetricIDParameter:
+      description: The name of the span-based metric.
+      in: path
+      name: metric_id
+      required: true
+      schema:
+        type: string
   securitySchemes:
     AuthZ:
       description: This API uses OAuth 2 with the implicit grant flow.

@@ -94,12 +94,6 @@ paths:
       - APM
 components:
   schemas:
-    ServiceList:
-      description: The response body for the service list endpoint.
-      properties:
-        data:
-          $ref: '#/components/schemas/ServiceListData'
-      type: object
     APIErrorResponse:
       description: API error response.
       properties:
@@ -125,28 +119,6 @@ components:
           description: Indicates whether the service uses Universal Service Monitoring.
           type: boolean
       type: object
-    ServiceListData:
-      description: A single data item in the service list response.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/ServiceListDataAttributes'
-        id:
-          description: The unique identifier of the service.
-          type: string
-        type:
-          $ref: '#/components/schemas/ServiceListDataType'
-      required:
-      - type
-      type: object
-    ServiceListDataType:
-      default: services_list
-      description: Services list resource type.
-      enum:
-      - services_list
-      example: services_list
-      type: string
-      x-enum-varnames:
-      - SERVICES_LIST
     ServiceListDataAttributes:
       description: Attributes of a service list entry, containing metadata and a list of service names.
       properties:
@@ -161,6 +133,34 @@ components:
             description: A single service name.
             type: string
           type: array
+      type: object
+    ServiceList:
+      description: The response body for the service list endpoint.
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceListData'
+      type: object
+    ServiceListDataType:
+      default: services_list
+      description: Services list resource type.
+      enum:
+      - services_list
+      example: services_list
+      type: string
+      x-enum-varnames:
+      - SERVICES_LIST
+    ServiceListData:
+      description: A single data item in the service list response.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/ServiceListDataAttributes'
+        id:
+          description: The unique identifier of the service.
+          type: string
+        type:
+          $ref: '#/components/schemas/ServiceListDataType'
+      required:
+      - type
       type: object
   responses:
     TooManyRequestsResponse:

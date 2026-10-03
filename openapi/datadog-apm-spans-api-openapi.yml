@@ -305,21 +305,91 @@ paths:
         resultsPath: data
 components:
   schemas:
-    JSONAPIErrorItemSource:
-      description: References to the source of the error.
+    SpansComputeType:
+      default: total
+      description: The type of compute.
+      enum:
+      - timeseries
+      - total
+      type: string
+      x-enum-varnames:
+      - TIMESERIES
+      - TOTAL
+    SpansGroupByTotalNumber:
+      description: A number to use as the key value for the total bucket.
+      format: double
+      type: number
+    SpansSort:
+      description: Sort parameters when querying spans.
+      enum:
+      - timestamp
+      - -timestamp
+      type: string
+      x-enum-varnames:
+      - TIMESTAMP_ASCENDING
+      - TIMESTAMP_DESCENDING
+    SpansAggregateBucketType:
+      description: The spans aggregate bucket type.
+      enum:
+      - bucket
+      example: bucket
+      type: string
+      x-enum-varnames:
+      - BUCKET
+    SpansCompute:
+      description: A compute rule to compute metrics or timeseries.
       properties:
-        header:
-          description: A string indicating the name of a single request header which caused the error.
-          example: Authorization
+        aggregation:
+          $ref: '#/components/schemas/SpansAggregationFunction'
+        interval:
+          description: 'The time buckets'' size (only used for type=timeseries)
+
+            Defaults to a resolution of 150 points.'
+          example: 5m
           type: string
-        parameter:
-          description: A string indicating which URI query parameter caused the error.
-          example: limit
+        metric:
+          description: The metric to use.
+          example: '@duration'
           type: string
-        pointer:
-          description: A JSON pointer to the value in the request document that caused the error.
-          example: /data/attributes/title
+        type:
+          $ref: '#/components/schemas/SpansComputeType'
+      required:
+      - aggregation
+      type: object
+    SpansListRequest:
+      description: The request for a spans list.
+      properties:
+        data:
+          $ref: '#/components/schemas/SpansListRequestData'
+      type: object
+    SpansAggregateBucketValue:
+      description: A bucket value, can be either a timeseries or a single value.
+      oneOf:
+      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleString'
+      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleNumber'
+      - $ref: '#/components/schemas/SpansAggregateBucketValueTimeseries'
+    JSONAPIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          items:
+            $ref: '#/components/schemas/JSONAPIErrorItem'
+          type: array
+      required:
+      - errors
+      type: object
+    Span:
+      description: Object description of a spans after being processed and stored by Datadog.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansAttributes'
+        id:
+          description: Unique ID of the Span.
+          example: AAAAAWgN8Xwgr1vKDQAAAABBV2dOOFh3ZzZobm1mWXJFYTR0OA
           type: string
+        type:
+          $ref: '#/components/schemas/SpansType'
       type: object
     SpansWarning:
       description: A warning message indicating something that went wrong with the query.
@@ -337,6 +407,45 @@ components:
           example: One or several indexes are missing or invalid, results hold data from the other indexes
           type: string
       type: object
+    SpansType:
+      default: spans
+      description: Type of the span.
+      enum:
+      - spans
+      example: spans
+      type: string
+      x-enum-varnames:
+      - SPANS
+    SpansAggregationFunction:
+      description: An aggregation function.
+      enum:
+      - count
+      - cardinality
+      - pc75
+      - pc90
+      - pc95
+      - pc98
+      - pc99
+      - sum
+      - min
+      - max
+      - avg
+      - median
+      example: pc90
+      type: string
+      x-enum-varnames:
+      - COUNT
+      - CARDINALITY
+      - PERCENTILE_75
+      - PERCENTILE_90
+      - PERCENTILE_95
+      - PERCENTILE_98
+      - PERCENTILE_99
+      - SUM
+      - MIN
+      - MAX
+      - AVG
+      - MEDIAN
     APIErrorResponse:
       description: API error response.
       properties:
@@ -352,6 +461,63 @@ components:
       required:
       - errors
       type: object
+    SpansListResponseLinks:
+      description: Links attributes.
+      properties:
+        next:
+          description: 'Link for the next set of results. Note that the request can also be made using the
+
+            POST endpoint.'
+          example: https://app.datadoghq.com/api/v2/spans/event?filter[query]=foo&page[cursor]=eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+      type: object
+    SpansAggregateResponse:
+      description: The response object for the spans aggregate API endpoint.
+      properties:
+        data:
+          description: The list of matching buckets, one item per bucket.
+          items:
+            $ref: '#/components/schemas/SpansAggregateBucket'
+          type: array
+        meta:
+          $ref: '#/components/schemas/SpansAggregateResponseMetadata'
+      type: object
+    SpansGroupByTotalString:
+      description: A string to use as the key value for the total bucket.
+      type: string
+    SpansListResponse:
+      description: Response object with all spans matching the request and pagination information.
+      properties:
+        data:
+          description: Array of spans matching the request.
+          items:
+            $ref: '#/components/schemas/Span'
+          type: array
+        links:
+          $ref: '#/components/schemas/SpansListResponseLinks'
+        meta:
+          $ref: '#/components/schemas/SpansListResponseMetadata'
+      type: object
+    SpansResponseMetadataPage:
+      description: Paging attributes.
+      properties:
+        after:
+          description: 'The cursor to use to get the next results, if any. To make the next request, use the same
+
+            parameters with the addition of the `page[cursor]`.'
+          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+      type: object
+    SpansSortOrder:
+      description: The order to use, ascending or descending.
+      enum:
+      - asc
+      - desc
+      example: asc
+      type: string
+      x-enum-varnames:
+      - ASCENDING
+      - DESCENDING
     SpansGroupBy:
       description: A group by rule.
       properties:
@@ -397,42 +563,93 @@ components:
           example: Bad Request
           type: string
       type: object
-    SpansAggregateBucketValueTimeseries:
-      description: A timeseries array.
-      items:
-        $ref: '#/components/schemas/SpansAggregateBucketValueTimeseriesPoint'
-      type: array
-      x-generate-alias-as-model: true
-    SpansListResponse:
-      description: Response object with all spans matching the request and pagination information.
+    SpansAggregateBucketValueSingleString:
+      description: A single string value.
+      type: string
+    SpansAggregateBucket:
+      description: Spans aggregate.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansAggregateBucketAttributes'
+        id:
+          description: ID of the spans aggregate.
+          type: string
+        type:
+          $ref: '#/components/schemas/SpansAggregateBucketType'
+      type: object
+    SpansAggregateRequest:
+      description: The object sent with the request to retrieve a list of aggregated spans from your organization.
       properties:
         data:
-          description: Array of spans matching the request.
-          items:
-            $ref: '#/components/schemas/Span'
-          type: array
-        links:
-          $ref: '#/components/schemas/SpansListResponseLinks'
-        meta:
-          $ref: '#/components/schemas/SpansListResponseMetadata'
+          $ref: '#/components/schemas/SpansAggregateData'
       type: object
-    SpansAggregateSort:
-      description: A sort rule.
-      example:
-        aggregation: count
-        order: asc
+    SpansGroupByTotal:
+      default: false
+      description: A resulting object to put the given computes in over all the matching records.
+      oneOf:
+      - $ref: '#/components/schemas/SpansGroupByTotalBoolean'
+      - $ref: '#/components/schemas/SpansGroupByTotalString'
+      - $ref: '#/components/schemas/SpansGroupByTotalNumber'
+    SpansAggregateResponseStatus:
+      description: The status of the response.
+      enum:
+      - done
+      - timeout
+      example: done
+      type: string
+      x-enum-varnames:
+      - DONE
+      - TIMEOUT
+    SpansGroupByHistogram:
+      description: 'Used to perform a histogram computation (only for measure facets).
+
+        Note: At most 100 buckets are allowed, the number of buckets is (max - min)/interval.'
       properties:
-        aggregation:
-          $ref: '#/components/schemas/SpansAggregationFunction'
-        metric:
-          description: The metric to sort by (only used for `type=measure`).
-          example: '@duration'
-          type: string
-        order:
-          $ref: '#/components/schemas/SpansSortOrder'
-        type:
-          $ref: '#/components/schemas/SpansAggregateSortType'
+        interval:
+          description: The bin size of the histogram buckets.
+          example: 10
+          format: double
+          type: number
+        max:
+          description: 'The maximum value for the measure used in the histogram
+
+            (values greater than this one are filtered out).'
+          example: 100
+          format: double
+          type: number
+        min:
+          description: 'The minimum value for the measure used in the histogram
+
+            (values smaller than this one are filtered out).'
+          example: 50
+          format: double
+          type: number
+      required:
+      - interval
+      - min
+      - max
       type: object
+    SpansGroupByMissingString:
+      description: The missing value to use if there is string valued facet.
+      type: string
+    SpansListRequestData:
+      description: The object containing the query content.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SpansListRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SpansListRequestType'
+      type: object
+    SpansAggregateSortType:
+      default: alphabetical
+      description: The type of sorting algorithm.
+      enum:
+      - alphabetical
+      - measure
+      type: string
+      x-enum-varnames:
+      - ALPHABETICAL
+      - MEASURE
     SpansQueryOptions:
       description: 'Global query options that are used during the query.
 
@@ -448,49 +665,45 @@ components:
           example: GMT
           type: string
       type: object
-    SpansAggregateResponse:
-      description: The response object for the spans aggregate API endpoint.
+    SpansGroupByTotalBoolean:
+      description: If set to true, creates an additional bucket labeled "$facet_total".
+      type: boolean
+    SpansAggregateBucketValueSingleNumber:
+      description: A single number value.
+      format: double
+      type: number
+    SpansAggregateBucketAttributes:
+      description: A bucket values.
       properties:
-        data:
-          description: The list of matching buckets, one item per bucket.
-          items:
-            $ref: '#/components/schemas/SpansAggregateBucket'
-          type: array
-        meta:
-          $ref: '#/components/schemas/SpansAggregateResponseMetadata'
+        by:
+          additionalProperties:
+            description: The values for each group by.
+          description: The key, value pairs for each group by.
+          example:
+            '@state': success
+            '@version': abc
+          type: object
+        compute:
+          description: The compute data.
+          type: object
+        computes:
+          additionalProperties:
+            $ref: '#/components/schemas/SpansAggregateBucketValue'
+          description: A map of the metric name -> value for regular compute or list of values for a timeseries.
+          type: object
       type: object
-    SpansListRequestType:
-      default: search_request
-      description: The type of resource. The value should always be search_request.
-      enum:
-      - search_request
-      example: search_request
-      type: string
-      x-enum-varnames:
-      - SEARCH_REQUEST
-    SpansAggregateBucketValue:
-      description: A bucket value, can be either a timeseries or a single value.
-      oneOf:
-      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleString'
-      - $ref: '#/components/schemas/SpansAggregateBucketValueSingleNumber'
-      - $ref: '#/components/schemas/SpansAggregateBucketValueTimeseries'
-    SpansGroupByMissingString:
-      description: The missing value to use if there is string valued facet.
-      type: string
-    SpansListRequestPage:
-      description: Paging attributes for listing spans.
+    SpansAggregateBucketValueTimeseriesPoint:
+      description: A timeseries point.
       properties:
-        cursor:
-          description: List following results with a cursor provided in the previous query.
-          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+        time:
+          description: The time value for this point.
+          example: '2023-06-08T11:55:00Z'
           type: string
-        limit:
-          default: 10
-          description: Maximum number of spans in the response.
-          example: 25
-          format: int32
-          maximum: 1000
-          type: integer
+        value:
+          description: The value for this point.
+          example: 19
+          format: double
+          type: number
       type: object
     SpansQueryFilter:
       description: The search and filter query settings.
@@ -511,102 +724,71 @@ components:
           example: now
           type: string
       type: object
-    SpansAggregateBucketValueTimeseriesPoint:
-      description: A timeseries point.
+    SpansAggregateResponseMetadata:
+      description: The metadata associated with a request.
       properties:
-        time:
-          description: The time value for this point.
-          example: '2023-06-08T11:55:00Z'
+        elapsed:
+          description: The time elapsed in milliseconds.
+          example: 132
+          format: int64
+          type: integer
+        request_id:
+          description: The identifier of the request.
+          example: MWlFUjVaWGZTTTZPYzM0VXp1OXU2d3xLSVpEMjZKQ0VKUTI0dEYtM3RSOFVR
           type: string
-        value:
-          description: The value for this point.
-          example: 19
-          format: double
-          type: number
-      type: object
-    SpansAggregateBucketType:
-      description: The spans aggregate bucket type.
-      enum:
-      - bucket
-      example: bucket
-      type: string
-      x-enum-varnames:
-      - BUCKET
-    JSONAPIErrorResponse:
-      description: API error response.
-      properties:
-        errors:
-          description: A list of errors.
+        status:
+          $ref: '#/components/schemas/SpansAggregateResponseStatus'
+        warnings:
+          description: 'A list of warnings (non fatal errors) encountered, partial results might be returned if
+
+            warnings are present in the response.'
           items:
-            $ref: '#/components/schemas/JSONAPIErrorItem'
+            $ref: '#/components/schemas/SpansWarning'
           type: array
-      required:
-      - errors
       type: object
-    SpansComputeType:
-      default: total
-      description: The type of compute.
+    SpansGroupByMissingNumber:
+      description: The missing value to use if there is a number valued facet.
+      format: double
+      type: number
+    SpansListRequestPage:
+      description: Paging attributes for listing spans.
+      properties:
+        cursor:
+          description: List following results with a cursor provided in the previous query.
+          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+          type: string
+        limit:
+          default: 10
+          description: Maximum number of spans in the response.
+          example: 25
+          format: int32
+          maximum: 1000
+          type: integer
+      type: object
+    SpansListRequestType:
+      default: search_request
+      description: The type of resource. The value should always be search_request.
       enum:
-      - timeseries
-      - total
+      - search_request
+      example: search_request
       type: string
       x-enum-varnames:
-      - TIMESERIES
-      - TOTAL
-    SpansListRequest:
-      description: The request for a spans list.
+      - SEARCH_REQUEST
+    JSONAPIErrorItemSource:
+      description: References to the source of the error.
       properties:
-        data:
-          $ref: '#/components/schemas/SpansListRequestData'
-      type: object
-    SpansAggregateBucketValueSingleString:
-      description: A single string value.
-      type: string
-    SpansListResponseLinks:
-      description: Links attributes.
-      properties:
-        next:
-          description: 'Link for the next set of results. Note that the request can also be made using the
-
-            POST endpoint.'
-          example: https://app.datadoghq.com/api/v2/spans/event?filter[query]=foo&page[cursor]=eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+        header:
+          description: A string indicating the name of a single request header which caused the error.
+          example: Authorization
           type: string
-      type: object
-    SpansGroupByTotal:
-      default: false
-      description: A resulting object to put the given computes in over all the matching records.
-      oneOf:
-      - $ref: '#/components/schemas/SpansGroupByTotalBoolean'
-      - $ref: '#/components/schemas/SpansGroupByTotalString'
-      - $ref: '#/components/schemas/SpansGroupByTotalNumber'
-    SpansAggregateRequestType:
-      default: aggregate_request
-      description: The type of resource. The value should always be aggregate_request.
-      enum:
-      - aggregate_request
-      example: aggregate_request
-      type: string
-      x-enum-varnames:
-      - AGGREGATE_REQUEST
-    SpansCompute:
-      description: A compute rule to compute metrics or timeseries.
-      properties:
-        aggregation:
-          $ref: '#/components/schemas/SpansAggregationFunction'
-        interval:
-          description: 'The time buckets'' size (only used for type=timeseries)
-
-            Defaults to a resolution of 150 points.'
-          example: 5m
+        parameter:
+          description: A string indicating which URI query parameter caused the error.
+          example: limit
           type: string
-        metric:
-          description: The metric to use.
-          example: '@duration'
+        pointer:
+          description: A JSON pointer to the value in the request document that caused the error.
+          example: /data/attributes/title
           type: string
-        type:
-          $ref: '#/components/schemas/SpansComputeType'
-      required:
-      - aggregation
       type: object
     SpansAttributes:
       description: JSON object containing all span attributes and their associated values.
@@ -693,9 +875,11 @@ components:
           example: web
           type: string
       type: object
-    SpansGroupByTotalString:
-      description: A string to use as the key value for the total bucket.
-      type: string
+    SpansGroupByMissing:
+      description: The value to use for spans that don't have the facet used to group by.
+      oneOf:
+      - $ref: '#/components/schemas/SpansGroupByMissingString'
+      - $ref: '#/components/schemas/SpansGroupByMissingNumber'
     SpansListRequestAttributes:
       description: The object containing all the query parameters.
       properties:
@@ -708,56 +892,30 @@ components:
         sort:
           $ref: '#/components/schemas/SpansSort'
       type: object
-    SpansAggregateBucket:
-      description: Spans aggregate.
+    SpansAggregateBucketValueTimeseries:
+      description: A timeseries array.
+      items:
+        $ref: '#/components/schemas/SpansAggregateBucketValueTimeseriesPoint'
+      type: array
+      x-generate-alias-as-model: true
+    SpansAggregateRequestAttributes:
+      description: The object containing all the query parameters.
       properties:
-        attributes:
-          $ref: '#/components/schemas/SpansAggregateBucketAttributes'
-        id:
-          description: ID of the spans aggregate.
-          type: string
-        type:
-          $ref: '#/components/schemas/SpansAggregateBucketType'
+        compute:
+          description: The list of metrics or timeseries to compute for the retrieved buckets.
+          items:
+            $ref: '#/components/schemas/SpansCompute'
+          type: array
+        filter:
+          $ref: '#/components/schemas/SpansQueryFilter'
+        group_by:
+          description: The rules for the group by.
+          items:
+            $ref: '#/components/schemas/SpansGroupBy'
+          type: array
+        options:
+          $ref: '#/components/schemas/SpansQueryOptions'
       type: object
-    SpansListRequestData:
-      description: The object containing the query content.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SpansListRequestAttributes'
-        type:
-          $ref: '#/components/schemas/SpansListRequestType'
-      type: object
-    SpansAggregateResponseStatus:
-      description: The status of the response.
-      enum:
-      - done
-      - timeout
-      example: done
-      type: string
-      x-enum-varnames:
-      - DONE
-      - TIMEOUT
-    Span:
-      description: Object description of a spans after being processed and stored by Datadog.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SpansAttributes'
-        id:
-          description: Unique ID of the Span.
-          example: AAAAAWgN8Xwgr1vKDQAAAABBV2dOOFh3ZzZobm1mWXJFYTR0OA
-          type: string
-        type:
-          $ref: '#/components/schemas/SpansType'
-      type: object
-    SpansType:
-      default: spans
-      description: Type of the span.
-      enum:
-      - spans
-      example: spans
-      type: string
-      x-enum-varnames:
-      - SPANS
     SpansAggregateData:
       description: The object containing the query content.
       properties:
@@ -790,233 +948,75 @@ components:
             $ref: '#/components/schemas/SpansWarning'
           type: array
       type: object
-    SpansGroupByTotalBoolean:
-      description: If set to true, creates an additional bucket labeled "$facet_total".
-      type: boolean
-    SpansSort:
-      description: Sort parameters when querying spans.
-      enum:
-      - timestamp
-      - -timestamp
-      type: string
-      x-enum-varnames:
-      - TIMESTAMP_ASCENDING
-      - TIMESTAMP_DESCENDING
-    SpansGroupByMissingNumber:
-      description: The missing value to use if there is a number valued facet.
-      format: double
-      type: number
-    SpansSortOrder:
-      description: The order to use, ascending or descending.
-      enum:
-      - asc
-      - desc
-      example: asc
-      type: string
-      x-enum-varnames:
-      - ASCENDING
-      - DESCENDING
-    SpansAggregateBucketAttributes:
-      description: A bucket values.
+    SpansAggregateSort:
+      description: A sort rule.
+      example:
+        aggregation: count
+        order: asc
       properties:
-        by:
-          additionalProperties:
-            description: The values for each group by.
-          description: The key, value pairs for each group by.
-          example:
-            '@state': success
-            '@version': abc
-          type: object
-        compute:
-          description: The compute data.
-          type: object
-        computes:
-          additionalProperties:
-            $ref: '#/components/schemas/SpansAggregateBucketValue'
-          description: A map of the metric name -> value for regular compute or list of values for a timeseries.
-          type: object
-      type: object
-    SpansGroupByHistogram:
-      description: 'Used to perform a histogram computation (only for measure facets).
-
-        Note: At most 100 buckets are allowed, the number of buckets is (max - min)/interval.'
-      properties:
-        interval:
-          description: The bin size of the histogram buckets.
-          example: 10
-          format: double
-          type: number
-        max:
-          description: 'The maximum value for the measure used in the histogram
-
-            (values greater than this one are filtered out).'
-          example: 100
-          format: double
-          type: number
-        min:
-          description: 'The minimum value for the measure used in the histogram
-
-            (values smaller than this one are filtered out).'
-          example: 50
-          format: double
-          type: number
-      required:
-      - interval
-      - min
-      - max
-      type: object
-    SpansResponseMetadataPage:
-      description: Paging attributes.
-      properties:
-        after:
-          description: 'The cursor to use to get the next results, if any. To make the next request, use the same
-
-            parameters with the addition of the `page[cursor]`.'
-          example: eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==
+        aggregation:
+          $ref: '#/components/schemas/SpansAggregationFunction'
+        metric:
+          description: The metric to sort by (only used for `type=measure`).
+          example: '@duration'
           type: string
+        order:
+          $ref: '#/components/schemas/SpansSortOrder'
+        type:
+          $ref: '#/components/schemas/SpansAggregateSortType'
       type: object
-    SpansAggregateRequestAttributes:
-      description: The object containing all the query parameters.
-      properties:
-        compute:
-          description: The list of metrics or timeseries to compute for the retrieved buckets.
-          items:
-            $ref: '#/components/schemas/SpansCompute'
-          type: array
-        filter:
-          $ref: '#/components/schemas/SpansQueryFilter'
-        group_by:
-          description: The rules for the group by.
-          items:
-            $ref: '#/components/schemas/SpansGroupBy'
-          type: array
-        options:
-          $ref: '#/components/schemas/SpansQueryOptions'
-      type: object
-    SpansAggregationFunction:
-      description: An aggregation function.
+    SpansAggregateRequestType:
+      default: aggregate_request
+      description: The type of resource. The value should always be aggregate_request.
       enum:
-      - count
-      - cardinality
-      - pc75
-      - pc90
-      - pc95
-      - pc98
-      - pc99
-      - sum
-      - min
-      - max
-      - avg
-      - median
-      example: pc90
+      - aggregate_request
+      example: aggregate_request
       type: string
       x-enum-varnames:
-      - COUNT
-      - CARDINALITY
-      - PERCENTILE_75
-      - PERCENTILE_90
-      - PERCENTILE_95
-      - PERCENTILE_98
-      - PERCENTILE_99
-      - SUM
-      - MIN
-      - MAX
-      - AVG
-      - MEDIAN
-    SpansGroupByMissing:
-      description: The value to use for spans that don't have the facet used to group by.
-      oneOf:
-      - $ref: '#/components/schemas/SpansGroupByMissingString'
-      - $ref: '#/components/schemas/SpansGroupByMissingNumber'
-    SpansGroupByTotalNumber:
-      description: A number to use as the key value for the total bucket.
-      format: double
-      type: number
-    SpansAggregateBucketValueSingleNumber:
-      description: A single number value.
-      format: double
-      type: number
-    SpansAggregateResponseMetadata:
-      description: The metadata associated with a request.
-      properties:
-        elapsed:
-          description: The time elapsed in milliseconds.
-          example: 132
-          format: int64
-          type: integer
-        request_id:
-          description: The identifier of the request.
-          example: MWlFUjVaWGZTTTZPYzM0VXp1OXU2d3xLSVpEMjZKQ0VKUTI0dEYtM3RSOFVR
-          type: string
-        status:
-          $ref: '#/components/schemas/SpansAggregateResponseStatus'
-        warnings:
-          description: 'A list of warnings (non fatal errors) encountered, partial results might be returned if
-
-            warnings are present in the response.'
-          items:
-            $ref: '#/components/schemas/SpansWarning'
-          type: array
-      type: object
-    SpansAggregateRequest:
-      description: The object sent with the request to retrieve a list of aggregated spans from your organization.
-      properties:
-        data:
-          $ref: '#/components/schemas/SpansAggregateData'
-      type: object
-    SpansAggregateSortType:
-      default: alphabetical
-      description: The type of sorting algorithm.
-      enum:
-      - alphabetical
-      - measure
-      type: string
-      x-enum-varnames:
-      - ALPHABETICAL
-      - MEASURE
+      - AGGREGATE_REQUEST
   responses:
-    SpansBadRequestResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JSONAPIErrorResponse'
-      description: Bad Request.
-    SpansForbiddenResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JSONAPIErrorResponse'
-      description: 'Forbidden: Access denied.'
-    SpansTooManyRequestsResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JSONAPIErrorResponse'
-      description: 'Too many requests: The rate limit set by the API has been exceeded.'
-    BadRequestResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Bad Request
-    SpansUnprocessableEntityResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/JSONAPIErrorResponse'
-      description: Unprocessable Entity.
     TooManyRequestsResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Too many requests
+    SpansTooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: 'Too many requests: The rate limit set by the API has been exceeded.'
+    SpansBadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: Bad Request.
     ForbiddenResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Forbidden
+    SpansUnprocessableEntityResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: Unprocessable Entity.
+    SpansForbiddenResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JSONAPIErrorResponse'
+      description: 'Forbidden: Access denied.'
+    BadRequestResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Bad Request
   securitySchemes:
     AuthZ:
       description: This API uses OAuth 2 with the implicit grant flow.

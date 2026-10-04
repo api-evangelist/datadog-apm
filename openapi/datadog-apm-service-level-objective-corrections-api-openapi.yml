@@ -369,7 +369,131 @@ paths:
       - Service Level Objective Corrections
       x-codegen-request-body-name: body
 components:
+  responses:
+    TooManyRequestsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIErrorResponse'
+      description: Too many requests
   schemas:
+    SLOCorrectionUpdateRequestAttributes:
+      description: The attribute object associated with the SLO correction to be updated.
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 3600
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
+          type: string
+      type: object
+    SLOCorrectionCategory:
+      description: Category the SLO correction belongs to.
+      enum:
+      - Scheduled Maintenance
+      - Outside Business Hours
+      - Deployment
+      - Other
+      example: Scheduled Maintenance
+      type: string
+      x-enum-varnames:
+      - SCHEDULED_MAINTENANCE
+      - OUTSIDE_BUSINESS_HOURS
+      - DEPLOYMENT
+      - OTHER
+    SLOCorrectionType:
+      default: correction
+      description: SLO correction resource type.
+      enum:
+      - correction
+      example: correction
+      type: string
+      x-enum-varnames:
+      - CORRECTION
+    SLOCorrectionCreateRequestAttributes:
+      description: 'The attribute object associated with the SLO correction to be created.
+
+
+        Exactly one of `slo_id` or `slo_query` must be provided.'
+      properties:
+        category:
+          $ref: '#/components/schemas/SLOCorrectionCategory'
+        description:
+          description: Description of the correction being made.
+          type: string
+        duration:
+          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
+          example: 1600000000
+          format: int64
+          type: integer
+        end:
+          description: Ending time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        rrule:
+          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
+
+            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
+          example: FREQ=DAILY;INTERVAL=10;COUNT=5
+          type: string
+        slo_id:
+          description: ID of the single SLO that this correction applies to.
+          example: sloId
+          type: string
+        slo_query:
+          description: 'Query that matches the SLOs this correction applies to.
+
+            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
+
+            and can filter SLOs by SLO tags.'
+          example: env:prod service:checkout
+          type: string
+        start:
+          description: Starting time of the correction in epoch seconds.
+          example: 1600000000
+          format: int64
+          type: integer
+        timezone:
+          description: The timezone to display in the UI for the correction times (defaults to "UTC").
+          example: UTC
+          type: string
+      required:
+      - start
+      - category
+      type: object
     APIErrorResponse:
       description: Error response object.
       properties:
@@ -384,30 +508,6 @@ components:
           type: array
       required:
       - errors
-      type: object
-    SLOCorrectionResponse:
-      description: The response object of an SLO correction.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOCorrection'
-      type: object
-    SLOCorrectionCreateRequest:
-      description: An object that defines a correction to be applied to one or more SLOs.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOCorrectionCreateData'
-      type: object
-    Pagination:
-      description: Pagination object.
-      properties:
-        total_count:
-          description: Total count.
-          format: int64
-          type: integer
-        total_filtered_count:
-          description: Total count of elements matched by the filter.
-          format: int64
-          type: integer
       type: object
     SLOCorrectionResponseAttributes:
       description: The attribute object associated with the SLO correction.
@@ -472,97 +572,6 @@ components:
           description: The timezone to display in the UI for the correction times (defaults to "UTC").
           type: string
       type: object
-    SLOCorrection:
-      description: The response object of a list of SLO corrections.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
-        id:
-          description: The ID of the SLO correction.
-          type: string
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      type: object
-    SLOCorrectionCreateData:
-      description: The data object associated with the SLO correction to be created.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      required:
-      - type
-      type: object
-    SLOCorrectionUpdateData:
-      description: The data object associated with the SLO correction to be updated.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      type: object
-    SLOCorrectionType:
-      default: correction
-      description: SLO correction resource type.
-      enum:
-      - correction
-      example: correction
-      type: string
-      x-enum-varnames:
-      - CORRECTION
-    SLOCorrectionUpdateRequestAttributes:
-      description: The attribute object associated with the SLO correction to be updated.
-      properties:
-        category:
-          $ref: '#/components/schemas/SLOCorrectionCategory'
-        description:
-          description: Description of the correction being made.
-          type: string
-        duration:
-          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
-          example: 3600
-          format: int64
-          type: integer
-        end:
-          description: Ending time of the correction in epoch seconds.
-          example: 1600000000
-          format: int64
-          type: integer
-        rrule:
-          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
-
-            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
-          example: FREQ=DAILY;INTERVAL=10;COUNT=5
-          type: string
-        slo_query:
-          description: 'Query that matches the SLOs this correction applies to.
-
-            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
-
-            and can filter SLOs by SLO tags.'
-          example: env:prod service:checkout
-          type: string
-        start:
-          description: Starting time of the correction in epoch seconds.
-          example: 1600000000
-          format: int64
-          type: integer
-        timezone:
-          description: The timezone to display in the UI for the correction times (defaults to "UTC").
-          example: UTC
-          type: string
-      type: object
-    SLOCorrectionListResponse:
-      description: A list of  SLO correction objects.
-      properties:
-        data:
-          description: The list of SLO corrections objects.
-          items:
-            $ref: '#/components/schemas/SLOCorrection'
-          type: array
-        meta:
-          $ref: '#/components/schemas/ResponseMetaAttributes'
-      type: object
     Creator:
       description: Object describing the creator of the shared element.
       properties:
@@ -579,6 +588,65 @@ components:
           - 'null'
       readOnly: true
       type: object
+    SLOCorrectionListResponse:
+      description: A list of  SLO correction objects.
+      properties:
+        data:
+          description: The list of SLO corrections objects.
+          items:
+            $ref: '#/components/schemas/SLOCorrection'
+          type: array
+        meta:
+          $ref: '#/components/schemas/ResponseMetaAttributes'
+      type: object
+    SLOCorrectionUpdateRequest:
+      description: An object that defines a correction to be applied to an SLO.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionUpdateData'
+      type: object
+    ResponseMetaAttributes:
+      description: Object describing meta attributes of response.
+      properties:
+        page:
+          $ref: '#/components/schemas/Pagination'
+      type: object
+    SLOCorrectionUpdateData:
+      description: The data object associated with the SLO correction to be updated.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    SLOCorrectionCreateData:
+      description: The data object associated with the SLO correction to be created.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      required:
+      - type
+      type: object
+    Pagination:
+      description: Pagination object.
+      properties:
+        total_count:
+          description: Total count.
+          format: int64
+          type: integer
+        total_filtered_count:
+          description: Total count of elements matched by the filter.
+          format: int64
+          type: integer
+      type: object
+    SLOCorrectionCreateRequest:
+      description: An object that defines a correction to be applied to one or more SLOs.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionCreateData'
+      type: object
     SLOCorrectionResponseAttributesModifier:
       description: Modifier of the object.
       properties:
@@ -594,91 +662,23 @@ components:
       type:
       - object
       - 'null'
-    SLOCorrectionCreateRequestAttributes:
-      description: 'The attribute object associated with the SLO correction to be created.
-
-
-        Exactly one of `slo_id` or `slo_query` must be provided.'
+    SLOCorrection:
+      description: The response object of a list of SLO corrections.
       properties:
-        category:
-          $ref: '#/components/schemas/SLOCorrectionCategory'
-        description:
-          description: Description of the correction being made.
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
+        id:
+          description: The ID of the SLO correction.
           type: string
-        duration:
-          description: Length of time (in seconds) for a specified `rrule` recurring SLO correction.
-          example: 1600000000
-          format: int64
-          type: integer
-        end:
-          description: Ending time of the correction in epoch seconds.
-          example: 1600000000
-          format: int64
-          type: integer
-        rrule:
-          description: 'The recurrence rules as defined in the iCalendar RFC 5545. The supported rules for SLO corrections
-
-            are `FREQ`, `INTERVAL`, `COUNT`, `UNTIL` and `BYDAY`.'
-          example: FREQ=DAILY;INTERVAL=10;COUNT=5
-          type: string
-        slo_id:
-          description: ID of the single SLO that this correction applies to.
-          example: sloId
-          type: string
-        slo_query:
-          description: 'Query that matches the SLOs this correction applies to.
-
-            The query uses the [Events search syntax](https://docs.datadoghq.com/events/explorer/searching/)
-
-            and can filter SLOs by SLO tags.'
-          example: env:prod service:checkout
-          type: string
-        start:
-          description: Starting time of the correction in epoch seconds.
-          example: 1600000000
-          format: int64
-          type: integer
-        timezone:
-          description: The timezone to display in the UI for the correction times (defaults to "UTC").
-          example: UTC
-          type: string
-      required:
-      - start
-      - category
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
       type: object
-    SLOCorrectionCategory:
-      description: Category the SLO correction belongs to.
-      enum:
-      - Scheduled Maintenance
-      - Outside Business Hours
-      - Deployment
-      - Other
-      example: Scheduled Maintenance
-      type: string
-      x-enum-varnames:
-      - SCHEDULED_MAINTENANCE
-      - OUTSIDE_BUSINESS_HOURS
-      - DEPLOYMENT
-      - OTHER
-    ResponseMetaAttributes:
-      description: Object describing meta attributes of response.
-      properties:
-        page:
-          $ref: '#/components/schemas/Pagination'
-      type: object
-    SLOCorrectionUpdateRequest:
-      description: An object that defines a correction to be applied to an SLO.
+    SLOCorrectionResponse:
+      description: The response object of an SLO correction.
       properties:
         data:
-          $ref: '#/components/schemas/SLOCorrectionUpdateData'
+          $ref: '#/components/schemas/SLOCorrection'
       type: object
-  responses:
-    TooManyRequestsResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/APIErrorResponse'
-      description: Too many requests
   securitySchemes:
     AuthZ:
       description: This API uses OAuth 2 with the implicit grant flow.

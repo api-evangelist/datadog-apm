@@ -197,6 +197,9 @@ apis:
   - type: OpenAPI
     url: openapi/datadog-apm-service-level-objectives-api-openapi.yml
 common:
+- type: CapabilityMap
+  url: capabilities/datadog-apm-capability-edges.yml
+  name: Datadog APM Business Capability Map
 - type: Overlay
   url: overlays/datadog-apm-retention-filters-overlay.yaml
 - type: Overlay

@@ -107,21 +107,15 @@ components:
         data:
           $ref: '#/components/schemas/ServiceListData'
       type: object
-    APIErrorResponse:
-      description: API error response.
-      properties:
-        errors:
-          description: A list of errors.
-          example:
-          - Bad Request
-          items:
-            description: A list of items.
-            example: Bad Request
-            type: string
-          type: array
-      required:
-      - errors
-      type: object
+    ServiceListDataType:
+      default: services_list
+      description: Services list resource type.
+      enum:
+      - services_list
+      example: services_list
+      type: string
+      x-enum-varnames:
+      - SERVICES_LIST
     ServiceListDataAttributes:
       description: Attributes of a service list entry, containing metadata and a list of service names.
       properties:
@@ -137,6 +131,31 @@ components:
             type: string
           type: array
       type: object
+    APIErrorResponse:
+      description: API error response.
+      properties:
+        errors:
+          description: A list of errors.
+          example:
+          - Bad Request
+          items:
+            description: A list of items.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    ServiceListDataAttributesMetadataItems:
+      description: An object containing metadata flags for a service, indicating whether it is traced by APM or monitored through Universal Service Monitoring.
+      properties:
+        isTraced:
+          description: Indicates whether the service is traced by APM.
+          type: boolean
+        isUsm:
+          description: Indicates whether the service uses Universal Service Monitoring.
+          type: boolean
+      type: object
     ServiceListData:
       description: A single data item in the service list response.
       properties:
@@ -149,25 +168,6 @@ components:
           $ref: '#/components/schemas/ServiceListDataType'
       required:
       - type
-      type: object
-    ServiceListDataType:
-      default: services_list
-      description: Services list resource type.
-      enum:
-      - services_list
-      example: services_list
-      type: string
-      x-enum-varnames:
-      - SERVICES_LIST
-    ServiceListDataAttributesMetadataItems:
-      description: An object containing metadata flags for a service, indicating whether it is traced by APM or monitored through Universal Service Monitoring.
-      properties:
-        isTraced:
-          description: Indicates whether the service is traced by APM.
-          type: boolean
-        isUsm:
-          description: Indicates whether the service uses Universal Service Monitoring.
-          type: boolean
       type: object
   securitySchemes:
     AuthZ:

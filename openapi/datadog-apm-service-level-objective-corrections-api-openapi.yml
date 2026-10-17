@@ -377,6 +377,89 @@ components:
             $ref: '#/components/schemas/APIErrorResponse'
       description: Too many requests
   schemas:
+    SLOCorrectionCreateData:
+      description: The data object associated with the SLO correction to be created.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      required:
+      - type
+      type: object
+    Pagination:
+      description: Pagination object.
+      properties:
+        total_count:
+          description: Total count.
+          format: int64
+          type: integer
+        total_filtered_count:
+          description: Total count of elements matched by the filter.
+          format: int64
+          type: integer
+      type: object
+    Creator:
+      description: Object describing the creator of the shared element.
+      properties:
+        email:
+          description: Email of the creator.
+          type: string
+        handle:
+          description: Handle of the creator.
+          type: string
+        name:
+          description: Name of the creator.
+          type:
+          - string
+          - 'null'
+      readOnly: true
+      type: object
+    SLOCorrectionCategory:
+      description: Category the SLO correction belongs to.
+      enum:
+      - Scheduled Maintenance
+      - Outside Business Hours
+      - Deployment
+      - Other
+      example: Scheduled Maintenance
+      type: string
+      x-enum-varnames:
+      - SCHEDULED_MAINTENANCE
+      - OUTSIDE_BUSINESS_HOURS
+      - DEPLOYMENT
+      - OTHER
+    SLOCorrectionUpdateRequest:
+      description: An object that defines a correction to be applied to an SLO.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionUpdateData'
+      type: object
+    SLOCorrectionCreateRequest:
+      description: An object that defines a correction to be applied to one or more SLOs.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrectionCreateData'
+      type: object
+    SLOCorrectionUpdateData:
+      description: The data object associated with the SLO correction to be updated.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    SLOCorrectionListResponse:
+      description: A list of  SLO correction objects.
+      properties:
+        data:
+          description: The list of SLO corrections objects.
+          items:
+            $ref: '#/components/schemas/SLOCorrection'
+          type: array
+        meta:
+          $ref: '#/components/schemas/ResponseMetaAttributes'
+      type: object
     SLOCorrectionUpdateRequestAttributes:
       description: The attribute object associated with the SLO correction to be updated.
       properties:
@@ -419,29 +502,53 @@ components:
           example: UTC
           type: string
       type: object
-    SLOCorrectionCategory:
-      description: Category the SLO correction belongs to.
-      enum:
-      - Scheduled Maintenance
-      - Outside Business Hours
-      - Deployment
-      - Other
-      example: Scheduled Maintenance
-      type: string
-      x-enum-varnames:
-      - SCHEDULED_MAINTENANCE
-      - OUTSIDE_BUSINESS_HOURS
-      - DEPLOYMENT
-      - OTHER
-    SLOCorrectionType:
-      default: correction
-      description: SLO correction resource type.
-      enum:
-      - correction
-      example: correction
-      type: string
-      x-enum-varnames:
-      - CORRECTION
+    SLOCorrectionResponse:
+      description: The response object of an SLO correction.
+      properties:
+        data:
+          $ref: '#/components/schemas/SLOCorrection'
+      type: object
+    SLOCorrection:
+      description: The response object of a list of SLO corrections.
+      properties:
+        attributes:
+          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
+        id:
+          description: The ID of the SLO correction.
+          type: string
+        type:
+          $ref: '#/components/schemas/SLOCorrectionType'
+      type: object
+    APIErrorResponse:
+      description: Error response object.
+      properties:
+        errors:
+          description: Array of errors returned by the API.
+          example:
+          - Bad Request
+          items:
+            description: Error description.
+            example: Bad Request
+            type: string
+          type: array
+      required:
+      - errors
+      type: object
+    SLOCorrectionResponseAttributesModifier:
+      description: Modifier of the object.
+      properties:
+        email:
+          description: Email of the Modifier.
+          type: string
+        handle:
+          description: Handle of the Modifier.
+          type: string
+        name:
+          description: Name of the Modifier.
+          type: string
+      type:
+      - object
+      - 'null'
     SLOCorrectionCreateRequestAttributes:
       description: 'The attribute object associated with the SLO correction to be created.
 
@@ -493,21 +600,6 @@ components:
       required:
       - start
       - category
-      type: object
-    APIErrorResponse:
-      description: Error response object.
-      properties:
-        errors:
-          description: Array of errors returned by the API.
-          example:
-          - Bad Request
-          items:
-            description: Error description.
-            example: Bad Request
-            type: string
-          type: array
-      required:
-      - errors
       type: object
     SLOCorrectionResponseAttributes:
       description: The attribute object associated with the SLO correction.
@@ -572,112 +664,20 @@ components:
           description: The timezone to display in the UI for the correction times (defaults to "UTC").
           type: string
       type: object
-    Creator:
-      description: Object describing the creator of the shared element.
-      properties:
-        email:
-          description: Email of the creator.
-          type: string
-        handle:
-          description: Handle of the creator.
-          type: string
-        name:
-          description: Name of the creator.
-          type:
-          - string
-          - 'null'
-      readOnly: true
-      type: object
-    SLOCorrectionListResponse:
-      description: A list of  SLO correction objects.
-      properties:
-        data:
-          description: The list of SLO corrections objects.
-          items:
-            $ref: '#/components/schemas/SLOCorrection'
-          type: array
-        meta:
-          $ref: '#/components/schemas/ResponseMetaAttributes'
-      type: object
-    SLOCorrectionUpdateRequest:
-      description: An object that defines a correction to be applied to an SLO.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOCorrectionUpdateData'
-      type: object
+    SLOCorrectionType:
+      default: correction
+      description: SLO correction resource type.
+      enum:
+      - correction
+      example: correction
+      type: string
+      x-enum-varnames:
+      - CORRECTION
     ResponseMetaAttributes:
       description: Object describing meta attributes of response.
       properties:
         page:
           $ref: '#/components/schemas/Pagination'
-      type: object
-    SLOCorrectionUpdateData:
-      description: The data object associated with the SLO correction to be updated.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionUpdateRequestAttributes'
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      type: object
-    SLOCorrectionCreateData:
-      description: The data object associated with the SLO correction to be created.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionCreateRequestAttributes'
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      required:
-      - type
-      type: object
-    Pagination:
-      description: Pagination object.
-      properties:
-        total_count:
-          description: Total count.
-          format: int64
-          type: integer
-        total_filtered_count:
-          description: Total count of elements matched by the filter.
-          format: int64
-          type: integer
-      type: object
-    SLOCorrectionCreateRequest:
-      description: An object that defines a correction to be applied to one or more SLOs.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOCorrectionCreateData'
-      type: object
-    SLOCorrectionResponseAttributesModifier:
-      description: Modifier of the object.
-      properties:
-        email:
-          description: Email of the Modifier.
-          type: string
-        handle:
-          description: Handle of the Modifier.
-          type: string
-        name:
-          description: Name of the Modifier.
-          type: string
-      type:
-      - object
-      - 'null'
-    SLOCorrection:
-      description: The response object of a list of SLO corrections.
-      properties:
-        attributes:
-          $ref: '#/components/schemas/SLOCorrectionResponseAttributes'
-        id:
-          description: The ID of the SLO correction.
-          type: string
-        type:
-          $ref: '#/components/schemas/SLOCorrectionType'
-      type: object
-    SLOCorrectionResponse:
-      description: The response object of an SLO correction.
-      properties:
-        data:
-          $ref: '#/components/schemas/SLOCorrection'
       type: object
   securitySchemes:
     AuthZ:

@@ -1,4 +1,4 @@
-# Datadog APM (datadog-apm)
+# Datadog APM
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,67 +66,190 @@
 
 Datadog APM provides end-to-end distributed tracing, continuous profiling, and real-time performance monitoring for applications and microservices. It automatically instruments applications to provide deep visibility into request traces, latency, and error rates across distributed systems.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/datadog-apm/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/datadog-apm/refs/heads/main/apis.yml)
+**Areas:** APM · Distributed Tracing · Microservices · Observability · Performance Monitoring · Spans · SLO · Service Catalog · OpenTelemetry · MCP
 
-## Scope
+## Datadog APM on APIs.io
 
-- **Type:** Index
-- **Position:** Consumer
-- **Access:** 3rd-Party
+Everything profiled for Datadog APM is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/datadog-apm/](https://apis.io/providers/datadog-apm/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (8)
 
-- APM
-- Distributed Tracing
-- Microservices
-- Observability
-- Performance Monitoring
+- [Datadog APM Spans API](https://apis.io/apis/datadog-apm/datadog-apm-spans-api/) — Search, list and aggregate APM spans. Three operations covering cursor-paginated span search (POST and GET forms) and a span analytics aggregation that…
+- [Datadog APM Spans Metrics API](https://apis.io/apis/datadog-apm/datadog-apm-spans-metrics-api/) — Create, read, update and delete span-based metric definitions — a compute over a span attribute, a filter query and group-by tags. Five operations.
+- [Datadog MCP Server](https://apis.io/apis/datadog-apm/datadog-apm-mcp-server/) — Datadog's first-party remote Model Context Protocol server. OAuth 2.1 with PKCE and dynamic client registration; a dedicated apm toolset covering span…
+- [Datadog APM API](https://apis.io/apis/datadog-apm/datadog-apm-apm-api/) — Observe, troubleshoot, and improve cloud-scale applications with all telemetry in context
+- [Datadog APM Retention Filters API](https://apis.io/apis/datadog-apm/datadog-apm-apm-retention-filters-api/) — Manage configuration of [APM retention filters](https://app.datadoghq.com/apm/traces/retention-filters) for your organization. You need an API and…
+- [Datadog APM Service Definition API](https://apis.io/apis/datadog-apm/datadog-apm-service-definition-api/) — API to create, update, retrieve and delete service definitions. Note: Service Catalog [v3.0…
+- [Datadog APM Service Level Objective Corrections API](https://apis.io/apis/datadog-apm/datadog-apm-service-level-objective-corrections-api/) — SLO Status Corrections allow you to prevent specific time periods from negatively impacting your SLO’s status and error budget. You can use Status…
+- [Datadog APM Service Level Objectives API](https://apis.io/apis/datadog-apm/datadog-apm-service-level-objectives-api/) — [Service Level Objectives](https://docs.datadoghq.com/monitors/service_level_objectives/#configuration) (or SLOs) are a key part of the site reliability…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-03-26
-- **Modified:** 2026-04-28
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (1)
 
-### Datadog APM API
+Event-driven and webhook contracts.
 
-Datadog APM REST API for traces, spans, services, service definitions, and SLOs. Provides endpoints for searching traces, managing service catalog entries, and configuring service level objectives.
+- [Datadog Apm Webhooks](https://apis.io/asyncapis/datadog-apm/datadog-apm-webhooks/)
 
-- **Human URL:** [https://docs.datadoghq.com/api/latest/tracing/](https://docs.datadoghq.com/api/latest/tracing/)
+#### MCP servers (1)
 
-#### Tags
+Model Context Protocol servers that expose the API to agents.
 
-- APM
-- Distributed Tracing
-- Service Definitions
-- SLOs
-- Spans
-- Traces
+- [Datadog MCP Server](https://apis.io/servers/datadog-apm/datadog-mcp-server/)
 
-#### Properties
+#### JSON-LD (1)
 
-- [Documentation](https://docs.datadoghq.com/api/latest/tracing/)
-- [OpenAPI](openapi/datadog-apm-api.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [JSON Schema](json-schema/trace.yml) — [JSON Schema](https://json-schema.org/specification)
+Linked-data contexts for the provider's vocabulary.
 
-## Common Properties
+- [Datadog Apm Context](https://apis.io/jsonld/datadog-apm/datadog-apm-context/)
+
+#### Vocabulary (1)
+
+The provider's domain terms, defined.
+
+- [Datadog APM Vocabulary](https://apis.io/vocabularies/datadog-apm/datadog-apm-vocabulary/)
+
+#### Collections (5)
+
+Postman and Open Collection request collections.
+
+- [Moved to /providers/datadog-apm/](https://apis.io/collections/datadog-apm/open-datadog-apm-service-definitions-api/)
+- [Moved to /providers/datadog-apm/](https://apis.io/collections/datadog-apm/open-datadog-apm-services-api/)
+- [Moved to /providers/datadog-apm/](https://apis.io/collections/datadog-apm/open-datadog-apm-slos-api/)
+- [Moved to /providers/datadog-apm/](https://apis.io/collections/datadog-apm/open-datadog-apm-spans-api/)
+- [Moved to /providers/datadog-apm/](https://apis.io/collections/datadog-apm/open-datadog-apm-traces-api/)
+
+#### Overlays (14)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Datadog Apm Apm Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-apm-api-phrasing-overlay/)
+- [Datadog Apm Apm Retention Filters Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-apm-retention-filters-api-phrasing-overlay/)
+- [Datadog Apm Retention Filters Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-retention-filters-overlay/)
+- [Datadog Apm Service Definition Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-service-definition-api-phrasing-overlay/)
+- [Datadog Apm Service Definitions Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-service-definitions-overlay/)
+- [Datadog Apm Service Level Objective Corrections Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-service-level-objective-corrections-api-phrasing-overlay/)
+- [Datadog Apm Service Level Objectives Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-service-level-objectives-api-phrasing-overlay/)
+- [Datadog Apm Services Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-services-overlay/)
+- [Datadog Apm Slo Corrections Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-slo-corrections-overlay/)
+- [Datadog Apm Slos Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-slos-overlay/)
+- [Datadog Apm Spans Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-spans-api-phrasing-overlay/)
+- [Datadog Apm Spans Metrics Api Phrasing Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-spans-metrics-api-phrasing-overlay/)
+- [Datadog Apm Spans Metrics Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-spans-metrics-overlay/)
+- [Datadog Apm Spans Overlay](https://apis.io/overlays/datadog-apm/datadog-apm-spans-overlay/)
+
+#### Governance rules (2)
+
+Spectral rulesets for the provider's contracts.
+
+- [Datadog APM — jsonschema rules](https://apis.io/rules/datadog-apm/datadog-apm-jsonschema-spectral-rules/)
+- [Datadog APM API Rules](https://apis.io/rules/datadog-apm/datadog-apm-rules/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Datadog Apm Authentication](https://apis.io/security/datadog-apm/datadog-apm-authentication/)
+- [Datadog Apm Domain Security](https://apis.io/security/datadog-apm/datadog-apm-domain-security/)
+- [Datadog Apm Trust Center](https://apis.io/security/datadog-apm/datadog-apm-trust-center/)
+- [Datadog Apm Vulnerability Disclosure](https://apis.io/security/datadog-apm/datadog-apm-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Datadog Apm Scopes](https://apis.io/scopes/datadog-apm/datadog-apm-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Datadog Apm Plans Pricing](https://apis.io/plans/datadog-apm/datadog-apm-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Datadog Apm Rate Limits](https://apis.io/rate-limits/datadog-apm/datadog-apm-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Datadog Apm Finops](https://apis.io/finops/datadog-apm/datadog-apm-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://www.datadoghq.com/)
 - [Documentation](https://docs.datadoghq.com/tracing/)
-- [Getting Started](https://docs.datadoghq.com/getting_started/tracing/)
-- [Git Hub](https://github.com/DataDog)
-- [Blog](https://www.datadoghq.com/blog/)
+- [Getting started](https://docs.datadoghq.com/getting_started/tracing/)
+- [API reference](https://docs.datadoghq.com/api/latest/)
 - [Pricing](https://www.datadoghq.com/pricing/)
-- [Sign Up](https://www.datadoghq.com/free-datadog-trial/)
-- [JSON-LD](json-ld/datadog-apm-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
-- [Vocabulary](vocabulary/datadog-apm-vocabulary.yml)
-- [Capabilities](capabilities/datadog-apm-capabilities.yml)
-- [Rules](rules/datadog-apm-rules.yml)
-- [Integrations](https://www.datadoghq.com/product/platform/integrations/)
-- [L L Ms Txt](https://docs.datadoghq.com/llms.txt)
+- [Sign up](https://www.datadoghq.com/free-datadog-trial/)
+- [Support](https://www.datadoghq.com/support/)
+- [Blog](https://www.datadoghq.com/blog/)
+- [Security](https://www.datadoghq.com/security/)
+- [Compliance](https://trust.datadoghq.com/)
+- [Terms of service](https://www.datadoghq.com/legal/terms/)
+- [Privacy policy](https://www.datadoghq.com/legal/privacy/)
+- [GitHub](https://github.com/DataDog)
+- [Status](https://status.datadoghq.com/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 80.4** — exemplar · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 64.2 |
+| Contract governance | 45.5 |
+| Operational transparency | 84.2 |
+| Developer ergonomics | 80.2 |
+| Access clarity | 92.1 |
+
+**Agent readiness 55.0** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | unknown |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 45.1** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/datadog-apm/](https://apis.io/providers/datadog-apm/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Datadog APM: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/datadog-apm/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).

@@ -1,0 +1,263 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://www.datadoghq.com/pricing/
+sources:
+- https://www.datadoghq.com/pricing/
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T120612
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: usage-other
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-28'
+  managed_tier: Pro
+published: true
+note: 'Datadog multi-product pricing page; text truncated mid-APM section so APM per-host prices are not
+  visible. Extra charges noted: additional containers $ 0.002 per container per hour; custom events $
+  2 for 100 000; free tier up to five Basic hosts.'
+plan_count: 15
+currency: USD
+plans:
+- name: AI Credits
+  price_text: Starting At $ 500 Per 500 credits, per month*
+  price: 500
+  currency: USD
+  period: month
+  unit: per 500 credits
+  included_quota: 500 credits
+  overage: '*Billed annually or $ 1.30 per credit on-demand.'
+- name: Code Coverage
+  price_text: Starting At $ 8 Per committer, per month*
+  price: 8
+  currency: USD
+  period: month
+  unit: per committer
+  overage: '*Billed annually or $ 12 on-demand'
+- name: Log Management — Ingest
+  price_text: Starting At $ 0.10 Per ingested or scanned GB, per month*
+  price: 0.1
+  currency: USD
+  period: month
+  unit: per ingested or scanned GB
+  overage: '**Billed annually or $ 0.10 on-demand'
+- name: Log Management — Standard Indexing (15-day retention)
+  price_text: $ 1.70 Per million log events, per month*
+  price: 1.7
+  currency: USD
+  period: month
+  unit: per million log events
+  included_quota: 15-day retention
+  overage: '*Billed annually or $ 2.55 on-demand'
+- name: Flex Storage
+  price_text: Starting At $ 0.05 Per million events stored, per month*
+  price: 0.05
+  currency: USD
+  period: month
+  unit: per million events stored
+  included_quota: Minimum retention of 1 month up to 15 months
+  overage: '**Billed annually or $ 0.075 on-demand'
+- name: Flex Logs Starter
+  price_text: Starting At $ 0.60 Per million events stored, per month*
+  price: 0.6
+  currency: USD
+  period: month
+  unit: per million events stored
+  included_quota: Bundled Starter Compute for log volumes below 2B per month (10B total stored)
+  overage: '**Billed annually or $ 0.90 on-demand'
+- name: Flex Compute
+  price_text: Contact Us for Pricing
+  period: none
+  unit: per instance-hour
+- name: Log Forwarding to Custom Destinations
+  price_text: Starting At $ 0.25 Per GB outbound, per destination, per month*
+  price: 0.25
+  currency: USD
+  period: month
+  unit: per GB outbound per destination
+- name: Feature Flags (1M-10M MFCRs)
+  price_text: $ 55 per month*
+  price: 55
+  currency: USD
+  period: month
+  unit: per 1M Monthly Flag Configuration Requests
+  included_quota: Usage below 1 million monthly flag configuration requests is included at no cost
+  overage: '**Billed annually or $ 100 on-demand'
+- name: Feature Flags (10M+ MFCRs)
+  price_text: Contact Us for Pricing
+  period: none
+  unit: per 1M MFCRs
+  overage: 10M+ $ 45 $ 73 $ 92
+- name: Infrastructure Basic
+  price_text: Contact sales for pricing
+  period: none
+  unit: per host
+  included_quota: Core system metrics, 15-month metric retention
+- name: Infrastructure Pro
+  price_text: Starting At $ 15 Per host, per month*
+  price: 15
+  currency: USD
+  period: month
+  unit: per host
+  included_quota: 5 containers per host, 100 custom metrics per host, 500 custom events per host
+  overage: '*Billed annually or $ 18 on-demand'
+- name: Infrastructure Enterprise
+  price_text: Starting At $ 23 Per host, per month*
+  price: 23
+  currency: USD
+  period: month
+  unit: per host
+  included_quota: 10 containers per host, 200 custom metrics, 1000 custom events
+  overage: '*Billed annually or $ 27 on-demand'
+- name: DevSecOps Pro
+  price_text: Starting At $ 22 Per host, per month*
+  price: 22
+  currency: USD
+  period: month
+  unit: per host
+  overage: '*Billed annually or $ 27 on-demand'
+- name: DevSecOps Enterprise
+  price_text: Starting At $ 34 Per host, per month*
+  price: 34
+  currency: USD
+  period: month
+  unit: per host
+  included_quota: 10 containers allotted per host license
+  overage: '*Billed annually or $ 41 on-demand'
+rate_limit_statements:
+- By committing to a monthly volume of logs, you aren’t rate-limited based on a single day’s volume.
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  units:
+  - compute
+  - credit
+  - data
+  - request
+  plans:
+  - name: AI Credits
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - credit
+    periods:
+    - month
+  - name: Code Coverage
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Log Management — Ingest
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - data
+    periods:
+    - month
+  - name: Log Management — Standard Indexing (15-day retention)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Flex Storage
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Flex Logs Starter
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Flex Compute
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - none
+  - name: Log Forwarding to Custom Destinations
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - data
+    periods:
+    - month
+  - name: Feature Flags (1M-10M MFCRs)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - request
+    periods:
+    - month
+  - name: Feature Flags (10M+ MFCRs)
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - other
+    periods:
+    - none
+  - name: Infrastructure Basic
+    access: other
+    model: unstated
+    model_how: derived
+    units:
+    - other
+    periods:
+    - none
+  - name: Infrastructure Pro
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: Infrastructure Enterprise
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: DevSecOps Pro
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month
+  - name: DevSecOps Enterprise
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - month

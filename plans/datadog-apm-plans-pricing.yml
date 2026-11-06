@@ -130,7 +130,7 @@ plans:
 rate_limit_statements:
 - By committing to a monthly volume of logs, you aren’t rate-limited based on a single day’s volume.
 x-canonical:
-  generated: '2026-11-02'
+  generated: '2026-11-06'
   vocabulary: engine/economics/plans-canonical.yml
   models:
   - hybrid

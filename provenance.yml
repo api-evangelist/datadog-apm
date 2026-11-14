@@ -11,6 +11,12 @@ artifacts:
   capabilities/datadog-apm-capability-edges.yml:
     method: unknown
     evidence: no authorship recorded
+  certification/observations-2026-11-11.jsonl:
+    method: unknown
+    evidence: no authorship recorded
+  certification/status.yml:
+    method: unknown
+    evidence: no authorship recorded
   changelog/datadog-apm-changelog.yml:
     method: searched
     evidence: declared in the artifact
@@ -23,8 +29,14 @@ artifacts:
   conventions/datadog-apm-conventions.yml:
     method: searched
     evidence: declared in the artifact
+  data-license/datadog-apm-data-license.yml:
+    method: harvested
+    evidence: declared in the artifact
   data-model/datadog-apm-data-model.yml:
     method: derived
+    evidence: declared in the artifact
+  eligibility/datadog-apm-eligibility.yml:
+    method: harvested
     evidence: declared in the artifact
   errors/datadog-apm-problem-types.yml:
     method: derived
@@ -56,7 +68,7 @@ artifacts:
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-23T000603.yml:
@@ -120,6 +132,9 @@ artifacts:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-11-02T082323.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   lifecycle/datadog-apm-lifecycle.yml:
@@ -214,6 +229,9 @@ artifacts:
   plans/datadog-apm-price-estimates.yml:
     method: unknown
     evidence: no authorship recorded
+  privacy/datadog-apm-privacy-policy.yml:
+    method: harvested
+    evidence: declared in the artifact
   rate-limits/datadog-apm-rate-limits.yml:
     method: searched
     evidence: declared in the artifact
@@ -261,6 +279,9 @@ artifacts:
     evidence: declared in the artifact
   sla/datadog-apm-sla.yml:
     method: generated
+    evidence: declared in the artifact
+  terms/datadog-apm-terms-of-service.yml:
+    method: harvested
     evidence: declared in the artifact
   vocabulary/datadog-apm-vocabulary.yml:
     method: unknown
